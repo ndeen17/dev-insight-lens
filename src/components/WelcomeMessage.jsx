@@ -118,27 +118,29 @@ const WelcomeMessage = () => {
     </div>
 
     {/* Info Section */}
-    <div className="mt-12 text-center">
-      <div className="inline-flex items-center space-x-2 bg-blue-50 px-6 py-3 rounded-full border-2 border-blue-200">
-        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div className="mt-8 sm:mt-12 text-center px-2">
+      <div className="inline-flex items-center space-x-2 bg-blue-50 px-3 sm:px-4 md:px-6 py-2 sm:py-2.5 md:py-3 rounded-full border-2 border-blue-200">
+        <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
-        <span className="text-sm font-medium text-gray-700">Switch between modes after analysis to see different perspectives</span>
+        <span className="text-xs sm:text-sm font-medium text-gray-700">Switch between modes after analysis to see different perspectives</span>
       </div>
     </div>
 
     {/* Stats Section */}
-    <div className="mt-8 sm:mt-12 grid grid-cols-3 gap-4 sm:gap-6 max-w-2xl mx-auto">
-      <div className="text-center">
-        <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1">6</div>
+    <div className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4 md:gap-6 px-4">
+      <div className="flex items-center space-x-2">
+        <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600">6</div>
         <div className="text-xs sm:text-sm text-gray-600">Key Metrics</div>
       </div>
-      <div className="text-center">
-        <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1">2</div>
+      <div className="w-1 h-8 bg-gray-200 rounded-full"></div>
+      <div className="flex items-center space-x-2">
+        <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600">2</div>
         <div className="text-xs sm:text-sm text-gray-600">View Modes</div>
       </div>
-      <div className="text-center">
-        <div className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1">AI</div>
+      <div className="w-1 h-8 bg-gray-200 rounded-full"></div>
+      <div className="flex items-center space-x-2">
+        <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600">AI</div>
         <div className="text-xs sm:text-sm text-gray-600">Powered</div>
       </div>
     </div>
