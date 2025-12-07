@@ -94,7 +94,7 @@ const GitHubInput = ({ value, onChange, onAnalyze, disabled }) => {
         </div>
         
         {/* Example hint */}
-        <p className="text-xs text-center text-gray-500">
+        <p className="text-xs text-center text-gray-500 mb-4">
           Example: <span className="text-blue-600 font-medium">https://github.com/torvalds</span>
         </p>
       </form>
