@@ -226,18 +226,18 @@ const BrowseDevelopers = () => {
             </div>
           </>
         ) : (
-          <div className="text-center bg-white rounded-3xl shadow-xl p-12">
-            <div className="text-6xl mb-4">🎉</div>
-            <h2 className="text-3xl font-bold text-black mb-4">You've seen all developers!</h2>
-            <p className="text-gray-600 mb-8">
+          <div className="text-center bg-white rounded-2xl sm:rounded-3xl shadow-xl p-6 sm:p-8 md:p-12 mx-2 sm:mx-0">
+            <div className="text-5xl sm:text-6xl mb-3 sm:mb-4">🎉</div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-black mb-3 sm:mb-4 px-2">You've seen all developers!</h2>
+            <p className="text-sm sm:text-base text-gray-600 mb-6 sm:mb-8 px-2">
               {savedCount > 0 
                 ? `You saved ${savedCount} developer${savedCount !== 1 ? 's' : ''}!` 
                 : "You didn't save any developers this time."}
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-2">
               <Link 
                 to="/saved"
-                className="px-6 py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors font-semibold"
+                className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors font-semibold text-sm sm:text-base"
               >
                 View Saved Developers
               </Link>
@@ -246,13 +246,13 @@ const BrowseDevelopers = () => {
                   setCurrentIndex(0);
                   fetchDevelopers();
                 }}
-                className="px-6 py-3 bg-gray-200 text-black rounded-full hover:bg-gray-300 transition-colors font-semibold"
+                className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-gray-200 text-black rounded-full hover:bg-gray-300 transition-colors font-semibold text-sm sm:text-base"
               >
                 Browse Again
               </button>
               <Link 
                 to="/"
-                className="px-6 py-3 bg-white border-2 border-gray-200 text-black rounded-full hover:bg-gray-50 transition-colors font-semibold"
+                className="w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-white border-2 border-gray-200 text-black rounded-full hover:bg-gray-50 transition-colors font-semibold text-sm sm:text-base"
               >
                 Back to Home
               </Link>
