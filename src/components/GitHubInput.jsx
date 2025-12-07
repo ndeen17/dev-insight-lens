@@ -39,7 +39,7 @@ const GitHubInput = ({ value, onChange, onAnalyze, disabled }) => {
               onChange={(e) => { onChange(e.target.value); setIsValid(true); }}
               placeholder="https://github.com/username"
               disabled={disabled}
-              className={`w-full px-4 py-4 border-2 rounded-[2rem] text-base focus:outline-none transition-all duration-200 ${
+              className={`w-full px-4 py-4 border-2 text-base focus:outline-none transition-all duration-200 ${
                 !isValid 
                   ? 'border-red-500 bg-red-50 text-red-900 placeholder-red-400' 
                   : disabled 
@@ -80,7 +80,7 @@ const GitHubInput = ({ value, onChange, onAnalyze, disabled }) => {
         >
           {disabled ? (
             <div className="flex items-center justify-center space-x-3">
-              <div className="w-5 h-5 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               <span>Analyzing...</span>
             </div>
           ) : (
