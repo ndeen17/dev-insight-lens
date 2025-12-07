@@ -77,12 +77,12 @@ const EngineerView: React.FC<EngineerViewProps> = ({ data }) => {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="patterns" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1 sm:gap-2">
-          <TabsTrigger value="patterns" className="text-xs sm:text-sm">Code Patterns</TabsTrigger>
-          <TabsTrigger value="architecture" className="text-xs sm:text-sm">Architecture</TabsTrigger>
-          <TabsTrigger value="testing" className="text-xs sm:text-sm">Testing</TabsTrigger>
-          <TabsTrigger value="languages" className="text-xs sm:text-sm">Languages</TabsTrigger>
-          <TabsTrigger value="repos" className="text-xs sm:text-sm">Repositories</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-1 sm:gap-2 h-auto">
+          <TabsTrigger value="patterns" className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap">Code Patterns</TabsTrigger>
+          <TabsTrigger value="architecture" className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap">Architecture</TabsTrigger>
+          <TabsTrigger value="testing" className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap">Testing</TabsTrigger>
+          <TabsTrigger value="languages" className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap">Languages</TabsTrigger>
+          <TabsTrigger value="repos" className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap col-span-2 sm:col-span-1">Repositories</TabsTrigger>
         </TabsList>
 
         {/* Code Patterns Tab */}
