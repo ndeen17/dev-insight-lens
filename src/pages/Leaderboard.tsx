@@ -248,8 +248,12 @@ const Leaderboard = () => {
 
       {/* Footer */}
       <footer className="mt-16 py-8 border-t border-gray-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 text-center text-gray-600 text-sm">
-          <p>Rankings updated when developers submit their profiles • Powered by GPT-4</p>
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <p className="text-gray-600 text-sm mb-3">Rankings updated when developers submit their profiles • Powered by GPT-4</p>
+          <div className="text-gray-400 text-xs space-y-1">
+            <p>Not affiliated with GitHub, Inc.</p>
+            <p>GitHub and the GitHub logo are trademarks of GitHub, Inc.</p>
+          </div>
         </div>
       </footer>
     </div>
