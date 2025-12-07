@@ -81,7 +81,7 @@ const GitHubInput = ({ value, onChange, onAnalyze, disabled }) => {
           >
           {disabled ? (
             <div className="flex items-center justify-center space-x-3">
-              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-5 h-5 border-[3px] border-white/30 border-t-white rounded-full animate-spin"></div>
               <span>Analyzing...</span>
             </div>
           ) : (
