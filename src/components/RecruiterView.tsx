@@ -60,13 +60,13 @@ const RecruiterView: React.FC<RecruiterViewProps> = ({ data }) => {
       {/* Hiring Decision Card */}
       <div className="bg-white border-2 border-gray-200 rounded-lg p-8 text-center">
         <div className="mb-4 flex items-center justify-center space-x-2">
-          <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
           </svg>
-          <span className="text-xl font-bold text-black">Hiring Recommendation</span>
+          <span className="text-base sm:text-lg md:text-xl font-bold text-black">Hiring Recommendation</span>
         </div>
         
-        <div className="inline-flex items-center px-6 py-3 rounded-lg text-3xl font-bold text-blue-600 bg-blue-50 border-2 border-blue-200 mb-4">
+        <div className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-xl sm:text-2xl md:text-3xl font-bold text-blue-600 bg-blue-50 border-2 border-blue-200 mb-4">
           {recruiter_summary.hiring_recommendation}
         </div>
 
@@ -74,24 +74,24 @@ const RecruiterView: React.FC<RecruiterViewProps> = ({ data }) => {
           {recruiter_summary.recommended_role_level}
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-3xl mx-auto">
-          <div className="bg-white rounded-lg p-4 border-2 border-gray-200">
-            <div className="text-2xl font-bold text-blue-600 mb-1 break-words">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto">
+          <div className="bg-white rounded-lg p-3 sm:p-4 border-2 border-gray-200">
+            <div className="text-lg sm:text-xl md:text-2xl font-bold text-blue-600 mb-1 break-words">
               {scores.overall_level}
             </div>
-            <div className="text-xs text-gray-600">Skill Level</div>
+            <div className="text-xs sm:text-xs text-gray-600">Skill Level</div>
           </div>
-          <div className="bg-white rounded-lg p-4 border-2 border-gray-200">
-            <div className="text-3xl font-bold text-blue-600 mb-1">{scores.job_readiness_score}%</div>
-            <div className="text-xs text-gray-600">Job Ready</div>
+          <div className="bg-white rounded-lg p-3 sm:p-4 border-2 border-gray-200">
+            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600 mb-1">{scores.job_readiness_score}%</div>
+            <div className="text-xs sm:text-xs text-gray-600">Job Ready</div>
           </div>
-          <div className="bg-white rounded-lg p-4 border-2 border-gray-200">
-            <div className="text-3xl font-bold text-blue-600 mb-1">{scores.tech_depth_score}%</div>
-            <div className="text-xs text-gray-600">Tech Depth</div>
+          <div className="bg-white rounded-lg p-3 sm:p-4 border-2 border-gray-200">
+            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600 mb-1">{scores.tech_depth_score}%</div>
+            <div className="text-xs sm:text-xs text-gray-600">Tech Depth</div>
           </div>
-          <div className="bg-white rounded-lg p-4 border-2 border-gray-200">
-            <div className="text-3xl font-bold text-blue-600 mb-1">{recruiter_summary.project_maturity_rating}</div>
-            <div className="text-xs text-gray-600">Projects</div>
+          <div className="bg-white rounded-lg p-3 sm:p-4 border-2 border-gray-200">
+            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600 mb-1 break-words">{recruiter_summary.project_maturity_rating}</div>
+            <div className="text-xs sm:text-xs text-gray-600">Projects</div>
           </div>
         </div>
       </div>
