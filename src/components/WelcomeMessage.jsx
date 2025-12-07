@@ -1,15 +1,12 @@
+import { Users, Code2, CheckCircle2 } from 'lucide-react';
+
 const WelcomeMessage = () => (
   <div className="max-w-6xl mx-auto px-3 sm:px-4">
     {/* Feature Cards */}
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-12">
       {/* Recruiter Mode Card */}
       <div className="group bg-gradient-to-br from-blue-50 via-white to-blue-50 border-2 border-blue-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
-        <div className="flex items-center space-x-3 mb-4">
-          <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
-            <svg className="w-6 h-6 text-white" fill="currentColor" stroke="currentColor" strokeWidth="0.5" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-            </svg>
-          </div>
+        <div className="mb-4">
           <h4 className="text-xl font-bold text-gray-900">Recruiter Mode</h4>
         </div>
         <p className="text-gray-600 mb-4">
@@ -23,21 +20,15 @@ const WelcomeMessage = () => (
             <span className="text-sm text-gray-700">Skill level & job readiness score</span>
           </li>
           <li className="flex items-start space-x-3">
-            <svg className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
+            <CheckCircle2 className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
             <span className="text-sm text-gray-700">Clear hiring recommendation</span>
           </li>
           <li className="flex items-start space-x-3">
-            <svg className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
+            <CheckCircle2 className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
             <span className="text-sm text-gray-700">Top strengths & potential risks</span>
           </li>
           <li className="flex items-start space-x-3">
-            <svg className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
+            <CheckCircle2 className="w-5 h-5 text-blue-500 mt-0.5 flex-shrink-0" />
             <span className="text-sm text-gray-700">Technical stack overview</span>
           </li>
         </ul>
@@ -47,9 +38,7 @@ const WelcomeMessage = () => (
       <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-5 text-left">
         <div className="flex items-center space-x-2 mb-3">
           <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
-            <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
-            </svg>
+            <Code2 className="w-6 h-6 text-white" strokeWidth={2} />
           </div>
           <h4 className="text-xl font-bold text-gray-900">Engineer Mode</h4>
         </div>
@@ -58,27 +47,19 @@ const WelcomeMessage = () => (
         </p>
         <ul className="space-y-2.5">
           <li className="flex items-start space-x-3">
-            <svg className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
+            <CheckCircle2 className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
             <span className="text-sm text-gray-700">Code patterns & architecture</span>
           </li>
           <li className="flex items-start space-x-3">
-            <svg className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
+            <CheckCircle2 className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
             <span className="text-sm text-gray-700">Testing & complexity analysis</span>
           </li>
           <li className="flex items-start space-x-3">
-            <svg className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
+            <CheckCircle2 className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
             <span className="text-sm text-gray-700">Language proficiency breakdown</span>
           </li>
           <li className="flex items-start space-x-3">
-            <svg className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
+            <CheckCircle2 className="w-5 h-5 text-purple-500 mt-0.5 flex-shrink-0" />
             <span className="text-sm text-gray-700">Repository-level diagnostics</span>
           </li>
         </ul>
