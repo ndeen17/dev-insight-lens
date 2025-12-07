@@ -26,36 +26,56 @@ const ErrorMessage = ({ error, onRetry }) => {
   };
 
   return (
-    <div className="text-center py-8 sm:py-12 px-4">
-      <p className="text-red-600 text-sm mb-3 sm:mb-4 max-w-md mx-auto">{error}</p>
-      
-      {isRateLimit && countdown > 0 && (
-        <p className="text-orange-600 text-xs mb-3 sm:mb-4">
-          Try again in {formatTime(countdown)}
-        </p>
-      )}
-      
-      <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center max-w-sm mx-auto">
-        <button 
-          onClick={onRetry}
-          disabled={isRateLimit && countdown > 0}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            isRateLimit && countdown > 0
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              : 'bg-red-600 text-white hover:bg-red-700'
-          }`}
-        >
-          {isRateLimit && countdown > 0 ? 'Please Wait' : 'Try Again'}
-        </button>
+    <div className="max-w-2xl mx-auto px-4">
+      <div className="bg-white rounded-2xl shadow-xl border-2 border-red-200 p-8">
+        {/* Error Icon */}
+        <div className="flex justify-center mb-6">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
         
-        {isNetwork && (
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-800 font-medium transition-colors"
+        {/* Error Message */}
+        <div className="text-center mb-6">
+          <h3 className="text-xl font-bold text-gray-900 mb-3">Analysis Failed</h3>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+            <p className="text-sm text-red-700 leading-relaxed">{error}</p>
+          </div>
+          
+          {isRateLimit && countdown > 0 && (
+            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
+              <p className="text-sm text-orange-700">
+                Rate limit reached. Try again in <span className="font-bold">{formatTime(countdown)}</span>
+              </p>
+            </div>
+          )}
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <button 
+            onClick={onRetry}
+            disabled={isRateLimit && countdown > 0}
+            className={`px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 ${
+              isRateLimit && countdown > 0
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : 'bg-gradient-to-r from-red-600 to-pink-600 text-white hover:shadow-lg hover:scale-105'
+            }`}
           >
-            Refresh
+            {isRateLimit && countdown > 0 ? 'Please Wait' : 'Try Again'}
           </button>
-        )}
+        
+          {isNetwork && (
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-gray-900 text-white text-sm rounded-lg hover:bg-gray-800 font-medium transition-colors"
+            >
+              Refresh
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

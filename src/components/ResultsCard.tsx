@@ -1,5 +1,82 @@
-const ResultsCard = ({ results }) => {
-  const getGradeColor = (grade) => {
+import React from 'react';
+import ModeToggle, { ViewMode } from './ModeToggle';
+import RecruiterView from './RecruiterView';
+import EngineerView from './EngineerView';
+import { EvaluationResponse, LegacyEvaluationResponse, isNewFormat, isLegacyFormat } from '../types/evaluation';
+
+interface ResultsCardProps {
+  results: EvaluationResponse | LegacyEvaluationResponse;
+  mode: ViewMode;
+  onModeChange: (mode: ViewMode) => void;
+}
+
+const ResultsCard: React.FC<ResultsCardProps> = ({ results, mode, onModeChange }) => {
+  // Handle legacy format (backward compatibility)
+  if (isLegacyFormat(results)) {
+    return <LegacyResultsView results={results} />;
+  }
+
+  // Handle new dual-mode format
+  if (isNewFormat(results)) {
+    return (
+      <div className="space-y-4 sm:space-y-6 w-full">
+        <ModeToggle mode={mode} onModeChange={onModeChange} />
+        
+        {mode === 'recruiter' ? (
+          <RecruiterView data={results} />
+        ) : (
+          <EngineerView data={results} />
+        )}
+
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8 px-2">
+          <button 
+            onClick={() => window.location.reload()}
+            className="flex items-center justify-center space-x-3 px-8 py-4 bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 font-bold text-base transform"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            <span>Analyze Another Profile</span>
+          </button>
+          
+          <button 
+            onClick={() => {
+              const shareText = `Check out my GitHub profile analysis: ${results.scores.overall_level} Developer (${results.scores.overall_score}/110 score)`;
+              if (navigator.share) {
+                navigator.share({ 
+                  title: 'Dev Insight Lens - GitHub Analysis',
+                  text: shareText,
+                  url: window.location.href
+                });
+              } else {
+                navigator.clipboard.writeText(shareText);
+                alert('Results copied to clipboard!');
+              }
+            }}
+            className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-lg sm:rounded-xl hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md font-medium text-sm sm:text-base"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+            </svg>
+            <span>Share Results</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Fallback for unexpected format
+  return (
+    <div className="text-center py-8 px-4">
+      <p className="text-red-600">Unexpected data format received</p>
+    </div>
+  );
+};
+
+// Legacy view component for backward compatibility
+const LegacyResultsView: React.FC<{ results: LegacyEvaluationResponse }> = ({ results }) => {
+  const getGradeColor = (grade: string) => {
     switch (grade) {
       case 'Beginner': return {
         bg: 'bg-gradient-to-r from-yellow-50 to-orange-50',
@@ -32,7 +109,7 @@ const ResultsCard = ({ results }) => {
 
   return (
     <div className="space-y-4 sm:space-y-6 w-full max-w-5xl mx-auto px-2 sm:px-4">
-      {/* Main Grade Card - Mobile Responsive */}
+      {/* Main Grade Card */}
       <div className={`${gradeColors.bg} ${gradeColors.border} border-2 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 text-center shadow-lg`}>
         <div className="mb-4 sm:mb-6">
           <div className={`inline-flex items-center px-3 py-2 sm:px-6 sm:py-3 rounded-full text-sm sm:text-lg font-semibold border-2 ${gradeColors.badge} shadow-sm`}>
@@ -57,7 +134,7 @@ const ResultsCard = ({ results }) => {
         </div>
       </div>
 
-      {/* Analysis Results Grid - Mobile Responsive */}
+      {/* Analysis Results Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Strengths */}
         <div className="bg-white rounded-lg sm:rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
@@ -82,7 +159,7 @@ const ResultsCard = ({ results }) => {
           </div>
         </div>
 
-        {/* Areas for Improvement */}
+        {/* Weaknesses */}
         <div className="bg-white rounded-lg sm:rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
           <div className="p-4 sm:p-6">
             <div className="flex items-center space-x-3 mb-3 sm:mb-4">
@@ -129,7 +206,7 @@ const ResultsCard = ({ results }) => {
         </div>
       </div>
 
-      {/* Action Buttons - Mobile Responsive */}
+      {/* Action Buttons */}
       <div className="flex flex-col sm:flex-row gap-3 justify-center pt-6 sm:pt-8 px-2">
         <button 
           onClick={() => window.location.reload()}
@@ -143,10 +220,10 @@ const ResultsCard = ({ results }) => {
         
         <button 
           onClick={() => {
-            const shareText = `I got ${results.grade} level on oncode developer analysis! Check out your GitHub profile analysis.`;
+            const shareText = `I got ${results.grade} level on GitHub developer analysis!`;
             if (navigator.share) {
               navigator.share({ 
-                title: 'oncode developer analysis',
+                title: 'Dev Insight Lens',
                 text: shareText,
                 url: window.location.href
               });

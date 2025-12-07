@@ -27,27 +27,27 @@ const HealthCheck = () => {
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 text-xs text-gray-400">
-        <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse"></div>
-        Checking...
+      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+        <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+        <span className="text-xs font-medium text-white">Checking API...</span>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex items-center gap-2 text-xs text-red-500">
-        <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
-        Offline
+      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-red-100 rounded-full border border-red-300">
+        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+        <span className="text-xs font-semibold text-red-700">API Offline</span>
       </div>
     );
   }
 
   if (healthStatus) {
     return (
-      <div className="flex items-center gap-2 text-xs text-green-600">
-        <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-        Online
+      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
+        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+        <span className="text-xs font-semibold text-white">API Online</span>
       </div>
     );
   }

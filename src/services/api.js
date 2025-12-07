@@ -82,9 +82,15 @@ export const analyzeGitHubProfile = async (githubUrl) => {
 
     // Make API call to backend
     const response = await api.post(appConfig.endpoints.analyze, {
-      githubUrl: githubUrl.trim()
+      github_url: githubUrl.trim(), // Updated to match new backend spec
+      githubUrl: githubUrl.trim()   // Keep legacy for backward compatibility
     });
 
+    // The response will contain either:
+    // - New format: { profile, scores, recruiter_summary, engineer_breakdown }
+    // - Legacy format: { grade, reasoning, strengths, weaknesses, suggestions, analyzedRepos, totalRepos }
+    // The frontend will handle both formats automatically
+    
     return response;
 
   } catch (error) {
