@@ -61,48 +61,50 @@ const Leaderboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4">
-          <Link to="/" className="inline-flex items-center space-x-2 text-white/90 hover:text-white mb-6 transition-colors">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            <span>Back to Analysis</span>
-          </Link>
-          
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            🏆 Developer Leaderboard
-          </h1>
-          <p className="text-lg text-white/90 max-w-2xl">
-            Top GitHub developers ranked by comprehensive skill assessment
-          </p>
+      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white py-8 sm:py-12">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col items-start">
+            <Link to="/" className="inline-flex items-center space-x-2 text-white/90 hover:text-white mb-6 transition-colors">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              <span>Back to Analysis</span>
+            </Link>
+            
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4">
+              🏆 Developer Leaderboard
+            </h1>
+            <p className="text-base sm:text-lg text-white/90 max-w-full md:max-w-2xl">
+              Top GitHub developers ranked by comprehensive skill assessment
+            </p>
 
-          {/* Stats Cards */}
-          {stats && (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8">
-              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30">
-                <div className="text-3xl font-bold">{stats.total_users}</div>
-                <div className="text-sm text-white/80">Total Developers</div>
+            {/* Stats Cards */}
+            {stats && (
+              <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mt-6 sm:mt-8">
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/30">
+                  <div className="text-2xl sm:text-3xl font-bold">{stats.total_users}</div>
+                  <div className="text-xs sm:text-sm text-white/80">Total Developers</div>
+                </div>
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/30">
+                  <div className="text-2xl sm:text-3xl font-bold">{stats.by_level?.Expert || 0}</div>
+                  <div className="text-xs sm:text-sm text-white/80">Experts</div>
+                </div>
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/30">
+                  <div className="text-2xl sm:text-3xl font-bold">{Math.round(stats.average_score)}</div>
+                  <div className="text-xs sm:text-sm text-white/80">Avg Score</div>
+                </div>
+                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/30">
+                  <div className="text-2xl sm:text-3xl font-bold">{stats.top_countries?.length || 0}</div>
+                  <div className="text-xs sm:text-sm text-white/80">Countries</div>
+                </div>
               </div>
-              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30">
-                <div className="text-3xl font-bold">{stats.by_level?.Expert || 0}</div>
-                <div className="text-sm text-white/80">Experts</div>
-              </div>
-              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30">
-                <div className="text-3xl font-bold">{Math.round(stats.average_score)}</div>
-                <div className="text-sm text-white/80">Avg Score</div>
-              </div>
-              <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30">
-                <div className="text-3xl font-bold">{stats.top_countries?.length || 0}</div>
-                <div className="text-sm text-white/80">Countries</div>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-8">
+      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Filters */}
         <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-8">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Filter Rankings</h3>
