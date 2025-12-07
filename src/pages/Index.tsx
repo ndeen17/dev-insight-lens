@@ -43,7 +43,7 @@ const Index = () => {
               <span className="text-xs sm:text-sm font-semibold">AI-Powered Developer Insights</span>
             </div>
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 tracking-tight px-2">
-              Artemis AI
+              Artemis AI By Oncode
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-4 sm:mb-6 px-4">
               Comprehensive GitHub profile analysis powered by GPT-4. Get instant insights for hiring decisions or technical deep-dives.
