@@ -1,11 +1,52 @@
 import { Users, Code2, CheckCircle2 } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 
-const WelcomeMessage = () => (
-  <div className="max-w-6xl mx-auto px-3 sm:px-4">
-    {/* Feature Cards */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-12">
-      {/* Recruiter Mode Card */}
-      <div className="group bg-white border-2 border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
+const WelcomeMessage = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const cardsRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+          }
+        });
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      }
+    );
+
+    if (cardsRef.current) {
+      observer.observe(cardsRef.current);
+    }
+
+    return () => {
+      if (cardsRef.current) {
+        observer.unobserve(cardsRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <div className="max-w-6xl mx-auto px-3 sm:px-4">
+      {/* Feature Cards */}
+      <div 
+        ref={cardsRef}
+        className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-12"
+      >
+        {/* Recruiter Mode Card */}
+        <div 
+          className={`group bg-white border-2 border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:shadow-lg transition-all duration-700 ${
+            isVisible 
+              ? 'opacity-100 translate-y-0' 
+              : 'opacity-0 translate-y-8'
+          }`}
+          style={{ transitionDelay: '100ms' }}
+        >
         <div className="flex items-center space-x-2 mb-3">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
             <Users className="w-5 h-5 text-white" strokeWidth={2} />
@@ -38,7 +79,14 @@ const WelcomeMessage = () => (
       </div>
 
       {/* Engineer Mode Card */}
-      <div className="bg-white border-2 border-gray-200 rounded-lg p-5 text-left">
+      <div 
+        className={`bg-white border-2 border-gray-200 rounded-lg p-5 text-left transition-all duration-700 hover:shadow-lg ${
+          isVisible 
+            ? 'opacity-100 translate-y-0' 
+            : 'opacity-0 translate-y-8'
+        }`}
+        style={{ transitionDelay: '200ms' }}
+      >
         <div className="flex items-center space-x-2 mb-3">
           <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
             <Code2 className="w-6 h-6 text-white" strokeWidth={2} />
@@ -95,6 +143,7 @@ const WelcomeMessage = () => (
       </div>
     </div>
   </div>
-);
+  );
+};
 
 export default WelcomeMessage;
