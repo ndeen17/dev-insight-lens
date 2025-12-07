@@ -59,21 +59,15 @@ const Index = () => {
       </div>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 md:px-6 py-12">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-6">
         {/* Search Section */}
         <div className="max-w-3xl mx-auto mb-12">
-          <div className="bg-white border-2 border-gray-200 rounded-[2rem] p-8">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-black mb-2">Analyze a GitHub Profile</h2>
-              <p className="text-gray-600">Enter a GitHub profile URL</p>
-            </div>
-            <GitHubInput 
-              value={githubUrl}
-              onChange={setGithubUrl}
-              onAnalyze={handleAnalyze}
-              disabled={appState === 'loading'}
-            />
-          </div>
+          <GitHubInput 
+            value={githubUrl}
+            onChange={setGithubUrl}
+            onAnalyze={handleAnalyze}
+            disabled={appState === 'loading'}
+          />
         </div>
 
         {/* Results Section */}

@@ -6,7 +6,10 @@ const WelcomeMessage = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-12">
       {/* Recruiter Mode Card */}
       <div className="group bg-white border-2 border-gray-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:shadow-lg transition-all duration-300">
-        <div className="mb-4">
+        <div className="flex items-center space-x-2 mb-3">
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+            <Users className="w-5 h-5 text-white" strokeWidth={2} />
+          </div>
           <h4 className="text-xl font-bold text-gray-900">Recruiter Mode</h4>
         </div>
         <p className="text-gray-600 mb-4">

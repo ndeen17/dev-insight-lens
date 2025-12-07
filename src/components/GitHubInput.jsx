@@ -39,12 +39,12 @@ const GitHubInput = ({ value, onChange, onAnalyze, disabled }) => {
               onChange={(e) => { onChange(e.target.value); setIsValid(true); }}
               placeholder="https://github.com/username"
               disabled={disabled}
-              className={`w-full h-full px-4 py-4 border-2 text-base focus:outline-none transition-all duration-200 ${
+              className={`w-full h-full px-4 py-4 border rounded-xl text-base focus:outline-none transition-all duration-200 shadow-sm hover:shadow-md ${
                 !isValid 
-                  ? 'border-red-500 bg-red-50 text-red-900 placeholder-red-400' 
+                  ? 'border-red-300 bg-red-50 text-red-900 placeholder-red-400 shadow-red-100' 
                   : disabled 
                     ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed' 
-                    : 'border-gray-300 focus:border-blue-600 bg-white'
+                    : 'border-gray-200 focus:border-blue-500 focus:shadow-lg focus:shadow-blue-100 bg-white'
               }`}
             />
             {!isValid && (
