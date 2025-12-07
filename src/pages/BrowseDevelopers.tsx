@@ -196,12 +196,12 @@ const BrowseDevelopers = () => {
               onTouchEnd={onTouchEnd}
             >
               {/* Avatar & Header */}
-              <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-4 sm:p-6 md:p-8 text-white">
+              <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-6 sm:p-8 md:p-10 text-white">
                 <div className="flex items-center space-x-3 sm:space-x-4">
                   <img 
                     src={currentDev.avatar} 
                     alt={currentDev.username}
-                    className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full border-2 sm:border-4 border-white shadow-lg flex-shrink-0"
+                    className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full border-2 sm:border-4 border-white shadow-lg flex-shrink-0"
                   />
                   <div className="flex-1 min-w-0">
                     <h2 className="text-xl sm:text-2xl md:text-3xl font-bold truncate">{currentDev.name || currentDev.username}</h2>
@@ -214,22 +214,22 @@ const BrowseDevelopers = () => {
               </div>
 
               {/* Stats */}
-              <div className="p-4 sm:p-6 md:p-8">
-                <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
-                  <div className="bg-blue-50 rounded-lg sm:rounded-xl p-3 sm:p-4 border-2 border-blue-100">
-                    <div className="text-2xl sm:text-3xl font-bold text-blue-600">{currentDev.overall_level}</div>
-                    <div className="text-xs sm:text-sm text-gray-600">Skill Level</div>
+              <div className="p-6 sm:p-8 md:p-10">
+                <div className="grid grid-cols-2 gap-4 sm:gap-5 mb-6 sm:mb-8">
+                  <div className="bg-blue-50 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 border-2 border-blue-100">
+                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-600">{currentDev.overall_level}</div>
+                    <div className="text-xs sm:text-sm text-gray-600 mt-1">Skill Level</div>
                   </div>
-                  <div className="bg-blue-50 rounded-lg sm:rounded-xl p-3 sm:p-4 border-2 border-blue-100">
-                    <div className="text-2xl sm:text-3xl font-bold text-blue-600">{currentDev.overall_score}</div>
-                    <div className="text-xs sm:text-sm text-gray-600">Overall Score</div>
+                  <div className="bg-blue-50 rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 border-2 border-blue-100">
+                    <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-600">{currentDev.overall_score}</div>
+                    <div className="text-xs sm:text-sm text-gray-600 mt-1">Overall Score</div>
                   </div>
                 </div>
 
                 {/* Languages */}
                 {currentDev.primary_languages && currentDev.primary_languages.length > 0 && (
-                  <div className="mb-4 sm:mb-6">
-                    <h3 className="text-xs sm:text-sm font-semibold text-gray-600 mb-2">Primary Languages</h3>
+                  <div className="mb-6 sm:mb-8">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-600 mb-3">Primary Languages</h3>
                     <div className="flex flex-wrap gap-1.5 sm:gap-2">
                       {currentDev.primary_languages.map((lang, idx) => (
                         <span key={idx} className="px-2.5 sm:px-3 py-1 bg-blue-600 text-white rounded-full text-xs sm:text-sm">
