@@ -21,7 +21,7 @@ const Index = () => {
     setResults(null);
 
     try {
-      const response = await analyzeGitHubProfile(url);
+      const response = await analyzeGitHubProfile(url, false); // Don't submit during analysis
       setResults(response.data);
       setAppState('success');
     } catch (err) {
@@ -48,8 +48,17 @@ const Index = () => {
             <p className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-4 sm:mb-6 px-4">
               Comprehensive GitHub profile analysis powered by GPT-4. Get instant insights for hiring decisions or technical deep-dives.
             </p>
-            <div className="flex justify-center">
+            <div className="flex items-center justify-center space-x-4">
               <HealthCheck />
+              <a 
+                href="/leaderboard"
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg border border-white/30 transition-all duration-200 text-white font-medium text-sm"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                </svg>
+                <span>🏆 Leaderboard</span>
+              </a>
             </div>
           </div>
         </div>

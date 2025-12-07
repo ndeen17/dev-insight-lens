@@ -73,7 +73,7 @@ const handleApiError = (error) => {
   }
 };
 
-export const analyzeGitHubProfile = async (githubUrl) => {
+export const analyzeGitHubProfile = async (githubUrl, submitToLeaderboard = false) => {
   try {
     // Validate GitHub URL format
     if (!appConfig.validation.githubUrlPattern.test(githubUrl)) {
@@ -83,11 +83,12 @@ export const analyzeGitHubProfile = async (githubUrl) => {
     // Make API call to backend
     const response = await api.post(appConfig.endpoints.analyze, {
       github_url: githubUrl.trim(), // Updated to match new backend spec
-      githubUrl: githubUrl.trim()   // Keep legacy for backward compatibility
+      githubUrl: githubUrl.trim(),   // Keep legacy for backward compatibility
+      submitToLeaderboard: submitToLeaderboard // Opt-in for leaderboard
     });
 
     // The response will contain either:
-    // - New format: { profile, scores, recruiter_summary, engineer_breakdown }
+    // - New format: { profile, scores, recruiter_summary, engineer_breakdown, leaderboard_submitted }
     // - Legacy format: { grade, reasoning, strengths, weaknesses, suggestions, analyzedRepos, totalRepos }
     // The frontend will handle both formats automatically
     
@@ -101,6 +102,49 @@ export const analyzeGitHubProfile = async (githubUrl) => {
 export const checkBackendHealth = async () => {
   try {
     const response = await api.get(appConfig.endpoints.health);
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
+
+// Leaderboard API endpoints
+export const getLeaderboard = async (filters = {}) => {
+  try {
+    const params = new URLSearchParams();
+    if (filters.country) params.append('country', filters.country);
+    if (filters.level) params.append('level', filters.level);
+    if (filters.language) params.append('language', filters.language);
+    if (filters.limit) params.append('limit', filters.limit);
+    
+    const response = await api.get(`/api/leaderboard?${params.toString()}`);
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
+
+export const getUserRank = async (username) => {
+  try {
+    const response = await api.get(`/api/leaderboard/${username}`);
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
+
+export const getLeaderboardStats = async () => {
+  try {
+    const response = await api.get('/api/leaderboard/stats');
+    return response.data;
+  } catch (error) {
+    handleApiError(error);
+  }
+};
+
+export const removeFromLeaderboard = async (username) => {
+  try {
+    const response = await api.delete(`/api/leaderboard/${username}`);
     return response.data;
   } catch (error) {
     handleApiError(error);

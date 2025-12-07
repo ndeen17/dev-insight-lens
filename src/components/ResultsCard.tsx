@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ModeToggle, { ViewMode } from './ModeToggle';
 import RecruiterView from './RecruiterView';
 import EngineerView from './EngineerView';
 import { EvaluationResponse, LegacyEvaluationResponse, isNewFormat, isLegacyFormat } from '../types/evaluation';
+import { analyzeGitHubProfile } from '../services/api';
 
 interface ResultsCardProps {
   results: EvaluationResponse | LegacyEvaluationResponse;
@@ -11,6 +12,7 @@ interface ResultsCardProps {
 }
 
 const ResultsCard: React.FC<ResultsCardProps> = ({ results, mode, onModeChange }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // Handle legacy format (backward compatibility)
   if (isLegacyFormat(results)) {
     return <LegacyResultsView results={results} />;
@@ -26,6 +28,60 @@ const ResultsCard: React.FC<ResultsCardProps> = ({ results, mode, onModeChange }
           <RecruiterView data={results} />
         ) : (
           <EngineerView data={results} />
+        )}
+
+        {/* Leaderboard Join Button */}
+        {!results.leaderboard_submitted && (
+          <div className="flex justify-center mb-6">
+            <button
+              onClick={async () => {
+                if (isSubmitting) return;
+                
+                setIsSubmitting(true);
+                try {
+                  // Extract GitHub URL from results
+                  const githubUrl = results.profile.github_url;
+                  
+                  console.log('Submitting to leaderboard:', githubUrl);
+                  
+                  // Re-analyze with leaderboard submission flag
+                  const response = await analyzeGitHubProfile(githubUrl, true);
+                  
+                  if (response?.data?.leaderboard_submitted) {
+                    alert('🎉 Successfully joined the leaderboard!');
+                    // Redirect to leaderboard page
+                    window.location.href = '/leaderboard';
+                  } else {
+                    alert('⚠️ Profile analyzed but leaderboard submission may have failed. Please try again.');
+                  }
+                } catch (error: any) {
+                  console.error('Leaderboard submission error:', error);
+                  alert(`Failed to join leaderboard: ${error.message || 'Please try again.'}`);
+                } finally {
+                  setIsSubmitting(false);
+                }
+              }}
+              disabled={isSubmitting}
+              className={`flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 font-semibold ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+            >
+              {isSubmitting ? (
+                <>
+                  <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  <span>Joining...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                  </svg>
+                  <span>Click to join leaderboard 🏆</span>
+                </>
+              )}
+            </button>
+          </div>
         )}
 
         {/* Action Buttons */}

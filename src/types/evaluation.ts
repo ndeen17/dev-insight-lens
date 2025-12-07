@@ -119,6 +119,8 @@ export interface EvaluationResponse {
   scores: Scores;
   recruiter_summary: RecruiterSummary;
   engineer_breakdown: EngineerBreakdown;
+  leaderboard_submitted?: boolean;
+  leaderboard_error?: string;
 }
 
 /**
