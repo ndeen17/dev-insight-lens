@@ -47,7 +47,7 @@ const HealthCheck = () => {
     return (
       <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/20 backdrop-blur-sm rounded-full border border-white/30">
             <div className="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
-        <span className="text-xs font-semibold text-white">API Online</span>
+        <span className="text-xs font-semibold text-black">API Online</span>
       </div>
     );
   }
