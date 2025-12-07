@@ -12,6 +12,8 @@ const BrowseDevelopers = () => {
   const [savedCount, setSavedCount] = useState(0);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState(0);
 
   // Minimum swipe distance (in px)
   const minSwipeDistance = 50;
@@ -78,14 +80,27 @@ const BrowseDevelopers = () => {
   const onTouchStart = (e) => {
     setTouchEnd(null);
     setTouchStart(e.targetTouches[0].clientX);
+    setIsDragging(true);
+    setDragOffset(0);
   };
 
   const onTouchMove = (e) => {
-    setTouchEnd(e.targetTouches[0].clientX);
+    if (!touchStart) return;
+    
+    const currentTouch = e.targetTouches[0].clientX;
+    const offset = currentTouch - touchStart;
+    
+    setTouchEnd(currentTouch);
+    setDragOffset(offset);
   };
 
   const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
+    setIsDragging(false);
+    
+    if (!touchStart || !touchEnd) {
+      setDragOffset(0);
+      return;
+    }
     
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > minSwipeDistance;
@@ -96,6 +111,9 @@ const BrowseDevelopers = () => {
     } else if (isRightSwipe) {
       handleSwipe('right');
     }
+    
+    // Reset drag offset
+    setDragOffset(0);
   };
 
   useEffect(() => {
@@ -164,10 +182,15 @@ const BrowseDevelopers = () => {
 
             {/* Card */}
             <div 
-              className={`bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden transition-all duration-300 ${
-                swipeDirection === 'left' ? 'transform -translate-x-full opacity-0' :
-                swipeDirection === 'right' ? 'transform translate-x-full opacity-0' : ''
+              className={`bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden ${
+                swipeDirection === 'left' ? 'transition-all duration-300 transform -translate-x-full opacity-0' :
+                swipeDirection === 'right' ? 'transition-all duration-300 transform translate-x-full opacity-0' : 
+                isDragging ? '' : 'transition-all duration-200'
               }`}
+              style={{
+                transform: isDragging ? `translateX(${dragOffset}px) rotate(${dragOffset * 0.05}deg)` : '',
+                opacity: isDragging ? Math.max(0.5, 1 - Math.abs(dragOffset) / 400) : 1
+              }}
               onTouchStart={onTouchStart}
               onTouchMove={onTouchMove}
               onTouchEnd={onTouchEnd}
