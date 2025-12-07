@@ -62,7 +62,7 @@ const ResultsCard: React.FC<ResultsCardProps> = ({ results, mode, onModeChange }
                 }
               }}
               disabled={isSubmitting}
-              className={`flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 font-semibold ${isSubmitting ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}`}
+              className={`flex items-center space-x-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 font-semibold ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               {isSubmitting ? (
                 <>
@@ -75,9 +75,9 @@ const ResultsCard: React.FC<ResultsCardProps> = ({ results, mode, onModeChange }
               ) : (
                 <>
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                   </svg>
-                  <span>Click to join leaderboard 🏆</span>
+                  <span>Join Leaderboard</span>
                 </>
               )}
             </button>
@@ -88,12 +88,12 @@ const ResultsCard: React.FC<ResultsCardProps> = ({ results, mode, onModeChange }
         <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8 px-2">
           <button 
             onClick={() => window.location.reload()}
-            className="flex items-center justify-center space-x-3 px-8 py-4 bg-gradient-to-r from-gray-900 to-gray-700 text-white rounded-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 font-bold text-base transform"
+            className="flex items-center justify-center space-x-2 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-900 transition-all duration-200 font-semibold"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
-            <span>Analyze Another Profile</span>
+            <span>Analyze Another</span>
           </button>
           
           <button 
@@ -110,10 +110,10 @@ const ResultsCard: React.FC<ResultsCardProps> = ({ results, mode, onModeChange }
                 alert('Results copied to clipboard!');
               }
             }}
-            className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-3 bg-white text-gray-700 border border-gray-300 rounded-lg sm:rounded-xl hover:bg-gray-50 transition-all duration-200 shadow-sm hover:shadow-md font-medium text-sm sm:text-base"
+            className="flex items-center justify-center space-x-2 px-6 py-3 bg-white text-black border-2 border-gray-200 rounded-lg hover:border-blue-200 hover:bg-blue-50 transition-all duration-200 font-semibold"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
             </svg>
             <span>Share Results</span>
           </button>
@@ -133,32 +133,12 @@ const ResultsCard: React.FC<ResultsCardProps> = ({ results, mode, onModeChange }
 // Legacy view component for backward compatibility
 const LegacyResultsView: React.FC<{ results: LegacyEvaluationResponse }> = ({ results }) => {
   const getGradeColor = (grade: string) => {
-    switch (grade) {
-      case 'Beginner': return {
-        bg: 'bg-gradient-to-r from-yellow-50 to-orange-50',
-        border: 'border-yellow-200',
-        text: 'text-yellow-800',
-        badge: 'bg-yellow-100 text-yellow-800 border-yellow-300'
-      };
-      case 'Intermediate': return {
-        bg: 'bg-gradient-to-r from-blue-50 to-indigo-50',
-        border: 'border-blue-200',
-        text: 'text-blue-800',
-        badge: 'bg-blue-100 text-blue-800 border-blue-300'
-      };
-      case 'Advanced': return {
-        bg: 'bg-gradient-to-r from-green-50 to-emerald-50',
-        border: 'border-green-200',
-        text: 'text-green-800',
-        badge: 'bg-green-100 text-green-800 border-green-300'
-      };
-      default: return {
-        bg: 'bg-gradient-to-r from-gray-50 to-slate-50',
-        border: 'border-gray-200',
-        text: 'text-gray-800',
-        badge: 'bg-gray-100 text-gray-800 border-gray-300'
-      };
-    }
+    return {
+      bg: 'bg-white',
+      border: 'border-gray-200',
+      text: 'text-gray-700',
+      badge: 'bg-blue-600 text-white'
+    };
   };
 
   const gradeColors = getGradeColor(results.grade);
@@ -179,12 +159,12 @@ const LegacyResultsView: React.FC<{ results: LegacyEvaluationResponse }> = ({ re
         
         <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4 text-xs sm:text-sm text-gray-600">
           <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
             <span>{results.analyzedRepos} repositories analyzed</span>
           </div>
           <div className="hidden sm:block w-1 h-1 bg-gray-400 rounded-full"></div>
           <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
             <span>{results.totalRepos} total repositories</span>
           </div>
         </div>
@@ -196,8 +176,8 @@ const LegacyResultsView: React.FC<{ results: LegacyEvaluationResponse }> = ({ re
         <div className="bg-white rounded-lg sm:rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
           <div className="p-4 sm:p-6">
             <div className="flex items-center space-x-3 mb-3 sm:mb-4">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
@@ -206,8 +186,8 @@ const LegacyResultsView: React.FC<{ results: LegacyEvaluationResponse }> = ({ re
             
             <div className="space-y-2 sm:space-y-3">
               {results.strengths.map((strength, index) => (
-                <div key={index} className="flex items-start space-x-3 p-2 sm:p-3 bg-green-50 rounded-lg">
-                  <div className="w-1.5 h-1.5 bg-green-500 rounded-full mt-1.5 sm:mt-2 flex-shrink-0"></div>
+                <div key={index} className="flex items-start space-x-3 p-2 sm:p-3 bg-blue-50 rounded-lg border-2 border-blue-100">
+                  <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-1.5 sm:mt-2 flex-shrink-0"></div>
                   <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">{strength}</p>
                 </div>
               ))}
@@ -219,8 +199,8 @@ const LegacyResultsView: React.FC<{ results: LegacyEvaluationResponse }> = ({ re
         <div className="bg-white rounded-lg sm:rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200">
           <div className="p-4 sm:p-6">
             <div className="flex items-center space-x-3 mb-3 sm:mb-4">
-              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
                 </svg>
               </div>
@@ -229,8 +209,8 @@ const LegacyResultsView: React.FC<{ results: LegacyEvaluationResponse }> = ({ re
             
             <div className="space-y-2 sm:space-y-3">
               {results.weaknesses.map((weakness, index) => (
-                <div key={index} className="flex items-start space-x-3 p-2 sm:p-3 bg-orange-50 rounded-lg">
-                  <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mt-1.5 sm:mt-2 flex-shrink-0"></div>
+                <div key={index} className="flex items-start space-x-3 p-2 sm:p-3 bg-gray-50 rounded-lg border-2 border-gray-200">
+                  <div className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-1.5 sm:mt-2 flex-shrink-0"></div>
                   <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">{weakness}</p>
                 </div>
               ))}
@@ -252,8 +232,8 @@ const LegacyResultsView: React.FC<{ results: LegacyEvaluationResponse }> = ({ re
             
             <div className="space-y-2 sm:space-y-3">
               {results.suggestions.map((suggestion, index) => (
-                <div key={index} className="flex items-start space-x-3 p-2 sm:p-3 bg-blue-50 rounded-lg">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full mt-1.5 sm:mt-2 flex-shrink-0"></div>
+                <div key={index} className="flex items-start space-x-3 p-2 sm:p-3 bg-blue-50 rounded-lg border-2 border-blue-100">
+                  <div className="w-1.5 h-1.5 bg-blue-600 rounded-full mt-1.5 sm:mt-2 flex-shrink-0"></div>
                   <p className="text-xs sm:text-sm text-gray-700 leading-relaxed">{suggestion}</p>
                 </div>
               ))}

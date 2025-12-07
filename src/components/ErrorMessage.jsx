@@ -45,8 +45,8 @@ const ErrorMessage = ({ error, onRetry }) => {
           </div>
           
           {isRateLimit && countdown > 0 && (
-            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-4">
-              <p className="text-sm text-orange-700">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+              <p className="text-sm text-red-700">
                 Rate limit reached. Try again in <span className="font-bold">{formatTime(countdown)}</span>
               </p>
             </div>
@@ -61,7 +61,7 @@ const ErrorMessage = ({ error, onRetry }) => {
             className={`px-6 py-3 rounded-lg text-sm font-semibold transition-all duration-200 ${
               isRateLimit && countdown > 0
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-red-600 to-pink-600 text-white hover:shadow-lg hover:scale-105'
+                : 'bg-blue-600 text-white hover:bg-blue-700'
             }`}
           >
             {isRateLimit && countdown > 0 ? 'Please Wait' : 'Try Again'}

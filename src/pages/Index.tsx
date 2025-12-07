@@ -31,33 +31,27 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white py-8 sm:py-12 md:py-16">
-        <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6">
+      <div className="bg-white py-12 md:py-16">
+        <div className="max-w-6xl mx-auto px-4 md:px-6">
           <div className="text-center">
-            <div className="inline-flex items-center space-x-1.5 sm:space-x-2 bg-white/20 backdrop-blur-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-full mb-4 sm:mb-6">
-              <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span className="text-xs sm:text-sm font-semibold">AI-Powered Developer Insights</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-4 tracking-tight px-2">
-              Artemis AI By Oncode
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight text-black">
+              Artemis AI
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-4 sm:mb-6 px-4">
-              Comprehensive GitHub profile analysis powered by GPT-4. Get instant insights for hiring decisions or technical deep-dives.
+            <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-6">
+              GitHub profile analysis powered by AI
             </p>
             <div className="flex items-center justify-center space-x-4">
               <HealthCheck />
               <a 
                 href="/leaderboard"
-                className="inline-flex items-center space-x-2 px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg border border-white/30 transition-all duration-200 text-white font-medium text-sm"
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-all duration-200 text-white font-medium text-sm"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                 </svg>
-                <span>🏆 Leaderboard</span>
+                <span>Leaderboard</span>
               </a>
             </div>
           </div>
@@ -65,13 +59,13 @@ const Index = () => {
       </div>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-6 sm:py-8 md:py-12">
+      <main className="max-w-7xl mx-auto px-4 md:px-6 py-12">
         {/* Search Section */}
-        <div className="max-w-3xl mx-auto mb-8 sm:mb-12">
-          <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 md:p-8">
-            <div className="text-center mb-4 sm:mb-6">
-              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1 sm:mb-2">Analyze a GitHub Profile</h2>
-              <p className="text-sm sm:text-base text-gray-600">Enter a GitHub username or profile URL to get started</p>
+        <div className="max-w-3xl mx-auto mb-12">
+          <div className="bg-white border-2 border-gray-200 rounded-[2rem] p-8">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-black mb-2">Analyze a GitHub Profile</h2>
+              <p className="text-gray-600">Enter a GitHub profile URL</p>
             </div>
             <GitHubInput 
               value={githubUrl}
@@ -92,9 +86,9 @@ const Index = () => {
       </main>
 
       {/* Footer */}
-      <footer className="mt-12 sm:mt-16 py-6 sm:py-8 border-t border-gray-200 bg-white">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 md:px-6 text-center text-gray-600 text-xs sm:text-sm">
-          <p>Powered by GPT-4 • Analyzes 6 key metrics • Real-time insights</p>
+      <footer className="mt-16 py-8 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 text-center text-gray-500 text-sm">
+          <p>Powered by GPT-4</p>
         </div>
       </footer>
     </div>
