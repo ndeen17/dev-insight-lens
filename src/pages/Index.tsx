@@ -37,7 +37,7 @@ const Index = () => {
         <div className="max-w-6xl mx-auto px-4 md:px-6">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight text-black">
-              Artemis AI
+              Artemis AI By Oncode
             </h1>
             <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-6">
               GitHub profile analysis powered by AI
