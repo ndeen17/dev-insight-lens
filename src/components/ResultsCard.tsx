@@ -4,6 +4,7 @@ import RecruiterView from './RecruiterView';
 import EngineerView from './EngineerView';
 import { EvaluationResponse, LegacyEvaluationResponse, isNewFormat, isLegacyFormat } from '../types/evaluation';
 import { analyzeGitHubProfile } from '../services/api';
+import { toast } from 'sonner';
 
 interface ResultsCardProps {
   results: EvaluationResponse | LegacyEvaluationResponse;
@@ -48,15 +49,22 @@ const ResultsCard: React.FC<ResultsCardProps> = ({ results, mode, onModeChange }
                   const response = await analyzeGitHubProfile(githubUrl, true);
                   
                   if (response?.data?.leaderboard_submitted) {
-                    alert('🎉 Successfully joined the leaderboard!');
+                    toast.success('Successfully joined the leaderboard!', {
+                      description: 'Redirecting to leaderboard...',
+                      duration: 3000,
+                    });
                     // Redirect to leaderboard page
-                    window.location.href = '/leaderboard';
+                    setTimeout(() => {
+                      window.location.href = '/leaderboard';
+                    }, 1000);
                   } else {
-                    alert('⚠️ Profile analyzed but leaderboard submission may have failed. Please try again.');
+                    toast.warning('Profile analyzed but leaderboard submission may have failed. Please try again.');
                   }
                 } catch (error: any) {
                   console.error('Leaderboard submission error:', error);
-                  alert(`Failed to join leaderboard: ${error.message || 'Please try again.'}`);
+                  toast.error('Failed to join leaderboard', {
+                    description: error.message || 'Please try again.',
+                  });
                 } finally {
                   setIsSubmitting(false);
                 }
