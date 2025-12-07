@@ -69,15 +69,16 @@ const GitHubInput = ({ value, onChange, onAnalyze, disabled }) => {
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={disabled || !value.trim()}
-          className={`w-full py-4 px-6 rounded-lg font-semibold transition-all duration-200 ${
-            disabled || !value.trim()
-              ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 text-white hover:bg-blue-700'
-          }`}
-        >
+        <div className="flex justify-center">
+          <button
+            type="submit"
+            disabled={disabled || !value.trim()}
+            className={`px-8 py-4 rounded-full font-semibold transition-all duration-200 ${
+              disabled || !value.trim()
+                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                : 'bg-blue-600 text-white hover:bg-blue-700'
+            }`}
+          >
           {disabled ? (
             <div className="flex items-center justify-center space-x-3">
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -86,7 +87,8 @@ const GitHubInput = ({ value, onChange, onAnalyze, disabled }) => {
           ) : (
             <span>Analyze Profile</span>
           )}
-        </button>
+          </button>
+        </div>
         
         {/* Example hint */}
         <p className="text-xs text-center text-gray-500">
