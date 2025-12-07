@@ -61,7 +61,7 @@ const Index = () => {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-6">
         {/* Search Section */}
-        <div className="max-w-3xl mx-auto mb-16">
+        <div className="max-w-3xl mx-auto mb-20 sm:mb-24 md:mb-28">
           <GitHubInput 
             value={githubUrl}
             onChange={setGithubUrl}
@@ -71,7 +71,7 @@ const Index = () => {
         </div>
 
         {/* Results Section */}
-        <div className="mt-8 sm:mt-12">
+        <div className="mt-12 sm:mt-16 md:mt-20">
           {appState === 'idle' && <WelcomeMessage />}
           {appState === 'loading' && <LoadingState />}
           {appState === 'success' && <ResultsCard results={results} mode={viewMode} onModeChange={setViewMode} />}
