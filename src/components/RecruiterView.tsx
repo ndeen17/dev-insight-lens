@@ -54,18 +54,18 @@ const RecruiterView: React.FC<RecruiterViewProps> = ({ data }) => {
   const recommendationStyle = getRecommendationStyle(recruiter_summary.hiring_recommendation);
 
   return (
-    <div className="space-y-4 sm:space-y-6 w-full max-w-6xl mx-auto px-2 sm:px-4">
+    <div className="space-y-3 sm:space-y-4 md:space-y-6 w-full max-w-6xl mx-auto px-2 sm:px-3 md:px-4">
       {/* Profile Header */}
-      <div className="bg-white rounded-xl sm:rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-6">
-        <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
+      <div className="bg-white rounded-lg sm:rounded-xl md:rounded-2xl border border-gray-200 shadow-sm p-3 sm:p-4 md:p-6">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-3 sm:space-y-0 sm:space-x-4 md:space-x-6">
           <img 
             src={profile.avatar} 
             alt={profile.name}
-            className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 border-gray-100 shadow-md"
+            className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full border-3 sm:border-4 border-gray-100 shadow-md"
           />
           <div className="flex-1 text-center sm:text-left">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-1">{profile.name || profile.username}</h2>
-            <p className="text-gray-600 text-sm sm:text-base mb-2">{profile.bio}</p>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900 mb-1">{profile.name || profile.username}</h2>
+            <p className="text-gray-600 text-xs sm:text-sm md:text-base mb-2">{profile.bio}</p>
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-xs sm:text-sm text-gray-500">
               {profile.location && (
                 <span className="flex items-center space-x-1">
@@ -85,24 +85,24 @@ const RecruiterView: React.FC<RecruiterViewProps> = ({ data }) => {
       </div>
 
       {/* Hiring Decision Card */}
-      <div className={`${recommendationStyle.bg} ${recommendationStyle.border} border-2 rounded-xl sm:rounded-2xl p-6 sm:p-8 text-center shadow-lg`}>
-        <div className="mb-4">
-          <div className="inline-flex items-center space-x-3 mb-3">
-            <div className={`w-3 h-3 ${recommendationStyle.badge} rounded-full animate-pulse`}></div>
-            <span className="text-lg sm:text-xl font-bold text-gray-900">Hiring Recommendation</span>
-            <div className={`w-3 h-3 ${recommendationStyle.badge} rounded-full animate-pulse`}></div>
+      <div className={`${recommendationStyle.bg} ${recommendationStyle.border} border-2 rounded-lg sm:rounded-xl md:rounded-2xl p-4 sm:p-6 md:p-8 text-center shadow-lg`}>
+        <div className="mb-3 sm:mb-4">
+          <div className="inline-flex items-center space-x-2 sm:space-x-3 mb-2 sm:mb-3">
+            <div className={`w-2 h-2 sm:w-3 sm:h-3 ${recommendationStyle.badge} rounded-full animate-pulse`}></div>
+            <span className="text-base sm:text-lg md:text-xl font-bold text-gray-900">Hiring Recommendation</span>
+            <div className={`w-2 h-2 sm:w-3 sm:h-3 ${recommendationStyle.badge} rounded-full animate-pulse`}></div>
           </div>
         </div>
         
-        <div className={`inline-flex items-center px-6 py-3 rounded-full text-2xl sm:text-3xl font-bold ${recommendationStyle.text} bg-white/60 border-2 ${recommendationStyle.border} shadow-sm mb-4`}>
+        <div className={`inline-flex items-center px-4 py-2 sm:px-6 sm:py-3 rounded-full text-xl sm:text-2xl md:text-3xl font-bold ${recommendationStyle.text} bg-white/60 border-2 ${recommendationStyle.border} shadow-sm mb-3 sm:mb-4`}>
           {recruiter_summary.hiring_recommendation}
         </div>
 
-        <p className="text-base sm:text-lg font-medium text-gray-700 mb-4">
+        <p className="text-sm sm:text-base md:text-lg font-medium text-gray-700 mb-3 sm:mb-4 px-2">
           {recruiter_summary.recommended_role_level}
         </p>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-3xl mx-auto">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 md:gap-4 max-w-3xl mx-auto">
           <div className="bg-white/80 rounded-lg p-3 border border-gray-200">
             <div className={`text-2xl sm:text-3xl font-bold ${getLevelColor(scores.overall_level)} mb-1`}>
               {scores.overall_level}
@@ -125,10 +125,10 @@ const RecruiterView: React.FC<RecruiterViewProps> = ({ data }) => {
       </div>
 
       {/* Key Insights Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
         {/* Top Strengths */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm">
-          <div className="p-5 sm:p-6">
+        <div className="bg-white rounded-lg sm:rounded-xl border border-gray-200 shadow-sm">
+          <div className="p-4 sm:p-5 md:p-6">
             <div className="flex items-center space-x-3 mb-4">
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                 <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

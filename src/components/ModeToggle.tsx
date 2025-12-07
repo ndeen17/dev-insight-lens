@@ -9,12 +9,12 @@ interface ModeToggleProps {
 
 const ModeToggle: React.FC<ModeToggleProps> = ({ mode, onModeChange }) => {
   return (
-    <div className="flex justify-center mb-8">
-      <div className="inline-flex items-center bg-gradient-to-r from-gray-100 to-gray-200 rounded-2xl p-1.5 shadow-lg border border-gray-300">
+    <div className="flex justify-center mb-6 sm:mb-8">
+      <div className="inline-flex items-center bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl sm:rounded-2xl p-1 sm:p-1.5 shadow-lg border border-gray-300">
         <button
           onClick={() => onModeChange('recruiter')}
           className={`
-            relative flex items-center space-x-2.5 px-6 py-3 rounded-xl font-bold text-sm transition-all duration-300
+            relative flex items-center space-x-1.5 sm:space-x-2.5 px-4 sm:px-6 py-2 sm:py-3 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm transition-all duration-300
             ${mode === 'recruiter'
               ? 'bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-xl scale-105'
               : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'

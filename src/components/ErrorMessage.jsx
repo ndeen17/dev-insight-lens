@@ -26,12 +26,12 @@ const ErrorMessage = ({ error, onRetry }) => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4">
-      <div className="bg-white rounded-2xl shadow-xl border-2 border-red-200 p-8">
+    <div className="max-w-2xl mx-auto px-3 sm:px-4">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow-xl border-2 border-red-200 p-6 sm:p-8">
         {/* Error Icon */}
-        <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="flex justify-center mb-4 sm:mb-6">
+          <div className="w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-full flex items-center justify-center">
+            <svg className="w-6 h-6 sm:w-8 sm:h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>

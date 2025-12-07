@@ -19,9 +19,9 @@ const EngineerView: React.FC<EngineerViewProps> = ({ data }) => {
   };
 
   return (
-    <div className="space-y-4 sm:space-y-6 w-full max-w-7xl mx-auto px-2 sm:px-4">
+    <div className="space-y-3 sm:space-y-4 md:space-y-6 w-full max-w-7xl mx-auto px-2 sm:px-3 md:px-4">
       {/* Profile Header */}
-      <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl sm:rounded-2xl border-2 border-purple-200 shadow-sm p-4 sm:p-6">
+      <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg sm:rounded-xl md:rounded-2xl border-2 border-purple-200 shadow-sm p-3 sm:p-4 md:p-6">
         <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6">
           <img 
             src={profile.avatar} 
@@ -44,8 +44,8 @@ const EngineerView: React.FC<EngineerViewProps> = ({ data }) => {
       </div>
 
       {/* Score Breakdown */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 sm:p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
+      <div className="bg-white rounded-lg sm:rounded-xl border border-gray-200 shadow-sm p-4 sm:p-5 md:p-6">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4 flex items-center space-x-2">
           <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
           </svg>
@@ -80,12 +80,12 @@ const EngineerView: React.FC<EngineerViewProps> = ({ data }) => {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="patterns" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2">
-          <TabsTrigger value="patterns">Code Patterns</TabsTrigger>
-          <TabsTrigger value="architecture">Architecture</TabsTrigger>
-          <TabsTrigger value="testing">Testing</TabsTrigger>
-          <TabsTrigger value="languages">Languages</TabsTrigger>
-          <TabsTrigger value="repos">Repositories</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1 sm:gap-2">
+          <TabsTrigger value="patterns" className="text-xs sm:text-sm">Code Patterns</TabsTrigger>
+          <TabsTrigger value="architecture" className="text-xs sm:text-sm">Architecture</TabsTrigger>
+          <TabsTrigger value="testing" className="text-xs sm:text-sm">Testing</TabsTrigger>
+          <TabsTrigger value="languages" className="text-xs sm:text-sm">Languages</TabsTrigger>
+          <TabsTrigger value="repos" className="text-xs sm:text-sm">Repositories</TabsTrigger>
         </TabsList>
 
         {/* Code Patterns Tab */}

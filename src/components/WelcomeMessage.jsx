@@ -1,9 +1,9 @@
 const WelcomeMessage = () => (
-  <div className="max-w-6xl mx-auto px-4">
+  <div className="max-w-6xl mx-auto px-3 sm:px-4">
     {/* Feature Cards */}
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-12">
       {/* Recruiter Mode Card */}
-      <div className="group bg-gradient-to-br from-blue-50 via-white to-blue-50 border-2 border-blue-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
+      <div className="group bg-gradient-to-br from-blue-50 via-white to-blue-50 border-2 border-blue-200 rounded-xl sm:rounded-2xl p-4 sm:p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
         <div className="flex items-center space-x-3 mb-4">
           <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-md">
             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -96,18 +96,18 @@ const WelcomeMessage = () => (
     </div>
 
     {/* Stats Section */}
-    <div className="mt-12 grid grid-cols-3 gap-6 max-w-2xl mx-auto">
+    <div className="mt-8 sm:mt-12 grid grid-cols-3 gap-4 sm:gap-6 max-w-2xl mx-auto">
       <div className="text-center">
-        <div className="text-3xl font-bold text-indigo-600 mb-1">6</div>
-        <div className="text-sm text-gray-600">Key Metrics</div>
+        <div className="text-2xl sm:text-3xl font-bold text-indigo-600 mb-1">6</div>
+        <div className="text-xs sm:text-sm text-gray-600">Key Metrics</div>
       </div>
       <div className="text-center">
-        <div className="text-3xl font-bold text-purple-600 mb-1">2</div>
-        <div className="text-sm text-gray-600">View Modes</div>
+        <div className="text-2xl sm:text-3xl font-bold text-purple-600 mb-1">2</div>
+        <div className="text-xs sm:text-sm text-gray-600">View Modes</div>
       </div>
       <div className="text-center">
-        <div className="text-3xl font-bold text-pink-600 mb-1">AI</div>
-        <div className="text-sm text-gray-600">Powered</div>
+        <div className="text-2xl sm:text-3xl font-bold text-pink-600 mb-1">AI</div>
+        <div className="text-xs sm:text-sm text-gray-600">Powered</div>
       </div>
     </div>
   </div>
