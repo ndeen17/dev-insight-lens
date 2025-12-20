@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { analyzeGitHubProfile } from '../services/api';
 import GitHubInput from '../components/GitHubInput';
 import LoadingState from '../components/LoadingState';
@@ -7,6 +8,9 @@ import ErrorMessage from '../components/ErrorMessage';
 import WelcomeMessage from '../components/WelcomeMessage';
 import HealthCheck from '../components/HealthCheck';
 import { ViewMode } from '../components/ModeToggle';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { GitBranch, ClipboardCheck, TrendingUp, ArrowRight } from 'lucide-react';
 
 const Index = () => {
   const [appState, setAppState] = useState('idle'); // 'idle', 'loading', 'success', 'error'
@@ -44,6 +48,13 @@ const Index = () => {
             </p>
             <div className="flex items-center justify-center space-x-4">
               <HealthCheck />
+              <Link 
+                to="/test-candidate"
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-all duration-200 text-white font-medium text-sm"
+              >
+                <ClipboardCheck className="w-4 h-4" />
+                <span>Test Candidates</span>
+              </Link>
               <a 
                 href="/leaderboard"
                 className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-all duration-200 text-white font-medium text-sm"
