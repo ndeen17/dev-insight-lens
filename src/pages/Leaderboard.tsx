@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 import { getLeaderboard, getLeaderboardStats } from '../services/api';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { Button } from '../components/ui/button';
+import { Briefcase } from 'lucide-react';
 
 const Leaderboard = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [leaderboard, setLeaderboard] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -12,6 +17,22 @@ const Leaderboard = () => {
     level: '',
     limit: 100
   });
+
+  const isBusinessOwner = user?.role === 'BusinessOwner';
+
+  const handleHire = (developerEmail: string, developerName: string) => {
+    if (!user) {
+      navigate('/auth/signin', { state: { from: '/leaderboard' } });
+      return;
+    }
+    if (user.role !== 'BusinessOwner') {
+      alert('Only business owners can hire developers. Please sign in with a business owner account.');
+      return;
+    }
+    navigate('/employer/contracts/new', {
+      state: { freelancerEmail: developerEmail, freelancerName: developerName }
+    });
+  };
 
   useEffect(() => {
     fetchLeaderboard();
@@ -229,15 +250,27 @@ const Leaderboard = () => {
                     </div>
                   </div>
 
-                  {/* Score */}
-                  <div className="flex-shrink-0 text-right">
-                    <div className="text-4xl font-bold text-indigo-600">
-                      {dev.overall_score}
+                  {/* Score & Actions */}
+                  <div className="flex-shrink-0 text-right space-y-3">
+                    <div>
+                      <div className="text-4xl font-bold text-indigo-600">
+                        {dev.overall_score}
+                      </div>
+                      <div className="text-sm text-gray-500">/ 110</div>
+                      <div className={`mt-2 inline-block px-3 py-1 rounded-full text-xs font-semibold border ${getLevelColor(dev.overall_level)}`}>
+                        {dev.overall_level}
+                      </div>
                     </div>
-                    <div className="text-sm text-gray-500">/ 110</div>
-                    <div className={`mt-2 inline-block px-3 py-1 rounded-full text-xs font-semibold border ${getLevelColor(dev.overall_level)}`}>
-                      {dev.overall_level}
-                    </div>
+                    {isBusinessOwner && (
+                      <Button
+                        onClick={() => handleHire(dev.email || `${dev.username}@github.com`, dev.name)}
+                        size="sm"
+                        className="w-full gap-1"
+                      >
+                        <Briefcase className="w-3 h-3" />
+                        Hire
+                      </Button>
+                    )}
                   </div>
                 </div>
               </div>

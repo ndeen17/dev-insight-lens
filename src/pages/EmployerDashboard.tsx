@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { demoTests } from '../data/demoTests';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
@@ -8,16 +8,44 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
-import { Clock, FileQuestion, Send, Copy, CheckCircle, BarChart3, Users, ClipboardList, Home } from 'lucide-react';
+import { Clock, FileQuestion, Send, Copy, CheckCircle, BarChart3, Users, ClipboardList, Home, FileText, Plus, Eye } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 
 const EmployerDashboard = () => {
+  const navigate = useNavigate();
   const [selectedTest, setSelectedTest] = useState<string | null>(null);
   const [candidateEmail, setCandidateEmail] = useState('');
   const [candidateName, setCandidateName] = useState('');
   const [generatedLink, setGeneratedLink] = useState('');
   const [showLinkDialog, setShowLinkDialog] = useState(false);
+  const [contracts, setContracts] = useState<any[]>([]);
+  const [loadingContracts, setLoadingContracts] = useState(false);
   const { toast } = useToast();
+
+  // Fetch contracts
+  useEffect(() => {
+    fetchContracts();
+  }, []);
+
+  const fetchContracts = async () => {
+    try {
+      setLoadingContracts(true);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/contracts`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setContracts(data);
+      }
+    } catch (error) {
+      console.error('Failed to fetch contracts:', error);
+    } finally {
+      setLoadingContracts(false);
+    }
+  };
 
   const handleGenerateLink = (testId: string) => {
     setSelectedTest(testId);
@@ -120,10 +148,14 @@ const EmployerDashboard = () => {
 
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Tabs defaultValue="tests" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
+          <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="tests" className="gap-2">
               <ClipboardList className="h-4 w-4" />
               Test Library
+            </TabsTrigger>
+            <TabsTrigger value="contracts" className="gap-2">
+              <FileText className="h-4 w-4" />
+              Contracts
             </TabsTrigger>
             <TabsTrigger value="invitations" className="gap-2">
               <Send className="h-4 w-4" />
@@ -227,6 +259,129 @@ const EmployerDashboard = () => {
                 </Card>
               ))}
             </div>
+          </TabsContent>
+
+          {/* Contracts Tab */}
+          <TabsContent value="contracts">
+            <div className="mb-6 flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-bold">My Contracts</h2>
+                <p className="text-gray-600">Manage all your contracts with freelancers</p>
+              </div>
+              <Button onClick={() => navigate('/employer/contracts/new')} className="gap-2">
+                <Plus className="h-4 w-4" />
+                New Contract
+              </Button>
+            </div>
+
+            {loadingContracts ? (
+              <Card>
+                <CardContent className="py-12">
+                  <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Loading contracts...</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : contracts.length === 0 ? (
+              <Card>
+                <CardContent className="py-12">
+                  <div className="text-center">
+                    <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600 text-lg font-medium">No contracts yet</p>
+                    <p className="text-sm text-gray-500 mt-2">Create your first contract to start working with freelancers</p>
+                    <Button onClick={() => navigate('/employer/contracts/new')} className="mt-6 gap-2">
+                      <Plus className="h-4 h-4" />
+                      Create Contract
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 gap-4">
+                {contracts.map((contract: any) => {
+                  const getStatusColor = (status: string) => {
+                    switch (status) {
+                      case 'active': return 'bg-green-100 text-green-800 border-green-300';
+                      case 'pending': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+                      case 'completed': return 'bg-blue-100 text-blue-800 border-blue-300';
+                      case 'cancelled': return 'bg-red-100 text-red-800 border-red-300';
+                      default: return 'bg-gray-100 text-gray-800 border-gray-300';
+                    }
+                  };
+
+                  const approvedMilestones = contract.milestones?.filter((m: any) => m.status === 'approved').length || 0;
+                  const totalMilestones = contract.milestones?.length || 0;
+
+                  return (
+                    <Card key={contract._id} className="hover:shadow-lg transition-shadow border-2">
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <CardTitle className="text-xl">{contract.name}</CardTitle>
+                            <CardDescription className="mt-1">
+                              {contract.category} • {contract.subcategory}
+                            </CardDescription>
+                          </div>
+                          <Badge className={`${getStatusColor(contract.status)} border-2`}>
+                            {contract.status}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        <div className="flex items-center justify-between text-sm">
+                          <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-1">
+                              <Users className="h-4 w-4 text-gray-500" />
+                              <span className="text-gray-700">
+                                {contract.freelancer?.firstName} {contract.freelancer?.lastName}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Clock className="h-4 w-4 text-gray-500" />
+                              <span className="text-gray-600">
+                                {new Date(contract.createdAt).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <span className="font-semibold text-lg">
+                              {contract.currency} {contract.type === 'fixed' ? contract.budget : `${contract.hourlyRate}/hr`}
+                            </span>
+                          </div>
+                        </div>
+
+                        {totalMilestones > 0 && (
+                          <div className="bg-gray-50 p-3 rounded-lg">
+                            <div className="flex items-center justify-between text-sm mb-2">
+                              <span className="text-gray-600">Milestones Progress</span>
+                              <span className="font-medium">{approvedMilestones} / {totalMilestones} completed</span>
+                            </div>
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className="bg-blue-600 h-2 rounded-full transition-all"
+                                style={{ width: `${(approvedMilestones / totalMilestones) * 100}%` }}
+                              />
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            className="flex-1"
+                            onClick={() => navigate(`/employer/contracts/${contract._id}`)}
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
+                            View Details
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
           </TabsContent>
 
           {/* Sent Invitations Tab */}
