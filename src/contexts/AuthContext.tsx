@@ -1,166 +1,244 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios from 'axios';
-
-interface User {
-  _id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: 'Freelancer' | 'BusinessOwner';
-  country: string;
-  companyName?: string;
-  githubUsername?: string;
-  profilePicture?: string;
-  bio?: string;
-  isActive: boolean;
-  savedDevelopers?: string[];
-  createdAt: string;
-  updatedAt: string;
-}
+import { useUser, useAuth as useClerkAuth } from '@clerk/clerk-react';
+import { apiClient, setAuthToken, setTokenRefreshCallback } from '@/lib/apiClient';
+import { RETRY_CONFIG } from '@/config/constants';
+import { logger } from '@/utils/logger';
+import type { User, UserRole } from '@/types';
 
 interface AuthContextType {
   user: User | null;
-  token: string | null;
+  clerkUser: any;
   loading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  signup: (data: SignupData) => Promise<void>;
-  logout: () => void;
-  updateUser: (user: User) => void;
-}
-
-interface SignupData {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  role: 'Freelancer' | 'BusinessOwner';
-  country: string;
-  companyName?: string;
+  isEmailVerified: boolean;
+  logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { user: clerkUser, isLoaded: clerkLoaded } = useUser();
+  const { getToken, signOut } = useClerkAuth();
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
+  const [loadingTimeout, setLoadingTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  // Load user from localStorage on mount
+  // Register token refresh callback with apiClient
   useEffect(() => {
-    const loadUser = async () => {
-      const storedToken = localStorage.getItem('authToken');
-      const storedUser = localStorage.getItem('user');
+    setTokenRefreshCallback(async () => {
+      try {
+        const token = await getToken();
+        logger.debug('Token refresh callback invoked', { hasToken: !!token });
+        return token;
+      } catch (error) {
+        logger.error('Failed to get token in refresh callback', error);
+        return null;
+      }
+    });
+  }, [getToken]);
 
-      if (storedToken && storedUser) {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
+  // Safety timeout: ensure loading never hangs more than 30 seconds
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (loading) {
+        logger.warn('Loading timeout reached (30s), forcing loading to false');
+        setLoading(false);
         
-        // Set axios default header
-        axios.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
-
-        // Verify token is still valid by fetching current user
-        try {
-          const response = await axios.get(`${API_BASE_URL}/api/auth/me`);
-          setUser(response.data.user);
-          localStorage.setItem('user', JSON.stringify(response.data.user));
-        } catch (error) {
-          // Token invalid, clear auth
-          console.error('Token validation failed:', error);
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('user');
-          setToken(null);
-          setUser(null);
-          delete axios.defaults.headers.common['Authorization'];
+        // If we have Clerk user but no MongoDB user, create fallback
+        if (clerkUser && !user) {
+          const clerkRole = (clerkUser.publicMetadata?.role || clerkUser.unsafeMetadata?.role) as 'Freelancer' | 'BusinessOwner' | undefined;
+          const fallbackUser: User = {
+            _id: '',
+            clerkId: clerkUser.id,
+            email: clerkUser.primaryEmailAddress?.emailAddress || '',
+            firstName: clerkUser.firstName || '',
+            lastName: clerkUser.lastName || '',
+            role: clerkRole || 'Freelancer',
+            profilePicture: clerkUser.imageUrl,
+            isActive: true,
+            isEmailVerified: clerkUser.primaryEmailAddress?.verification?.status === 'verified',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          };
+          setUser(fallbackUser);
+          logger.info('Using Clerk fallback data after timeout', { role: clerkRole });
         }
       }
-      
-      setLoading(false);
+    }, 30000); // 30 seconds maximum loading time
+
+    setLoadingTimeout(timeout);
+
+    return () => {
+      if (timeout) clearTimeout(timeout);
+    };
+  }, [loading, clerkUser, user]);
+
+  // Automatic token refresh before expiration
+  useEffect(() => {
+    if (!clerkUser) return;
+
+    const refreshTokenPeriodically = async () => {
+      try {
+        // Get fresh token - Clerk will handle expiration internally
+        const token = await getToken({ skipCache: false });
+        if (token) {
+          setAuthToken(token);
+          logger.debug('Token refreshed proactively');
+        }
+      } catch (error) {
+        logger.error('Proactive token refresh failed', error);
+      }
     };
 
-    loadUser();
-  }, []);
+    // Refresh token every 50 minutes (Clerk tokens typically expire after 60 minutes)
+    const refreshInterval = setInterval(refreshTokenPeriodically, 50 * 60 * 1000);
 
-  const login = async (email: string, password: string) => {
+    // Initial immediate refresh
+    refreshTokenPeriodically();
+
+    return () => clearInterval(refreshInterval);
+  }, [clerkUser, getToken]);
+
+  // Fetch MongoDB user data when Clerk user is available
+  useEffect(() => {
+    const fetchMongoUser = async () => {
+      if (!clerkLoaded) {
+        logger.auth.loading('Clerk not loaded yet');
+        return;
+      }
+
+      if (!clerkUser) {
+        logger.auth.loading('No Clerk user');
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+
+      logger.auth.loading(`Fetching MongoDB user for Clerk ID: ${clerkUser.id}`);
+
+      try {
+        // Get Clerk session token
+        const token = await getToken();
+        
+        if (!token) {
+          logger.auth.error('Token retrieval', 'No token available');
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+
+        // Set auth token for API client
+        setAuthToken(token);
+
+        // Fetch user from MongoDB
+        const response = await apiClient.get('/api/auth/me');
+        logger.auth.success('MongoDB user fetch', response.data.user);
+        setUser(response.data.user);
+        setRetryCount(0); // Reset retry count on success
+        setLoading(false); // Success: stop loading
+        
+        // Clear timeout on success
+        if (loadingTimeout) {
+          clearTimeout(loadingTimeout);
+          setLoadingTimeout(null);
+        }
+      } catch (error: any) {
+        logger.auth.error('User fetch', error);
+        
+        // If user not found (404 or 401) and we haven't retried too many times, retry
+        // 401 can happen when user is being created in MongoDB
+        const shouldRetry = (error.response?.status === 404 || error.response?.status === 401) && 
+                           retryCount < RETRY_CONFIG.MAX_ATTEMPTS;
+        
+        if (shouldRetry) {
+          const statusMessage = error.response?.status === 401 ? 'Unauthorized' : 'User not found';
+          logger.warn(`${statusMessage} in MongoDB, retrying (${retryCount + 1}/${RETRY_CONFIG.MAX_ATTEMPTS})`);
+          logger.info('This is normal for new signups - user is being created...');
+          
+          // Schedule retry without blocking
+          setTimeout(() => {
+            setRetryCount(prev => prev + 1);
+          }, RETRY_CONFIG.DELAY_MS);
+          
+          // Keep loading state true for retries
+          return;
+        }
+        
+        // After max retries or non-retryable error, use Clerk data as fallback
+        logger.warn('Using Clerk data as fallback', { 
+          reason: retryCount >= RETRY_CONFIG.MAX_ATTEMPTS ? 'max_retries' : 'non_retryable_error',
+          errorStatus: error.response?.status 
+        });
+        
+        const clerkRole = (clerkUser.publicMetadata?.role || clerkUser.unsafeMetadata?.role) as 'Freelancer' | 'BusinessOwner' | undefined;
+        const fallbackUser: User = {
+          _id: '',
+          clerkId: clerkUser.id,
+          email: clerkUser.primaryEmailAddress?.emailAddress || '',
+          firstName: clerkUser.firstName || '',
+          lastName: clerkUser.lastName || '',
+          role: clerkRole || 'Freelancer',
+          profilePicture: clerkUser.imageUrl,
+          isActive: true,
+          isEmailVerified: clerkUser.primaryEmailAddress?.verification?.status === 'verified',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+        setUser(fallbackUser);
+        logger.warn('Fallback user role', { role: clerkRole, source: 'retry_exhaustion' });
+        
+        // Always set loading to false when done retrying
+        setLoading(false);
+        
+        // Clear timeout on error resolution
+        if (loadingTimeout) {
+          clearTimeout(loadingTimeout);
+          setLoadingTimeout(null);
+        }
+      }
+    };
+
+    fetchMongoUser();
+  }, [clerkUser, clerkLoaded, getToken, retryCount]);
+
+  // Refresh user data from MongoDB
+  const refreshUser = async () => {
+    if (!clerkUser) return;
+
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/auth/login`, {
-        email,
-        password
-      });
+      const token = await getToken();
+      if (!token) return;
 
-      const { token: newToken, user: newUser } = response.data;
-
-      // Save to state
-      setToken(newToken);
-      setUser(newUser);
-
-      // Save to localStorage
-      localStorage.setItem('authToken', newToken);
-      localStorage.setItem('user', JSON.stringify(newUser));
-
-      // Set axios default header
-      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-
-    } catch (error: any) {
-      console.error('Login error:', error);
-      const message = error.response?.data?.message || 'Login failed. Please try again.';
-      throw new Error(message);
+      setAuthToken(token);
+      const response = await apiClient.get('/api/auth/me');
+      setUser(response.data.user);
+      logger.auth.success('User data refreshed');
+    } catch (error) {
+      logger.auth.error('User refresh', error);
     }
   };
 
-  const signup = async (data: SignupData) => {
+  const logout = async () => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/auth/signup`, data);
-
-      const { token: newToken, user: newUser } = response.data;
-
-      // Save to state
-      setToken(newToken);
-      setUser(newUser);
-
-      // Save to localStorage
-      localStorage.setItem('authToken', newToken);
-      localStorage.setItem('user', JSON.stringify(newUser));
-
-      // Set axios default header
-      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-
-    } catch (error: any) {
-      console.error('Signup error:', error);
-      const message = error.response?.data?.message || 'Signup failed. Please try again.';
-      throw new Error(message);
+      await signOut();
+      setUser(null);
+      setAuthToken(null); // Clear auth token
+      logger.info('User logged out successfully');
+    } catch (error) {
+      logger.error('Logout error', error);
     }
-  };
-
-  const logout = () => {
-    // Clear state
-    setUser(null);
-    setToken(null);
-
-    // Clear localStorage
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('user');
-
-    // Remove axios default header
-    delete axios.defaults.headers.common['Authorization'];
-  };
-
-  const updateUser = (updatedUser: User) => {
-    setUser(updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
   };
 
   const value: AuthContextType = {
     user,
-    token,
+    clerkUser,
     loading,
-    isAuthenticated: !!user && !!token,
-    login,
-    signup,
+    isAuthenticated: !!clerkUser && !!user,
+    isEmailVerified: user?.isEmailVerified || false,
     logout,
-    updateUser
+    refreshUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -173,32 +251,3 @@ export const useAuth = (): AuthContextType => {
   }
   return context;
 };
-
-// Configure axios interceptor to attach token to all requests
-axios.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Intercept 401 responses and logout
-axios.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Token expired or invalid
-      localStorage.removeItem('authToken');
-      localStorage.removeItem('user');
-      delete axios.defaults.headers.common['Authorization'];
-      window.location.href = '/auth/signin';
-    }
-    return Promise.reject(error);
-  }
-);

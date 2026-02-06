@@ -26,7 +26,7 @@ interface Milestone {
 
 interface ContractDraft {
   contractName: string;
-  contributorEmail: string;
+  employerEmail: string;
   category: string;
   subcategory: string;
   description: string;
@@ -45,7 +45,7 @@ interface ContractDraft {
 
 const PLATFORM_FEE_PERCENTAGE = 3.6;
 
-export default function CreateContract() {
+export default function CreateContractFreelancer() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -55,7 +55,7 @@ export default function CreateContract() {
   
   // Form state
   const [contractName, setContractName] = useState('');
-  const [contributorEmail, setContributorEmail] = useState('');
+  const [employerEmail, setEmployerEmail] = useState('');
   const [category, setCategory] = useState('');
   const [subcategory, setSubcategory] = useState('');
   const [description, setDescription] = useState('');
@@ -75,10 +75,10 @@ export default function CreateContract() {
   const [recipientMessage, setRecipientMessage] = useState('');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
 
-  // Pre-fill email from location state (e.g., from Leaderboard hire button)
+  // Pre-fill email from location state
   useEffect(() => {
-    if (location.state?.freelancerEmail) {
-      setContributorEmail(location.state.freelancerEmail);
+    if (location.state?.employerEmail) {
+      setEmployerEmail(location.state.employerEmail);
     }
   }, [location.state]);
 
@@ -86,7 +86,7 @@ export default function CreateContract() {
 
   // Load draft from localStorage
   useEffect(() => {
-    const savedDraft = localStorage.getItem('contractDraft');
+    const savedDraft = localStorage.getItem('freelancerContractDraft');
     if (savedDraft) {
       try {
         const draft: ContractDraft = JSON.parse(savedDraft);
@@ -97,7 +97,7 @@ export default function CreateContract() {
         // Only restore draft if saved within 48 hours
         if (hoursDiff < 48) {
           setContractName(draft.contractName);
-          setContributorEmail(draft.contributorEmail);
+          setEmployerEmail(draft.employerEmail);
           setCategory(draft.category);
           setSubcategory(draft.subcategory);
           setDescription(draft.description);
@@ -114,7 +114,7 @@ export default function CreateContract() {
           setShowDraftToast(true);
           setTimeout(() => setShowDraftToast(false), 5000);
         } else {
-          localStorage.removeItem('contractDraft');
+          localStorage.removeItem('freelancerContractDraft');
         }
       } catch (error) {
         console.error('Failed to restore draft:', error);
@@ -124,10 +124,10 @@ export default function CreateContract() {
 
   // Auto-save draft whenever form data changes
   useEffect(() => {
-    if (contractName || contributorEmail) {
+    if (contractName || employerEmail) {
       const draft: ContractDraft = {
         contractName,
-        contributorEmail,
+        employerEmail,
         category,
         subcategory,
         description,
@@ -139,28 +139,19 @@ export default function CreateContract() {
         hourlyRate,
         weeklyLimit,
         noLimit,
+        recipientMessage,
+        agreedToTerms,
         savedAt: new Date().toISOString()
       };
-      localStorage.setItem('contractDraft', JSON.stringify(draft));
+      localStorage.setItem('freelancerContractDraft', JSON.stringify(draft));
     }
-  }, [contractName, contributorEmail, category, subcategory, description, contractType, budget, currency, milestones, splitMilestones, hourlyRate, weeklyLimit, noLimit]);
-
-  // Auto-save to backend (debounced) - saves as draft in pending contracts
-  useEffect(() => {
-    if (contractName && contributorEmail) {
-      const timer = setTimeout(() => {
-        saveDraft();
-      }, 5000); // Save 5 seconds after user stops typing
-
-      return () => clearTimeout(timer);
-    }
-  }, [contractName, contributorEmail, category, subcategory, description, contractType, budget, currency, milestones, splitMilestones, hourlyRate, weeklyLimit, noLimit, recipientMessage, agreedToTerms, saveDraft]);
+  }, [contractName, employerEmail, category, subcategory, description, contractType, budget, currency, milestones, splitMilestones, hourlyRate, weeklyLimit, noLimit, recipientMessage, agreedToTerms]);
 
   // Save draft to localStorage and backend
   const saveDraft = useCallback(async () => {
     const draft: ContractDraft = {
       contractName,
-      contributorEmail,
+      employerEmail,
       category,
       subcategory,
       description,
@@ -176,14 +167,14 @@ export default function CreateContract() {
       agreedToTerms,
       savedAt: new Date().toISOString()
     };
-    localStorage.setItem('contractDraft', JSON.stringify(draft));
+    localStorage.setItem('freelancerContractDraft', JSON.stringify(draft));
 
     // Save to backend if there's enough data
-    if (contractName && contributorEmail) {
+    if (contractName && employerEmail) {
       try {
         const contractData = {
           name: contractName,
-          freelancerEmail: contributorEmail,
+          employerEmail: employerEmail,
           category: category || undefined,
           subcategory: subcategory || undefined,
           description: description || undefined,
@@ -230,7 +221,18 @@ export default function CreateContract() {
         // Continue silently - localStorage backup is available
       }
     }
-  }, [contractName, contributorEmail, category, subcategory, description, contractType, budget, currency, milestones, splitMilestones, hourlyRate, weeklyLimit, noLimit, recipientMessage, agreedToTerms, draftContractId]);
+  }, [contractName, employerEmail, category, subcategory, description, contractType, budget, currency, milestones, splitMilestones, hourlyRate, weeklyLimit, noLimit, recipientMessage, agreedToTerms, draftContractId]);
+
+  // Auto-save to backend (debounced) - saves as draft in pending contracts
+  useEffect(() => {
+    if (contractName && employerEmail) {
+      const timer = setTimeout(() => {
+        saveDraft();
+      }, 5000); // Save 5 seconds after user stops typing
+
+      return () => clearTimeout(timer);
+    }
+  }, [contractName, employerEmail, category, subcategory, description, contractType, budget, currency, milestones, splitMilestones, hourlyRate, weeklyLimit, noLimit, recipientMessage, agreedToTerms, saveDraft]);
 
   // Calculate payment summary — uses milestone total when milestones active
   const milestoneTotalBudget = useMemo(
@@ -276,12 +278,12 @@ export default function CreateContract() {
       newErrors.contractName = 'Contract name must be 70 characters or less';
     }
     
-    if (!contributorEmail.trim()) {
-      newErrors.contributorEmail = 'Contributor email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contributorEmail)) {
-      newErrors.contributorEmail = 'Invalid email address';
-    } else if (contributorEmail.toLowerCase() === user?.email?.toLowerCase()) {
-      newErrors.contributorEmail = "You can't send the contract to yourself";
+    if (!employerEmail.trim()) {
+      newErrors.employerEmail = 'Employer email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(employerEmail)) {
+      newErrors.employerEmail = 'Invalid email address';
+    } else if (employerEmail.toLowerCase() === user?.email?.toLowerCase()) {
+      newErrors.employerEmail = "You can't send the contract to yourself";
     }
     
     setErrors(newErrors);
@@ -409,7 +411,7 @@ export default function CreateContract() {
     try {
       const contractData = {
         name: contractName,
-        freelancerEmail: contributorEmail,
+        employerEmail: employerEmail,
         category,
         subcategory,
         description,
@@ -449,9 +451,9 @@ export default function CreateContract() {
         throw new Error('Failed to create contract');
       }
 
-      localStorage.removeItem('contractDraft');
+      localStorage.removeItem('freelancerContractDraft');
       setDraftContractId(null);
-      navigate('/employer/dashboard', { state: { message: 'Contract created successfully!' } });
+      navigate('/freelancer/dashboard', { state: { message: 'Contract created successfully!' } });
     } catch (error) {
       console.error('Error creating contract:', error);
       alert('Failed to create contract. Please try again.');
@@ -469,7 +471,7 @@ export default function CreateContract() {
             <BackToDashboard />
           </div>
           <h1 className="text-3xl font-bold text-gray-900">Create New Contract</h1>
-          <p className="mt-2 text-gray-600">Set up a contract with your freelancer</p>
+          <p className="mt-2 text-gray-600">Set up a contract with your employer</p>
         </div>
 
         {/* Progress Steps */}
@@ -555,28 +557,28 @@ export default function CreateContract() {
                     </div>
 
                     <div>
-                      <Label htmlFor="contributorEmail" className="text-base font-semibold">Freelancer Email *</Label>
+                      <Label htmlFor="employerEmail" className="text-base font-semibold">Employer Email *</Label>
                       <div className="relative mt-2">
                         <Input
-                          id="contributorEmail"
+                          id="employerEmail"
                           type="email"
-                          value={contributorEmail}
-                          onChange={(e) => setContributorEmail(e.target.value)}
-                          placeholder="freelancer@example.com"
+                          value={employerEmail}
+                          onChange={(e) => setEmployerEmail(e.target.value)}
+                          placeholder="employer@example.com"
                           className={`pr-10 ${
-                            errors.contributorEmail 
+                            errors.employerEmail 
                               ? 'border-red-500' 
-                              : contributorEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contributorEmail)
+                              : employerEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(employerEmail)
                               ? 'border-green-400'
                               : ''
                           }`}
                         />
-                        {contributorEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contributorEmail) && !errors.contributorEmail && (
+                        {employerEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(employerEmail) && !errors.employerEmail && (
                           <Check className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />
                         )}
                       </div>
-                      {errors.contributorEmail && (
-                        <p className="text-sm text-red-500 mt-1">{errors.contributorEmail}</p>
+                      {errors.employerEmail && (
+                        <p className="text-sm text-red-500 mt-1">{errors.employerEmail}</p>
                       )}
                     </div>
                   </>
@@ -870,7 +872,7 @@ export default function CreateContract() {
                                 </span>
                               </div>
                               <div className="border-t pt-2 flex justify-between text-sm">
-                                <span className="font-medium text-gray-700">Freelancer receives</span>
+                                <span className="font-medium text-gray-700">You'll receive</span>
                                 <span className="font-bold text-green-600">
                                   {currency} {(milestoneTotalBudget - (milestoneTotalBudget * PLATFORM_FEE_PERCENTAGE) / 100).toFixed(2)}
                                 </span>
@@ -1086,7 +1088,7 @@ export default function CreateContract() {
 
                     {/* Financial Summary Card */}
                     <div className="border-2 border-[#84cc16]/20 rounded-lg p-6 bg-[#84cc16]/5">
-                      <h3 className="text-sm font-medium text-gray-700 mb-4">You'll pay</h3>
+                      <h3 className="text-sm font-medium text-gray-700 mb-4">You'll receive</h3>
                       <div className="space-y-3">
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">
@@ -1101,14 +1103,14 @@ export default function CreateContract() {
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">Platform Fee ({PLATFORM_FEE_PERCENTAGE}%)</span>
                           <span className="font-medium text-red-600">
-                            + {currency} {payment.fee.toFixed(2)}
+                            - {currency} {payment.fee.toFixed(2)}
                           </span>
                         </div>
                         <div className="border-t-2 border-[#84cc16]/20 pt-3">
                           <div className="flex justify-between">
-                            <span className="font-bold text-gray-900">Total</span>
+                            <span className="font-bold text-gray-900">Your Payout</span>
                             <span className="font-bold text-xl text-[#84cc16]">
-                              {currency} {payment.total.toFixed(2)}
+                              {currency} {payment.payoutForFreelancer.toFixed(2)}
                             </span>
                           </div>
                         </div>
@@ -1185,13 +1187,13 @@ export default function CreateContract() {
                   </div>
                   <div className="border-t pt-2">
                     <div className="flex justify-between font-semibold">
-                      <span>You Pay</span>
+                      <span>Employer Pays</span>
                       <span>{currency} {payment.totalForClient.toFixed(2)}</span>
                     </div>
                   </div>
                   <div className="bg-[#84cc16]/10 rounded-lg p-3 mt-2">
                     <div className="flex justify-between">
-                      <span className="text-sm font-medium text-[#65a30d]">Freelancer Receives</span>
+                      <span className="text-sm font-medium text-[#65a30d]">You'll Receive</span>
                       <span className="font-bold text-[#65a30d]">
                         {currency} {payment.payoutForFreelancer.toFixed(2)}
                       </span>
@@ -1219,13 +1221,13 @@ export default function CreateContract() {
                   <Alert className="border-[#84cc16]/30 bg-[#84cc16]/5">
                     <Calendar className="h-4 w-4 text-[#65a30d]" />
                     <AlertDescription className="text-sm text-[#65a30d]">
-                      Estimated weekly cost: {currency} {(parseFloat(hourlyRate || '0') * parseFloat(weeklyLimit)).toFixed(2)}
+                      Estimated weekly earnings: {currency} {(parseFloat(hourlyRate || '0') * parseFloat(weeklyLimit)).toFixed(2)}
                     </AlertDescription>
                   </Alert>
                 )}
 
                 <div className="text-xs text-gray-500 pt-4 border-t">
-                  💰 Payment will be held in escrow until milestones are approved. Funds are released to the freelancer upon your approval.
+                  💰 Payment will be held in escrow until milestones are approved. Funds are released to you upon employer approval.
                 </div>
               </CardContent>
             </Card>
@@ -1255,7 +1257,7 @@ export default function CreateContract() {
                       </Button>
                     </div>
                     <div className="p-3 bg-gray-50 rounded-lg border">
-                      <p className="text-sm font-medium text-gray-900">{contributorEmail}</p>
+                      <p className="text-sm font-medium text-gray-900">{employerEmail}</p>
                     </div>
                   </div>
 

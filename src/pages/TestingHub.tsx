@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Users, Briefcase, Home } from 'lucide-react';
+import BackToDashboard from '../components/BackToDashboard';
 
 const TestingHub = () => {
   const navigate = useNavigate();
@@ -11,10 +12,9 @@ const TestingHub = () => {
       <div className="bg-white py-12 md:py-16">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
           <div className="text-center">
-            <Link to="/" className="text-gray-600 hover:text-black transition-colors text-sm mb-4 inline-flex items-center">
-              <Home className="w-4 h-4 mr-1" />
-              Back to Home
-            </Link>
+            <div className="mb-4 flex justify-center">
+              <BackToDashboard />
+            </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 tracking-tight text-black">
               Testing Platform
             </h1>

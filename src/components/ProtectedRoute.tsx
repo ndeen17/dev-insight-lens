@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { SignedIn, SignedOut, RedirectToSignIn } from '@clerk/clerk-react';
 import { Loader2 } from 'lucide-react';
 
 interface ProtectedRouteProps {
@@ -13,7 +14,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   requiredRole,
   redirectTo = '/auth/signin'
 }) => {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { user, loading } = useAuth();
 
   // Show loading spinner while checking authentication
   if (loading) {
@@ -24,22 +25,25 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  // Redirect to sign-in if not authenticated
-  if (!isAuthenticated || !user) {
-    return <Navigate to={redirectTo} replace />;
-  }
-
-  // Check role if required
-  if (requiredRole && user.role !== requiredRole) {
-    // Redirect to appropriate dashboard based on actual role
-    const dashboardRoute = user.role === 'Freelancer' 
-      ? '/freelancer/dashboard' 
-      : '/employer/dashboard';
-    return <Navigate to={dashboardRoute} replace />;
-  }
-
-  // User is authenticated and has correct role
-  return <>{children}</>;
+  return (
+    <>
+      <SignedOut>
+        <RedirectToSignIn />
+      </SignedOut>
+      
+      <SignedIn>
+        {/* Check role if required */}
+        {requiredRole && user && user.role !== requiredRole ? (
+          <Navigate 
+            to={user.role === 'Freelancer' ? '/freelancer/dashboard' : '/employer/dashboard'} 
+            replace 
+          />
+        ) : (
+          children
+        )}
+      </SignedIn>
+    </>
+  );
 };
 
 export default ProtectedRoute;

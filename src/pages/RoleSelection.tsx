@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Briefcase, Code2 } from 'lucide-react';
+import { Briefcase, Code2, AlertCircle } from 'lucide-react';
 
 const RoleSelection = () => {
   const navigate = useNavigate();
@@ -14,6 +14,20 @@ const RoleSelection = () => {
           <p className="text-lg text-muted-foreground">
             Choose how you want to get started
           </p>
+        </div>
+        
+        <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+          <div className="flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+            <div className="text-sm">
+              <p className="font-semibold text-amber-800 dark:text-amber-300 mb-1">
+                Important: Choose your account type carefully
+              </p>
+              <p className="text-amber-700 dark:text-amber-400">
+                Each email address can only be used for one account type. You cannot create both a Freelancer and Employer account with the same email.
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">

@@ -1,0 +1,317 @@
+import { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/config/constants';
+import { useUser, UserButton } from '@clerk/clerk-react';
+import { 
+  Clock, 
+  CheckCircle2, 
+  Archive, 
+  DollarSign, 
+  Plus,
+  Menu,
+  X,
+  FileText,
+  Inbox,
+  Users,
+  ClipboardCheck,
+  Bookmark,
+  Send,
+  BarChart3,
+  Trophy,
+  ChevronDown,
+  ChevronRight
+} from 'lucide-react';
+
+interface SidebarProps {
+  userRole?: 'BusinessOwner' | 'Freelancer';
+}
+
+export default function Sidebar({ userRole }: SidebarProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useUser();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [talentSectionOpen, setTalentSectionOpen] = useState(true);
+  const [testsSectionOpen, setTestsSectionOpen] = useState(true);
+
+  // Define navigation items based on user role
+  const getNavigationItems = () => {
+    if (userRole === 'BusinessOwner') {
+      return {
+        contracts: [
+          { 
+            name: 'Pending', 
+            path: '/employer/dashboard?filter=pending', 
+            icon: Clock,
+            count: 0 // Will be populated dynamically
+          },
+          { 
+            name: 'Active', 
+            path: '/employer/dashboard?filter=active', 
+            icon: CheckCircle2,
+            count: 0 
+          },
+          { 
+            name: 'Archived', 
+            path: '/employer/dashboard?filter=archived', 
+            icon: Archive,
+            count: 0 
+          },
+          { 
+            name: 'Payments', 
+            path: '/employer/dashboard?filter=payments', 
+            icon: DollarSign 
+          },
+        ],
+        talent: [
+          { name: 'Browse Developers', icon: Users, path: ROUTES.BROWSE_DEVELOPERS },
+          { name: 'Leaderboard', icon: Trophy, path: ROUTES.LEADERBOARD },
+          { name: 'Saved Developers', icon: Bookmark, path: ROUTES.SAVED_DEVELOPERS },
+        ],
+        tests: [
+          { name: 'Create Test', icon: ClipboardCheck, path: ROUTES.TESTING_HUB },
+          { name: 'Test Invitations', icon: Send, path: ROUTES.TEST_INVITATIONS },
+          { name: 'Test Results', icon: BarChart3, path: ROUTES.TEST_RESULTS },
+        ]
+      };
+    } else {
+      // Freelancer navigation
+      return {
+        contracts: [
+          { 
+            name: 'Pending Offers', 
+            path: '/freelancer/dashboard?filter=pending', 
+            icon: Inbox,
+            count: 0 
+          },
+          { 
+            name: 'Active', 
+            path: '/freelancer/dashboard?filter=active', 
+            icon: CheckCircle2,
+            count: 0 
+          },
+          { 
+            name: 'Completed', 
+            path: '/freelancer/dashboard?filter=completed', 
+            icon: FileText,
+          count: 0 
+        },
+        { 
+          name: 'Payments', 
+          path: '/freelancer/dashboard?filter=payments', 
+          icon: DollarSign 
+        },
+      ]
+      };
+    }
+  };
+
+  const navItems = getNavigationItems();
+
+  const isActive = (path: string) => {
+    const currentPath = location.pathname + location.search;
+    return currentPath === path || location.search.includes(path.split('?')[1]);
+  };
+
+  const handleCreateContract = () => {
+    if (userRole === 'BusinessOwner') {
+      navigate(ROUTES.CREATE_CONTRACT);
+    } else {
+      navigate(ROUTES.CREATE_CONTRACT_FREELANCER);
+    }
+    setMobileMenuOpen(false);
+  };
+
+  const SidebarContent = () => (
+    <>
+      {/* Logo */}
+      <div className="px-6 py-6">
+        <Link to="/" className="flex items-center space-x-2">
+          <span className="text-2xl font-bold text-gray-900">Artemis</span>
+        </Link>
+      </div>
+
+      {/* Navigation Items */}
+      <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
+        {/* Contracts Section */}
+        <div className="mb-6">
+          <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            Contracts
+          </h3>
+          {navItems.contracts?.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.path);
+            
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center justify-between px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                  active
+                  ? 'bg-gray-200 text-gray-900'
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <Icon className="w-5 h-5" />
+                <span>{item.name}</span>
+              </div>
+              {item.count !== undefined && item.count > 0 && (
+                <span className="px-2 py-0.5 text-xs font-semibold text-gray-700 bg-gray-300 rounded-full">
+                  {item.count}
+                </span>
+              )}
+            </Link>
+          );
+        })}
+        </div>
+
+        {/* Find Talent Section (only for Business Owners) */}
+        {userRole === 'BusinessOwner' && navItems.talent && (
+          <div className="mb-6">
+            <button
+              onClick={() => setTalentSectionOpen(!talentSectionOpen)}
+              className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider hover:text-gray-700"
+            >
+              <span>Find Talent</span>
+              {talentSectionOpen ? (
+                <ChevronDown className="w-4 h-4" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
+            </button>
+            {talentSectionOpen && (
+              <div className="mt-1 space-y-1">
+                {navItems.talent.map((item) => {
+                  const Icon = item.icon;
+                  const active = location.pathname === item.path;
+                  
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center space-x-3 px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                        active
+                          ? 'bg-gray-200 text-gray-900'
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span>{item.name}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Tests Section (only for Business Owners) */}
+        {userRole === 'BusinessOwner' && navItems.tests && (
+          <div className="mb-6">
+            <button
+              onClick={() => setTestsSectionOpen(!testsSectionOpen)}
+              className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider hover:text-gray-700"
+            >
+              <span>Tests</span>
+              {testsSectionOpen ? (
+                <ChevronDown className="w-4 h-4" />
+              ) : (
+                <ChevronRight className="w-4 h-4" />
+              )}
+            </button>
+            {testsSectionOpen && (
+              <div className="mt-1 space-y-1">
+                {navItems.tests.map((item) => {
+                  const Icon = item.icon;
+                  const active = location.pathname === item.path;
+                  
+                  return (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center space-x-3 px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                        active
+                          ? 'bg-gray-200 text-gray-900'
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                      }`}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span>{item.name}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
+      </nav>
+
+      {/* Create Contract Button */}
+      <div className="px-4 pb-6">
+        <button
+          onClick={handleCreateContract}
+          className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-black font-bold bg-green-400 hover:bg-green-500 rounded-lg transition-colors shadow-md"
+        >
+          <Plus className="w-5 h-5" />
+          <span>New Contract</span>
+        </button>
+      </div>
+
+      {/* User Profile */}
+      <div className="px-6 py-4 border-t border-gray-200">
+        <div className="flex items-center space-x-3">
+          <UserButton afterSignOutUrl="/" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 truncate">
+              {user?.fullName || user?.primaryEmailAddress?.emailAddress}
+            </p>
+            <p className="text-xs text-gray-500 truncate">
+              {userRole === 'BusinessOwner' ? 'Business Owner' : 'Freelancer'}
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar - Fixed */}
+      <aside className="hidden md:flex md:flex-col w-64 bg-white border-r border-gray-200">
+        <SidebarContent />
+      </aside>
+
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg border border-gray-200"
+      >
+        {mobileMenuOpen ? (
+          <X className="w-6 h-6 text-gray-900" />
+        ) : (
+          <Menu className="w-6 h-6 text-gray-900" />
+        )}
+      </button>
+
+      {/* Mobile Sidebar - Slide-in overlay */}
+      {mobileMenuOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          
+          {/* Slide-in menu */}
+          <aside className="md:hidden fixed inset-y-0 left-0 w-64 bg-white z-50 flex flex-col shadow-xl animate-slide-in">
+            <SidebarContent />
+          </aside>
+        </>
+      )}
+    </>
+  );
+}

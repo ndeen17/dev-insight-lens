@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { savedDevsService } from '../utils/savedDevs';
 import { toast } from 'sonner';
+import BackToDashboard from '../components/BackToDashboard';
 
 const SavedDevelopers = () => {
   const [savedDevs, setSavedDevs] = useState([]);
@@ -37,12 +38,7 @@ const SavedDevelopers = () => {
       <div className="bg-white border-b border-gray-200 py-6">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between mb-4">
-            <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-black transition-colors">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
-              <span>Back to Home</span>
-            </Link>
+            <BackToDashboard />
 
             {savedDevs.length > 0 && (
               <button

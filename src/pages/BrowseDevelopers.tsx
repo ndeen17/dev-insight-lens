@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { getLeaderboard } from '../services/api';
 import { savedDevsService } from '../utils/savedDevs';
 import { toast } from 'sonner';
+import BackToDashboard from '../components/BackToDashboard';
 
 const BrowseDevelopers = () => {
   const [developers, setDevelopers] = useState([]);
@@ -140,13 +141,7 @@ const BrowseDevelopers = () => {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 py-3 sm:py-4">
         <div className="max-w-6xl mx-auto px-3 sm:px-4 flex items-center justify-between gap-2">
-          <Link to="/" className="flex items-center space-x-1 sm:space-x-2 text-gray-600 hover:text-black transition-colors text-sm sm:text-base">
-            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            <span className="hidden sm:inline">Back to Home</span>
-            <span className="sm:hidden">Back</span>
-          </Link>
+          <BackToDashboard />
 
           <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-black">Browse Developers</h1>
 

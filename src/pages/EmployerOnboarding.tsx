@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Label } from '../components/ui/label';
@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from '../components/ui/radio-group';
 import { Checkbox } from '../components/ui/checkbox';
 import { Badge } from '../components/ui/badge';
 import { Textarea } from '../components/ui/textarea';
+import BackToDashboard from '../components/BackToDashboard';
 import { ArrowRight, ArrowLeft, Check, Sparkles, Loader2 } from 'lucide-react';
 
 const EmployerOnboarding = () => {
@@ -24,6 +25,24 @@ const EmployerOnboarding = () => {
   const [teamSize, setTeamSize] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [aiRecommendations, setAiRecommendations] = useState<any>(null);
+
+  // Check if onboarding already completed
+  useEffect(() => {
+    const existingRequirements = localStorage.getItem('employer_requirements');
+    if (existingRequirements) {
+      try {
+        const { createdAt } = JSON.parse(existingRequirements);
+        const daysSinceOnboarding = (Date.now() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24);
+        
+        // If onboarding was completed within last 30 days, redirect to dashboard
+        if (daysSinceOnboarding < 30) {
+          navigate('/employer/dashboard');
+        }
+      } catch (error) {
+        console.error('Error checking onboarding status:', error);
+      }
+    }
+  }, [navigate]);
 
   const roleTypes = [
     { id: 'frontend', label: 'Frontend Developer', skills: ['React', 'JavaScript', 'CSS', 'HTML', 'TypeScript'] },
@@ -90,7 +109,7 @@ const EmployerOnboarding = () => {
     };
     
     localStorage.setItem('employer_requirements', JSON.stringify(requirements));
-    navigate('/employer/dashboard');
+    navigate('/employer/getting-started');
   };
 
   const handleAiAnalysis = async () => {
@@ -138,6 +157,9 @@ const EmployerOnboarding = () => {
         {/* Mode Selection (Initial Step) */}
         {onboardingMode === 'choose' && (
           <div>
+            <div className="mb-6">
+              <BackToDashboard label="Back to Getting Started" />
+            </div>
             <div className="text-center mb-12">
               <h1 className="text-3xl md:text-4xl font-bold text-black mb-4">
                 How would you like to proceed?
@@ -185,6 +207,15 @@ const EmployerOnboarding = () => {
                     </span>
                   </div>
                 </div>
+              </button>
+            </div>
+
+            <div className="text-center mt-6">
+              <button
+                onClick={() => navigate('/employer/getting-started')}
+                className="text-sm text-gray-600 hover:text-gray-900 underline"
+              >
+                Skip setup, choose what to do next →
               </button>
             </div>
           </div>
