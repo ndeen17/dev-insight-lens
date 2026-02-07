@@ -39,7 +39,7 @@ const VerifyEmail = () => {
   }, [isLoaded, navigate, user]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100 dark:from-gray-900 dark:to-gray-800 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-900 dark:to-gray-800 p-4">
       <div className="w-full max-w-md text-center space-y-6">
         {/* Success animation */}
         <div className="mx-auto w-20 h-20 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center animate-in zoom-in-50 duration-500">
@@ -65,7 +65,7 @@ const VerifyEmail = () => {
 
           <button
             onClick={() => navigate(getDashboardRoute(), { replace: true })}
-            className="mt-4 text-sm text-green-700 dark:text-green-300 underline hover:text-green-900 dark:hover:text-green-100 transition-colors"
+            className="mt-4 text-sm text-blue-700 dark:text-blue-300 underline hover:text-blue-900 dark:hover:text-blue-100 transition-colors"
           >
             Go to dashboard now
           </button>

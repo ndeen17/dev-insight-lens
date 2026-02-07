@@ -218,16 +218,16 @@ const ProfileSettings = () => {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 sm:px-8 py-4 sm:py-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="pl-10 md:pl-0">
-            <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Settings</h1>
-            <p className="text-gray-500 mt-1 text-sm sm:text-base">Manage your profile and account preferences</p>
+          <div>
+            <h1 className="text-heading-sm sm:text-heading font-semibold text-gray-900 tracking-tight">Settings</h1>
+            <p className="text-body-sm text-gray-500 mt-0.5">Manage your profile and account preferences</p>
           </div>
           <button
             onClick={handleSave}
             disabled={!hasChanges || saving}
             className={`flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-lg font-bold transition-all shadow-sm active:scale-[0.97] w-full sm:w-auto ${
               hasChanges
-                ? 'bg-green-400 hover:bg-green-500 text-black'
+                ? 'bg-blue-600 hover:bg-blue-700 text-white'
                 : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'
             }`}
           >

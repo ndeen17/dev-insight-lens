@@ -109,7 +109,7 @@ const BusinessOwnerSignup = () => {
               Already have an account?{' '}
               <Link 
                 to={ROUTES.SIGN_IN} 
-                className="underline hover:text-green-800 dark:hover:text-green-200 font-semibold"
+                className="underline hover:text-blue-700 dark:hover:text-blue-300 font-semibold"
               >
                 Sign in here
               </Link>

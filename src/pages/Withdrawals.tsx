@@ -171,21 +171,21 @@ const Withdrawals = () => {
   return (
     <DashboardLayout userRole="Freelancer">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-8 py-6">
-        <h1 className="text-3xl font-bold text-gray-900">Withdrawals</h1>
-        <p className="text-gray-600 mt-1">Manage your earnings and request payouts</p>
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-8 py-6">
+        <h1 className="text-heading-sm sm:text-heading font-semibold text-gray-900 tracking-tight">Withdrawals</h1>
+        <p className="text-body-sm text-gray-500 mt-0.5">Manage your earnings and request payouts</p>
       </div>
 
-      <div className="px-8 py-6 space-y-6">
+      <div className="px-4 sm:px-8 py-6 space-y-6">
         {/* ── Balance Cards ──────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Available Balance */}
-          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-6">
+          <div className="bg-gradient-to-br from-blue-50 to-sky-50 border border-blue-200 rounded-xl p-6">
             <div className="flex items-center gap-3 mb-2">
-              <Wallet className="w-5 h-5 text-emerald-600" />
-              <span className="text-sm font-medium text-emerald-600">Available Balance</span>
+              <Wallet className="w-5 h-5 text-blue-600" />
+              <span className="text-sm font-medium text-blue-600">Available Balance</span>
             </div>
-            <p className="text-3xl font-bold text-emerald-900">${balance.toFixed(2)}</p>
+            <p className="text-display-sm font-bold text-blue-900">${balance.toFixed(2)}</p>
           </div>
 
           {/* Total Earnings */}
@@ -194,7 +194,7 @@ const Withdrawals = () => {
               <ArrowDownToLine className="w-5 h-5 text-gray-500" />
               <span className="text-sm font-medium text-gray-500">Total Earned</span>
             </div>
-            <p className="text-3xl font-bold text-gray-900">${totalEarnings.toFixed(2)}</p>
+            <p className="text-display-sm font-bold text-gray-900">${totalEarnings.toFixed(2)}</p>
           </div>
 
           {/* Withdrawn */}
@@ -203,7 +203,7 @@ const Withdrawals = () => {
               <Building2 className="w-5 h-5 text-gray-500" />
               <span className="text-sm font-medium text-gray-500">Total Withdrawn</span>
             </div>
-            <p className="text-3xl font-bold text-gray-900">
+            <p className="text-display-sm font-bold text-gray-900">
               ${(totalEarnings - balance).toFixed(2)}
             </p>
           </div>
@@ -214,7 +214,7 @@ const Withdrawals = () => {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <Building2 className="w-5 h-5 text-gray-700" />
-              <h2 className="text-lg font-semibold text-gray-900">Bank Details</h2>
+              <h2 className="text-subheading text-gray-900">Bank Details</h2>
             </div>
             <button
               onClick={() => setShowBankForm(!showBankForm)}
@@ -256,7 +256,7 @@ const Withdrawals = () => {
                     type="text"
                     value={withdrawalInfo.bankName}
                     onChange={(e) => setWithdrawalInfo((p) => ({ ...p, bankName: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="e.g. Chase Bank"
                     required
                   />
@@ -267,7 +267,7 @@ const Withdrawals = () => {
                     type="text"
                     value={withdrawalInfo.accountName}
                     onChange={(e) => setWithdrawalInfo((p) => ({ ...p, accountName: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="e.g. John Doe"
                     required
                   />
@@ -278,7 +278,7 @@ const Withdrawals = () => {
                     type="text"
                     value={withdrawalInfo.accountNumber}
                     onChange={(e) => setWithdrawalInfo((p) => ({ ...p, accountNumber: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Account number"
                     required
                   />
@@ -289,7 +289,7 @@ const Withdrawals = () => {
                     type="text"
                     value={withdrawalInfo.routingNumber || ''}
                     onChange={(e) => setWithdrawalInfo((p) => ({ ...p, routingNumber: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Optional"
                   />
                 </div>
@@ -299,7 +299,7 @@ const Withdrawals = () => {
                     type="text"
                     value={withdrawalInfo.bankCountry || ''}
                     onChange={(e) => setWithdrawalInfo((p) => ({ ...p, bankCountry: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="e.g. US"
                   />
                 </div>
@@ -309,7 +309,7 @@ const Withdrawals = () => {
                     type="text"
                     value={withdrawalInfo.currency || 'USD'}
                     onChange={(e) => setWithdrawalInfo((p) => ({ ...p, currency: e.target.value }))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="USD"
                   />
                 </div>
@@ -319,7 +319,7 @@ const Withdrawals = () => {
                 <textarea
                   value={withdrawalInfo.additionalInfo || ''}
                   onChange={(e) => setWithdrawalInfo((p) => ({ ...p, additionalInfo: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   rows={2}
                   placeholder="Any additional details (e.g. SWIFT / IBAN)"
                 />
@@ -328,7 +328,7 @@ const Withdrawals = () => {
                 <button
                   type="submit"
                   disabled={savingInfo}
-                  className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+                  className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
                 >
                   {savingInfo ? 'Saving...' : 'Save Bank Details'}
                 </button>
@@ -348,7 +348,7 @@ const Withdrawals = () => {
 
         {/* ── Request Withdrawal ─────────────────────────────── */}
         <div className="bg-white border border-gray-200 rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Request Withdrawal</h2>
+          <h2 className="text-subheading text-gray-900 mb-4">Request Withdrawal</h2>
 
           {!hasBankInfo ? (
             <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg">
@@ -396,14 +396,14 @@ const Withdrawals = () => {
                       max={balance}
                       value={withdrawAmount}
                       onChange={(e) => setWithdrawAmount(e.target.value)}
-                      className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="0.00"
                     />
                   </div>
                   <button
                     type="button"
                     onClick={() => setWithdrawAmount(balance.toFixed(2))}
-                    className="px-3 py-2 text-sm text-emerald-600 border border-emerald-300 rounded-lg hover:bg-emerald-50 transition-colors"
+                    className="px-3 py-2 text-sm text-blue-600 border border-blue-300 rounded-lg hover:bg-blue-50 transition-colors"
                   >
                     Max
                   </button>
@@ -412,7 +412,7 @@ const Withdrawals = () => {
               <button
                 onClick={handleRequestWithdrawal}
                 disabled={requestingWithdrawal || !withdrawAmount}
-                className="px-5 py-2.5 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+                className="px-5 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
               >
                 {requestingWithdrawal ? 'Requesting...' : 'Request Withdrawal'}
               </button>
@@ -426,7 +426,7 @@ const Withdrawals = () => {
         {/* ── Withdrawal History ──────────────────────────────── */}
         <div className="bg-white border border-gray-200 rounded-xl p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Withdrawal History</h2>
+            <h2 className="text-subheading text-gray-900">Withdrawal History</h2>
             <button
               onClick={() => { fetchBalance(); fetchWithdrawals(); }}
               className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
@@ -445,7 +445,7 @@ const Withdrawals = () => {
                 return (
                   <div
                     key={w._id}
-                    className={`flex items-center justify-between p-4 rounded-lg border ${config.bg}`}
+                    className={`flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-4 rounded-lg border ${config.bg}`}
                   >
                     <div className="flex items-center gap-3">
                       <span className={config.color}>{config.icon}</span>

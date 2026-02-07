@@ -1,9 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { getLeaderboard, getLeaderboardStats } from '../services/api';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/button';
-import { Briefcase, Trophy, ArrowLeft } from 'lucide-react';
+import { 
+  Briefcase, 
+  Trophy, 
+  ArrowLeft, 
+  Search, 
+  ChevronDown,
+  Medal,
+  Crown,
+  Star,
+  Globe,
+  Users,
+  BarChart3,
+  MapPin,
+  ExternalLink,
+} from 'lucide-react';
 import { SkeletonLeaderboardRow } from '../components/Skeletons';
 
 const Leaderboard = () => {
@@ -13,6 +27,7 @@ const Leaderboard = () => {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState({
     country: '',
     level: '',
@@ -63,211 +78,356 @@ const Leaderboard = () => {
     }
   };
 
-  const getLevelColor = (level) => {
+  // Client-side search filtering
+  const filteredLeaderboard = useMemo(() => {
+    if (!searchQuery.trim()) return leaderboard;
+    const q = searchQuery.toLowerCase();
+    return leaderboard.filter((dev) =>
+      dev.name?.toLowerCase().includes(q) ||
+      dev.username?.toLowerCase().includes(q) ||
+      dev.primary_languages?.some((l: string) => l.toLowerCase().includes(q))
+    );
+  }, [leaderboard, searchQuery]);
+
+  const getLevelColor = (level: string) => {
     switch (level) {
-      case 'Expert': return 'bg-purple-100 text-purple-800 border-purple-300';
-      case 'Senior': return 'bg-green-100 text-green-800 border-green-300';
-      case 'Intermediate': return 'bg-blue-100 text-blue-800 border-blue-300';
-      case 'Beginner': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-300';
+      case 'Expert': return 'bg-purple-50 text-purple-700 border-purple-200';
+      case 'Senior': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+      case 'Intermediate': return 'bg-blue-50 text-blue-700 border-blue-200';
+      case 'Beginner': return 'bg-amber-50 text-amber-700 border-amber-200';
+      default: return 'bg-gray-50 text-gray-700 border-gray-200';
     }
   };
 
-  const getRankMedal = (rank) => {
-    if (rank === 1) return '🥇';
-    if (rank === 2) return '🥈';
-    if (rank === 3) return '🥉';
-    return null;
+  const getScoreColor = (score: number) => {
+    if (score >= 90) return 'text-purple-700 bg-purple-50';
+    if (score >= 75) return 'text-emerald-700 bg-emerald-50';
+    if (score >= 60) return 'text-blue-700 bg-blue-50';
+    return 'text-gray-700 bg-gray-50';
+  };
+
+  const RankBadge = ({ rank }: { rank: number }) => {
+    if (rank === 1) return (
+      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-500 flex items-center justify-center shadow-md shadow-amber-200/60">
+        <Crown className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+      </div>
+    );
+    if (rank === 2) return (
+      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-gray-300 to-gray-400 flex items-center justify-center shadow-md shadow-gray-200/60">
+        <Medal className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+      </div>
+    );
+    if (rank === 3) return (
+      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-amber-600 to-amber-700 flex items-center justify-center shadow-md shadow-amber-300/40">
+        <Medal className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+      </div>
+    );
+    return (
+      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 flex items-center justify-center">
+        <span className="text-body-sm sm:text-body font-semibold text-gray-500">#{rank}</span>
+      </div>
+    );
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-500 via-green-400 to-emerald-500 text-white py-8 sm:py-12">
-        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-start">
-            <Link to="/" className="inline-flex items-center space-x-2 text-white/90 hover:text-white mb-6 transition-colors">
-              <ArrowLeft className="w-5 h-5" />
-              <span>Back to Analysis</span>
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Top nav bar */}
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center gap-4">
+              <Link to="/" className="text-heading-sm font-semibold text-gray-900 hover:text-blue-600 transition-colors">
+                Artemis
+              </Link>
+              <span className="text-gray-300">/</span>
+              <span className="text-body text-gray-500">Leaderboard</span>
+            </div>
+            <Link to="/" className="text-body-sm text-gray-500 hover:text-gray-900 flex items-center gap-1.5 transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">Home</span>
             </Link>
-            
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 flex items-center gap-3">
-              <Trophy className="w-8 h-8 sm:w-10 sm:h-10" /> Developer Leaderboard
-            </h1>
-            <p className="text-base sm:text-lg text-white/90 max-w-full md:max-w-2xl">
-              Top GitHub developers ranked by comprehensive skill assessment
-            </p>
-
-            {/* Stats Cards */}
-            {stats && (
-              <div className="w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mt-6 sm:mt-8">
-                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/30">
-                  <div className="text-2xl sm:text-3xl font-bold">{stats.total_users}</div>
-                  <div className="text-xs sm:text-sm text-white/80">Total Developers</div>
-                </div>
-                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/30">
-                  <div className="text-2xl sm:text-3xl font-bold">{stats.by_level?.Expert || 0}</div>
-                  <div className="text-xs sm:text-sm text-white/80">Experts</div>
-                </div>
-                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/30">
-                  <div className="text-2xl sm:text-3xl font-bold">{Math.round(stats.average_score)}</div>
-                  <div className="text-xs sm:text-sm text-white/80">Avg Score</div>
-                </div>
-                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/30">
-                  <div className="text-2xl sm:text-3xl font-bold">{stats.top_countries?.length || 0}</div>
-                  <div className="text-xs sm:text-sm text-white/80">Countries</div>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-        {/* Filters */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-8">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Filter Rankings</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
-              <select 
-                value={filters.country} 
-                onChange={(e) => setFilters({...filters, country: e.target.value})}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:border-green-400"
-              >
-                <option value="">All Countries</option>
-                <option value="US">🇺🇸 United States</option>
-                <option value="GB">🇬🇧 United Kingdom</option>
-                <option value="IN">🇮🇳 India</option>
-                <option value="NG">🇳🇬 Nigeria</option>
-                <option value="CA">🇨🇦 Canada</option>
-                <option value="DE">🇩🇪 Germany</option>
-                <option value="FR">🇫🇷 France</option>
-                <option value="BR">🇧🇷 Brazil</option>
-                <option value="AU">🇦🇺 Australia</option>
-                <option value="CN">🇨🇳 China</option>
-              </select>
+      {/* Hero banner */}
+      <div className="bg-gradient-to-b from-blue-50/80 via-white to-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+          <div className="flex items-center gap-3 sm:gap-4 mb-2">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-100 border border-blue-200/60 flex items-center justify-center">
+              <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
             </div>
-            
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Level</label>
-              <select 
-                value={filters.level} 
-                onChange={(e) => setFilters({...filters, level: e.target.value})}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:border-green-400"
-              >
-                <option value="">All Levels</option>
-                <option value="Expert">Expert</option>
-                <option value="Senior">Senior</option>
-                <option value="Intermediate">Intermediate</option>
-                <option value="Beginner">Beginner</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Show Top</label>
-              <select 
-                value={filters.limit} 
-                onChange={(e) => setFilters({...filters, limit: parseInt(e.target.value)})}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:border-green-400"
-              >
-                <option value="10">Top 10</option>
-                <option value="25">Top 25</option>
-                <option value="50">Top 50</option>
-                <option value="100">Top 100</option>
-              </select>
+              <h1 className="text-display-sm sm:text-display text-gray-900 tracking-tight">
+                Developer Leaderboard
+              </h1>
             </div>
           </div>
+          <p className="text-body sm:text-lg text-gray-500 mt-2 max-w-xl">
+            Top professionals ranked by comprehensive skill assessment and GitHub activity
+          </p>
+
+          {/* Stats bar */}
+          {stats && (
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-8">
+              {[
+                { icon: Users, value: stats.total_users, label: 'Developers' },
+                { icon: Star, value: stats.by_level?.Expert || 0, label: 'Experts' },
+                { icon: BarChart3, value: Math.round(stats.average_score), label: 'Avg Score' },
+                { icon: Globe, value: stats.top_countries?.length || 0, label: 'Countries' },
+              ].map(({ icon: Icon, value, label }) => (
+                <div key={label} className="bg-white rounded-xl px-4 py-3 border border-gray-200 shadow-sm">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Icon className="w-4 h-4 text-gray-400" />
+                    <span className="text-caption text-gray-500 uppercase tracking-wider">{label}</span>
+                  </div>
+                  <span className="text-heading sm:text-display-sm text-gray-900 font-semibold">{value}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        {/* Search & Filters bar */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5 mb-6">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+            {/* Search */}
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search by name, username, or skill..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-body-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition-all"
+              />
+            </div>
+            {/* Filters */}
+            <div className="flex gap-2 sm:gap-3">
+              <div className="relative">
+                <select 
+                  value={filters.country} 
+                  onChange={(e) => setFilters({...filters, country: e.target.value})}
+                  className="appearance-none pl-3 pr-8 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-body-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer transition-all"
+                >
+                  <option value="">All Countries</option>
+                  <option value="US">United States</option>
+                  <option value="GB">United Kingdom</option>
+                  <option value="IN">India</option>
+                  <option value="NG">Nigeria</option>
+                  <option value="CA">Canada</option>
+                  <option value="DE">Germany</option>
+                  <option value="FR">France</option>
+                  <option value="BR">Brazil</option>
+                  <option value="AU">Australia</option>
+                  <option value="CN">China</option>
+                </select>
+                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+              </div>
+              
+              <div className="relative">
+                <select 
+                  value={filters.level} 
+                  onChange={(e) => setFilters({...filters, level: e.target.value})}
+                  className="appearance-none pl-3 pr-8 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-body-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer transition-all"
+                >
+                  <option value="">All Levels</option>
+                  <option value="Expert">Expert</option>
+                  <option value="Senior">Senior</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Beginner">Beginner</option>
+                </select>
+                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+              </div>
+
+              <div className="relative hidden sm:block">
+                <select 
+                  value={filters.limit} 
+                  onChange={(e) => setFilters({...filters, limit: parseInt(e.target.value)})}
+                  className="appearance-none pl-3 pr-8 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-body-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 cursor-pointer transition-all"
+                >
+                  <option value="10">Top 10</option>
+                  <option value="25">Top 25</option>
+                  <option value="50">Top 50</option>
+                  <option value="100">Top 100</option>
+                </select>
+                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 pointer-events-none" />
+              </div>
+            </div>
+          </div>
+          {/* Active filter count */}
+          {(searchQuery || filters.country || filters.level) && (
+            <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+              <span className="text-caption text-gray-500">
+                Showing {filteredLeaderboard.length} of {leaderboard.length} developers
+              </span>
+              <button
+                onClick={() => { setSearchQuery(''); setFilters({ country: '', level: '', limit: 100 }); }}
+                className="text-caption text-blue-600 hover:text-blue-700 font-medium transition-colors"
+              >
+                Clear all
+              </button>
+            </div>
+          )}
         </div>
 
-        {/* Leaderboard */}
+        {/* Leaderboard Table */}
         {loading ? (
-          <div className="grid gap-4 animate-fade-in-up">
+          <div className="space-y-3 animate-fade-in-up">
             {Array.from({ length: 5 }).map((_, i) => (
               <SkeletonLeaderboardRow key={i} />
             ))}
           </div>
         ) : error ? (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-            <p className="text-red-600">{error}</p>
-            <button 
+          <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center">
+            <p className="text-body text-red-600 mb-4">{error}</p>
+            <Button 
               onClick={fetchLeaderboard}
-              className="mt-4 px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              variant="destructive"
+              size="sm"
             >
-              Retry
-            </button>
+              Try Again
+            </Button>
           </div>
-        ) : leaderboard.length === 0 ? (
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-12 text-center">
-            <p className="text-gray-600 text-lg">No developers found with the selected filters</p>
-            <button 
-              onClick={() => setFilters({ country: '', level: '', limit: 100 })}
-              className="mt-4 px-6 py-2 bg-green-400 text-black font-bold rounded-lg hover:bg-green-500 active:scale-[0.97] transition-all"
+        ) : filteredLeaderboard.length === 0 ? (
+          <div className="bg-white border border-gray-200 rounded-xl p-12 text-center">
+            <Search className="w-10 h-10 text-gray-300 mx-auto mb-3" />
+            <p className="text-body text-gray-600 font-medium mb-1">No developers found</p>
+            <p className="text-body-sm text-gray-400 mb-4">Try adjusting your search or filters</p>
+            <Button 
+              onClick={() => { setSearchQuery(''); setFilters({ country: '', level: '', limit: 100 }); }}
+              variant="outline"
+              size="sm"
             >
               Reset Filters
-            </button>
+            </Button>
           </div>
         ) : (
-          <div className="grid gap-4">
-            {leaderboard.map((dev) => (
+          <div className="space-y-2">
+            {/* Table header — desktop only */}
+            <div className="hidden lg:grid lg:grid-cols-12 gap-4 px-6 py-2.5 text-overline text-gray-400 uppercase tracking-wider">
+              <div className="col-span-1">Rank</div>
+              <div className="col-span-5">Developer</div>
+              <div className="col-span-3">Skills</div>
+              <div className="col-span-1 text-center">Score</div>
+              <div className="col-span-1 text-center">Level</div>
+              <div className="col-span-1 text-right">Action</div>
+            </div>
+
+            {filteredLeaderboard.map((dev, idx) => (
               <div 
                 key={dev.username} 
-                className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-6"
+                className={`bg-white rounded-xl border transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 animate-fade-in-up ${
+                  dev.rank <= 3 ? 'border-blue-100 shadow-sm' : 'border-gray-200'
+                }`}
+                style={{ animationDelay: `${Math.min(idx, 10) * 40}ms` }}
               >
-                <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
-                  {/* Rank */}
-                  <div className="flex-shrink-0 w-10 sm:w-16 text-center">
-                    <div className="text-xl sm:text-3xl font-bold text-gray-400">
-                      {getRankMedal(dev.rank) || `#${dev.rank}`}
+                {/* Mobile layout */}
+                <div className="lg:hidden p-4">
+                  <div className="flex items-center gap-3">
+                    <RankBadge rank={dev.rank} />
+                    <img 
+                      src={dev.avatar} 
+                      alt={dev.name} 
+                      className="w-10 h-10 rounded-full border-2 border-gray-100 object-cover"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-body font-semibold text-gray-900 truncate">{dev.name}</p>
+                      <a 
+                        href={`https://github.com/${dev.username}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-caption text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                      >
+                        @{dev.username} <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
+                    <div className="text-right">
+                      <span className={`text-heading-sm font-semibold ${getScoreColor(dev.overall_score)} px-2 py-0.5 rounded-lg`}>
+                        {dev.overall_score}
+                      </span>
                     </div>
                   </div>
+                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+                    <div className="flex flex-wrap gap-1.5">
+                      {dev.primary_languages?.slice(0, 3).map((lang: string) => (
+                        <span key={lang} className="px-2 py-0.5 bg-gray-50 text-gray-600 text-caption rounded-md border border-gray-100">
+                          {lang}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-2.5 py-0.5 rounded-full text-caption font-medium border ${getLevelColor(dev.overall_level)}`}>
+                        {dev.overall_level}
+                      </span>
+                      {isBusinessOwner && (
+                        <Button
+                          onClick={() => handleHire(dev.email || `${dev.username}@github.com`, dev.name)}
+                          size="sm"
+                          className="h-7 px-2.5 text-caption bg-blue-600 hover:bg-blue-700 text-white"
+                        >
+                          <Briefcase className="w-3 h-3 mr-1" />
+                          Hire
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </div>
 
-                  {/* Avatar */}
-                  <img 
-                    src={dev.avatar} 
-                    alt={dev.name} 
-                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 border-gray-200"
-                  />
-
-                  {/* Info */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-base sm:text-xl font-bold text-gray-900 truncate">{dev.name}</h3>
-                    <a 
-                      href={`https://github.com/${dev.username}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-green-600 hover:text-green-700 font-medium text-sm"
-                    >
-                      @{dev.username} ↗
-                    </a>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {dev.primary_languages?.slice(0, 3).map(lang => (
-                        <span key={lang} className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">
+                {/* Desktop layout — table-like row */}
+                <div className="hidden lg:grid lg:grid-cols-12 gap-4 items-center px-6 py-4">
+                  <div className="col-span-1">
+                    <RankBadge rank={dev.rank} />
+                  </div>
+                  <div className="col-span-5 flex items-center gap-3">
+                    <img 
+                      src={dev.avatar} 
+                      alt={dev.name} 
+                      className="w-10 h-10 rounded-full border-2 border-gray-100 object-cover"
+                    />
+                    <div className="min-w-0">
+                      <p className="text-body font-semibold text-gray-900 truncate">{dev.name}</p>
+                      <a 
+                        href={`https://github.com/${dev.username}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-caption text-blue-600 hover:text-blue-700 flex items-center gap-1 transition-colors"
+                      >
+                        @{dev.username} <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
+                  </div>
+                  <div className="col-span-3">
+                    <div className="flex flex-wrap gap-1.5">
+                      {dev.primary_languages?.slice(0, 4).map((lang: string) => (
+                        <span key={lang} className="px-2 py-0.5 bg-gray-50 text-gray-600 text-caption rounded-md border border-gray-100">
                           {lang}
                         </span>
                       ))}
                     </div>
                   </div>
-
-                  {/* Score & Actions */}
-                  <div className="flex-shrink-0 text-left sm:text-right space-y-2 sm:space-y-3">
-                    <div>
-                      <div className="text-2xl sm:text-4xl font-bold text-green-500">
-                        {dev.overall_score}
-                      </div>
-                      <div className="text-sm text-gray-500">/ 110</div>
-                      <div className={`mt-2 inline-block px-3 py-1 rounded-full text-xs font-semibold border ${getLevelColor(dev.overall_level)}`}>
-                        {dev.overall_level}
-                      </div>
-                    </div>
+                  <div className="col-span-1 text-center">
+                    <span className={`text-heading-sm font-semibold ${getScoreColor(dev.overall_score)} px-2.5 py-1 rounded-lg inline-block`}>
+                      {dev.overall_score}
+                    </span>
+                  </div>
+                  <div className="col-span-1 text-center">
+                    <span className={`inline-block px-2.5 py-0.5 rounded-full text-caption font-medium border ${getLevelColor(dev.overall_level)}`}>
+                      {dev.overall_level}
+                    </span>
+                  </div>
+                  <div className="col-span-1 text-right">
                     {isBusinessOwner && (
                       <Button
                         onClick={() => handleHire(dev.email || `${dev.username}@github.com`, dev.name)}
                         size="sm"
-                        className="w-full gap-1"
+                        className="h-8 px-3 text-caption bg-blue-600 hover:bg-blue-700 text-white"
                       >
-                        <Briefcase className="w-3 h-3" />
+                        <Briefcase className="w-3.5 h-3.5 mr-1" />
                         Hire
                       </Button>
                     )}
@@ -280,12 +440,16 @@ const Leaderboard = () => {
       </main>
 
       {/* Footer */}
-      <footer className="mt-16 py-8 border-t border-gray-200 bg-white">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-gray-600 text-sm mb-3">• Powered by GPT-4</p>
-          <div className="text-gray-400 text-xs space-y-1">
-            <p>Not affiliated with GitHub, Inc.</p>
-            <p>GitHub and the GitHub logo are trademarks of GitHub, Inc.</p>
+      <footer className="mt-12 border-t border-gray-200 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-body font-semibold text-gray-900">Artemis</span>
+              <span className="text-body-sm text-gray-400">Remote Work Platform</span>
+            </div>
+            <div className="text-caption text-gray-400 text-center sm:text-right">
+              <p>Not affiliated with GitHub, Inc. GitHub is a trademark of GitHub, Inc.</p>
+            </div>
           </div>
         </div>
       </footer>

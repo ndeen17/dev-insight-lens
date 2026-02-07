@@ -63,6 +63,7 @@ export const ROUTES = {
 
   // Admin routes
   ADMIN_WITHDRAWALS: '/admin/withdrawals',
+  ADMIN_BROADCAST: '/admin/broadcast',
 } as const;
 
 // User Roles

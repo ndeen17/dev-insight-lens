@@ -9,6 +9,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import FilterTabs from '../components/FilterTabs';
 import ContractCard from '../components/ContractCard';
 import EmptyState from '../components/EmptyState';
+import StatCard from '../components/StatCard';
 import {
   FileText,
   Inbox,
@@ -44,7 +45,7 @@ const FreelancerDashboard = () => {
 
   const filterTabs = [
     { id: 'all', label: 'All Contracts', count: contracts.length },
-    { id: 'pending', label: 'Pending Offers', count: contracts.filter(c => c.status?.toLowerCase() === 'pending').length },
+    { id: 'pending', label: 'Pending Offers', count: contracts.filter(c => ['pending', 'draft'].includes(c.status?.toLowerCase())).length },
     { id: 'active', label: 'Active', count: contracts.filter(c => c.status?.toLowerCase() === 'active').length },
     { id: 'rejected', label: 'Declined', count: contracts.filter(c => c.status?.toLowerCase() === 'rejected').length },
     { id: 'completed', label: 'Completed', count: contracts.filter(c => c.status?.toLowerCase() === 'completed').length },
@@ -103,7 +104,11 @@ const FreelancerDashboard = () => {
   }, [notifications, fetchContracts, fetchStats]);
 
   const filteredContracts =
-    activeFilter === 'all' ? contracts : contracts.filter(c => c.status?.toLowerCase() === activeFilter);
+    activeFilter === 'all'
+      ? contracts
+      : activeFilter === 'pending'
+        ? contracts.filter(c => ['pending', 'draft'].includes(c.status?.toLowerCase()))
+        : contracts.filter(c => c.status?.toLowerCase() === activeFilter);
 
   const handleFilterChange = (filterId: string) => setSearchParams({ filter: filterId });
 
@@ -123,15 +128,13 @@ const FreelancerDashboard = () => {
   return (
     <DashboardLayout userRole="Freelancer">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 sm:px-8 py-4 sm:py-6">
-        <div className="pl-10 md:pl-0">
-          <h1 className="text-xl sm:text-3xl font-bold text-gray-900">{greeting}</h1>
-          <p className="text-gray-500 mt-1 text-sm sm:text-base">
-            {authUser?.profession
-              ? `${authUser.profession}${authUser.professionalRole ? ` · ${authUser.professionalRole}` : ''}`
-              : 'Track your projects and earnings'}
-          </p>
-        </div>
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-8 py-5 sm:py-6">
+        <h1 className="text-heading-sm sm:text-heading font-semibold text-gray-900 tracking-tight">{greeting}</h1>
+        <p className="text-body-sm text-gray-500 mt-0.5">
+          {authUser?.profession
+            ? `${authUser.profession}${authUser.professionalRole ? ` · ${authUser.professionalRole}` : ''}`
+            : 'Track your projects and earnings'}
+        </p>
       </div>
 
       {/* Stats Cards */}
@@ -140,8 +143,8 @@ const FreelancerDashboard = () => {
           <StatCard
             label="Active Contracts"
             value={stats?.contracts.active ?? 0}
-            icon={<TrendingUp className="w-5 h-5 text-emerald-600" />}
-            bg="bg-emerald-50"
+            icon={<TrendingUp className="w-5 h-5 text-blue-600" />}
+            bg="bg-blue-50"
             loading={loadingStats}
           />
           <StatCard
@@ -176,16 +179,16 @@ const FreelancerDashboard = () => {
           {/* Balance / Withdrawals */}
           <button
             onClick={() => navigate(ROUTES.WITHDRAWALS)}
-            className="flex items-center gap-4 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-5 text-left hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
+            className="flex items-center gap-4 bg-gradient-to-r from-blue-50 to-sky-50 border border-blue-200 rounded-xl p-5 text-left hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
           >
-            <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <DollarSign className="w-5 h-5 text-emerald-600" />
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <DollarSign className="w-5 h-5 text-blue-600" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-emerald-900">Withdrawals</p>
-              <p className="text-xs text-emerald-600">Manage your earnings &amp; payouts</p>
+              <p className="text-sm font-semibold text-blue-900">Withdrawals</p>
+              <p className="text-xs text-blue-600">Manage your earnings &amp; payouts</p>
             </div>
-            <ArrowUpRight className="w-4 h-4 text-emerald-300 group-hover:text-emerald-500 transition-colors" />
+            <ArrowUpRight className="w-4 h-4 text-blue-300 group-hover:text-blue-500 transition-colors" />
           </button>
 
           {/* Skills / GitHub or Assessments */}
@@ -242,7 +245,7 @@ const FreelancerDashboard = () => {
 
       {/* Contracts Section */}
       <div className="px-4 sm:px-8 pt-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Contracts</h2>
+        <h2 className="text-subheading text-gray-900 mb-4">Contracts</h2>
         <FilterTabs tabs={filterTabs} activeTab={activeFilter} onTabChange={handleFilterChange} />
       </div>
 
@@ -278,38 +281,5 @@ const FreelancerDashboard = () => {
 };
 
 /* ── Sub-components ────────────────────────────────────────── */
-
-function StatCard({
-  label,
-  value,
-  sub,
-  icon,
-  bg,
-  loading,
-}: {
-  label: string;
-  value: string | number;
-  sub?: string;
-  icon: React.ReactNode;
-  bg: string;
-  loading: boolean;
-}) {
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-start gap-4 animate-scale-in">
-      <div className={`w-10 h-10 rounded-lg ${bg} flex items-center justify-center flex-shrink-0`}>
-        {icon}
-      </div>
-      <div className="min-w-0">
-        <p className="text-sm text-gray-500 font-medium">{label}</p>
-        {loading ? (
-          <div className="h-7 w-16 bg-gray-100 rounded animate-pulse mt-1" />
-        ) : (
-          <p className="text-2xl font-bold text-gray-900 mt-0.5">{value}</p>
-        )}
-        {sub && !loading && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
-      </div>
-    </div>
-  );
-}
 
 export default FreelancerDashboard;

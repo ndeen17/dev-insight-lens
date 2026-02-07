@@ -169,7 +169,7 @@ export default function ContractRespond() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
         <div className="max-w-md w-full bg-white rounded-xl shadow-sm p-8 text-center">
           <AlertTriangle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
+          <h2 className="text-heading-sm font-semibold text-gray-900 mb-2">
             Unable to Load Contract
           </h2>
           <p className="text-gray-500 mb-6">{error}</p>
@@ -204,7 +204,7 @@ export default function ContractRespond() {
               <XCircle className="w-9 h-9 text-red-500" />
             )}
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-heading font-semibold text-gray-900 mb-2">
             Contract {accepted ? "Accepted" : "Declined"}
           </h2>
           <p className="text-gray-500 mb-2">
@@ -254,7 +254,7 @@ export default function ContractRespond() {
               <FileText className="w-6 h-6 text-lime-600" />
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">
+              <h1 className="text-heading-sm sm:text-heading font-semibold text-gray-900 mb-1">
                 {contract.contractName}
               </h1>
               <div className="flex flex-wrap gap-3 text-sm text-gray-500">
@@ -305,7 +305,7 @@ export default function ContractRespond() {
 
         {/* ── Payment details card ─────────────── */}
         <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8">
-          <h2 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+          <h2 className="text-subheading text-gray-900 mb-4 flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-lime-600" /> Payment Details
           </h2>
 
@@ -316,17 +316,17 @@ export default function ContractRespond() {
                   ? "Total Budget"
                   : "Hourly Rate"}
               </p>
-              <p className="text-xl font-bold text-gray-900">{amount}</p>
+              <p className="text-heading-sm font-bold text-gray-900">{amount}</p>
             </div>
             <div className="bg-gray-50 rounded-lg p-4">
               <p className="text-xs text-gray-500 mb-1">
                 Platform Fee ({contract.platformFee}%)
               </p>
-              <p className="text-xl font-bold text-gray-900">{fee}</p>
+              <p className="text-heading-sm font-bold text-gray-900">{fee}</p>
             </div>
             <div className="bg-lime-50 rounded-lg p-4 border border-lime-200">
               <p className="text-xs text-lime-700 mb-1">Your Payout</p>
-              <p className="text-xl font-bold text-lime-700">{payout}</p>
+              <p className="text-heading-sm font-bold text-lime-700">{payout}</p>
             </div>
           </div>
 
@@ -353,7 +353,7 @@ export default function ContractRespond() {
           contract.milestones &&
           contract.milestones.length > 0 && (
             <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">
+              <h2 className="text-subheading text-gray-900 mb-4">
                 Milestones ({contract.milestones.length})
               </h2>
               <div className="space-y-3">
@@ -435,7 +435,7 @@ export default function ContractRespond() {
         {/* ── Action area (only for pending) ───── */}
         {!alreadyResponded && (
           <div className="bg-white rounded-xl shadow-sm p-6 sm:p-8">
-            <h2 className="text-lg font-bold text-gray-900 mb-1">
+            <h2 className="text-subheading text-gray-900 mb-1">
               Your Response
             </h2>
             <p className="text-sm text-gray-500 mb-6">

@@ -178,7 +178,7 @@ export default function TalentProfile() {
                   state: { inviteEmail: profile.email },
                 })
               }
-              className="w-full sm:w-auto bg-green-400 hover:bg-green-500 text-black font-bold shadow-sm active:scale-[0.97] transition-all"
+              className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-sm active:scale-[0.97] transition-all"
             >
               <Send className="w-4 h-4 mr-2" />
               Invite to Assessment

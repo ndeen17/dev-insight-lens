@@ -18,6 +18,21 @@ export default {
 			}
 		},
 		extend: {
+			fontSize: {
+				// Enterprise type scale (matches Stripe/PayPal patterns)
+				'display': ['2.25rem', { lineHeight: '2.5rem', letterSpacing: '-0.025em', fontWeight: '700' }],     // 36px — hero/page titles
+				'display-sm': ['1.875rem', { lineHeight: '2.25rem', letterSpacing: '-0.025em', fontWeight: '700' }], // 30px — section titles
+				'heading': ['1.5rem', { lineHeight: '2rem', letterSpacing: '-0.02em', fontWeight: '600' }],          // 24px — page headings
+				'heading-sm': ['1.25rem', { lineHeight: '1.75rem', letterSpacing: '-0.01em', fontWeight: '600' }],   // 20px — card titles
+				'subheading': ['1rem', { lineHeight: '1.5rem', fontWeight: '600' }],                                  // 16px — section subtitles
+				'body': ['0.9375rem', { lineHeight: '1.5rem', fontWeight: '400' }],                                   // 15px — main body
+				'body-sm': ['0.8125rem', { lineHeight: '1.25rem', fontWeight: '400' }],                               // 13px — secondary text
+				'caption': ['0.75rem', { lineHeight: '1rem', fontWeight: '500' }],                                    // 12px — labels/badges
+				'overline': ['0.6875rem', { lineHeight: '1rem', fontWeight: '600', letterSpacing: '0.05em' }],       // 11px — section headers
+			},
+			maxWidth: {
+				'8xl': '88rem',    // 1408px — wider content for large monitors
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

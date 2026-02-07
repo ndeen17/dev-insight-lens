@@ -40,7 +40,7 @@ const EmployerDashboard = () => {
 
   const filterTabs = [
     { id: 'all', label: 'All Contracts', count: contracts.length },
-    { id: 'pending', label: 'Pending', count: contracts.filter(c => c.status?.toLowerCase() === 'pending').length },
+    { id: 'pending', label: 'Pending', count: contracts.filter(c => ['pending', 'draft'].includes(c.status?.toLowerCase())).length },
     { id: 'active', label: 'Active', count: contracts.filter(c => c.status?.toLowerCase() === 'active').length },
     { id: 'rejected', label: 'Rejected', count: contracts.filter(c => c.status?.toLowerCase() === 'rejected').length },
     { id: 'completed', label: 'Completed', count: contracts.filter(c => c.status?.toLowerCase() === 'completed').length },
@@ -89,10 +89,14 @@ const EmployerDashboard = () => {
   }, [notifications, fetchContracts, fetchStats]);
 
   const filteredContracts =
-    activeFilter === 'all' ? contracts : contracts.filter(c => c.status?.toLowerCase() === activeFilter);
+    activeFilter === 'all'
+      ? contracts
+      : activeFilter === 'pending'
+        ? contracts.filter(c => ['pending', 'draft'].includes(c.status?.toLowerCase()))
+        : contracts.filter(c => c.status?.toLowerCase() === activeFilter);
 
   const handleFilterChange = (filterId: string) => setSearchParams({ filter: filterId });
-  const handleCreateContract = () => navigate(ROUTES.CREATE_CONTRACT);
+  const handleCreateContract = () => navigate(ROUTES.CREATE_CONTRACT, { state: { fresh: true } });
 
   const fmtCurrency = (v: number) =>
     v >= 1000 ? `$${(v / 1000).toFixed(v % 1000 === 0 ? 0 : 1)}k` : `$${v}`;
@@ -102,17 +106,17 @@ const EmployerDashboard = () => {
   return (
     <DashboardLayout userRole="BusinessOwner">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 sm:px-8 py-4 sm:py-6">
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-8 py-5 sm:py-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="pl-10 md:pl-0">
-            <h1 className="text-xl sm:text-3xl font-bold text-gray-900">{greeting}</h1>
-            <p className="text-gray-500 mt-1 text-sm sm:text-base">Here&apos;s what&apos;s happening across your workspace</p>
+          <div>
+            <h1 className="text-heading-sm sm:text-heading font-semibold text-gray-900 tracking-tight">{greeting}</h1>
+            <p className="text-body-sm text-gray-500 mt-0.5">Here&apos;s what&apos;s happening across your workspace</p>
           </div>
           <button
             onClick={handleCreateContract}
-            className="flex items-center justify-center space-x-2 px-5 py-2.5 sm:px-6 sm:py-3 text-black font-bold bg-green-400 hover:bg-green-500 active:scale-[0.97] rounded-lg transition-all shadow-sm w-full sm:w-auto"
+            className="flex items-center justify-center gap-2 px-5 py-2.5 text-white font-semibold bg-blue-600 hover:bg-blue-700 active:scale-[0.97] rounded-lg transition-all shadow-sm w-full sm:w-auto"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-4 h-4" />
             <span>New Contract</span>
           </button>
         </div>
@@ -120,7 +124,7 @@ const EmployerDashboard = () => {
 
       {/* Quick Actions */}
       <div className="px-4 sm:px-8 pt-6">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <QuickAction
             label="Browse Talent"
             description="Find and assess professionals"
@@ -147,7 +151,7 @@ const EmployerDashboard = () => {
         <div className="px-4 sm:px-8 pt-6">
           <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100">
-              <h2 className="text-lg font-semibold text-gray-900">Recent Assessment Results</h2>
+              <h2 className="text-subheading text-gray-900">Recent Assessment Results</h2>
               <button
                 onClick={() => navigate(ROUTES.EMPLOYER_ASSESSMENTS)}
                 className="text-sm text-gray-500 hover:text-gray-900 flex items-center gap-1 transition-colors"
@@ -166,7 +170,7 @@ const EmployerDashboard = () => {
 
       {/* Contracts Section */}
       <div className="px-4 sm:px-8 pt-8">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Contracts</h2>
+        <h2 className="text-subheading text-gray-900 mb-4">Contracts</h2>
         <FilterTabs tabs={filterTabs} activeTab={activeFilter} onTabChange={handleFilterChange} />
       </div>
 
@@ -203,39 +207,6 @@ const EmployerDashboard = () => {
 
 /* ── Sub-components ────────────────────────────────────────── */
 
-function StatCard({
-  label,
-  value,
-  sub,
-  icon,
-  bg,
-  loading,
-}: {
-  label: string;
-  value: string | number;
-  sub?: string;
-  icon: React.ReactNode;
-  bg: string;
-  loading: boolean;
-}) {
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 p-5 flex items-start gap-4 animate-scale-in">
-      <div className={`w-10 h-10 rounded-lg ${bg} flex items-center justify-center flex-shrink-0`}>
-        {icon}
-      </div>
-      <div className="min-w-0">
-        <p className="text-sm text-gray-500 font-medium">{label}</p>
-        {loading ? (
-          <div className="h-7 w-16 bg-gray-100 rounded animate-pulse mt-1" />
-        ) : (
-          <p className="text-2xl font-bold text-gray-900 mt-0.5">{value}</p>
-        )}
-        {sub && !loading && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
-      </div>
-    </div>
-  );
-}
-
 function QuickAction({
   label,
   description,
@@ -252,7 +223,7 @@ function QuickAction({
       onClick={onClick}
       className="flex items-center gap-4 bg-white rounded-xl border border-gray-200 p-5 text-left hover:border-gray-300 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
     >
-      <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 group-hover:bg-green-50 group-hover:text-green-600 transition-colors">
+      <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
         {icon}
       </div>
       <div>

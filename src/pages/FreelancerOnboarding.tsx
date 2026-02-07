@@ -30,7 +30,7 @@ const PROFESSIONS = [
   { id: 'Software Engineering', label: 'Software Engineering', icon: Code2, color: 'bg-blue-50 border-blue-200 hover:border-blue-400' },
   { id: 'Marketing', label: 'Marketing', icon: Megaphone, color: 'bg-orange-50 border-orange-200 hover:border-orange-400' },
   { id: 'Design', label: 'Design', icon: Palette, color: 'bg-pink-50 border-pink-200 hover:border-pink-400' },
-  { id: 'Finance', label: 'Finance', icon: BarChart3, color: 'bg-green-50 border-green-200 hover:border-green-400' },
+  { id: 'Finance', label: 'Finance', icon: BarChart3, color: 'bg-blue-50 border-blue-200 hover:border-blue-400' },
   { id: 'Writing', label: 'Writing', icon: PenTool, color: 'bg-purple-50 border-purple-200 hover:border-purple-400' },
   { id: 'Project Management', label: 'Project Management', icon: FolderKanban, color: 'bg-yellow-50 border-yellow-200 hover:border-yellow-400' },
   { id: 'Data Analysis', label: 'Data Analysis', icon: Database, color: 'bg-teal-50 border-teal-200 hover:border-teal-400' },
@@ -149,7 +149,7 @@ const FreelancerOnboarding = () => {
       <div className="max-w-2xl mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-heading-sm sm:text-heading font-semibold text-gray-900 tracking-tight mb-2">
             Let's set up your profile
           </h1>
           <p className="text-gray-500">
@@ -164,7 +164,7 @@ const FreelancerOnboarding = () => {
               <div
                 className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
                   step > s
-                    ? 'bg-green-500 text-white'
+                    ? 'bg-blue-600 text-white'
                     : step === s
                     ? 'bg-black text-white'
                     : 'bg-gray-200 text-gray-500'
@@ -173,7 +173,7 @@ const FreelancerOnboarding = () => {
                 {step > s ? <Check className="w-4 h-4" /> : s}
               </div>
               {s < totalSteps && (
-                <div className={`w-12 h-1 mx-1 rounded ${step > s ? 'bg-green-500' : 'bg-gray-200'}`} />
+                <div className={`w-12 h-1 mx-1 rounded ${step > s ? 'bg-blue-600' : 'bg-gray-200'}`} />
               )}
             </div>
           ))}
@@ -182,7 +182,7 @@ const FreelancerOnboarding = () => {
         {/* Step 1: Profession */}
         {step === 1 && (
           <div>
-            <h2 className="text-xl font-bold text-gray-900 mb-1">What do you do?</h2>
+            <h2 className="text-heading-sm font-semibold text-gray-900 mb-1">What do you do?</h2>
             <p className="text-gray-500 mb-6 text-sm">Select the profession that best describes your work</p>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -198,7 +198,7 @@ const FreelancerOnboarding = () => {
                       setCustomRole('');
                       setSkills([]);
                     }}
-                    className={`flex flex-col items-center gap-2 p-5 border-2 rounded-xl transition-all text-center ${
+                    className={`flex flex-col items-center gap-2 p-3 sm:p-5 border-2 rounded-xl transition-all text-center ${
                       isSelected
                         ? 'border-black bg-gray-50 ring-1 ring-black'
                         : p.color
@@ -218,7 +218,7 @@ const FreelancerOnboarding = () => {
         {/* Step 2: Role */}
         {step === 2 && (
           <div>
-            <h2 className="text-xl font-bold text-gray-900 mb-1">What's your role?</h2>
+            <h2 className="text-heading-sm font-semibold text-gray-900 mb-1">What's your role?</h2>
             <p className="text-gray-500 mb-6 text-sm">Pick one or type your own</p>
 
             {ROLE_SUGGESTIONS[profession]?.length > 0 && (
@@ -264,7 +264,7 @@ const FreelancerOnboarding = () => {
         {/* Step 3: Skills */}
         {step === 3 && (
           <div>
-            <h2 className="text-xl font-bold text-gray-900 mb-1">Your top skills</h2>
+            <h2 className="text-heading-sm font-semibold text-gray-900 mb-1">Your top skills</h2>
             <p className="text-gray-500 mb-6 text-sm">
               Add skills that showcase your expertise (click suggestions or type below)
             </p>
@@ -339,7 +339,7 @@ const FreelancerOnboarding = () => {
         {/* Step 4: GitHub (devs only) */}
         {step === 4 && isDev && (
           <div>
-            <h2 className="text-xl font-bold text-gray-900 mb-1">Link your GitHub</h2>
+            <h2 className="text-heading-sm font-semibold text-gray-900 mb-1">Link your GitHub</h2>
             <p className="text-gray-500 mb-6 text-sm">
               This powers your developer Skills Card and makes you visible on the leaderboard.
               You can skip this and do it later.

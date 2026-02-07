@@ -324,9 +324,9 @@ export default function BrowseTalent() {
       {/* ── Header ── */}
       <div className="bg-white border-b border-gray-200 px-4 sm:px-8 py-4 sm:py-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="pl-10 md:pl-0">
-            <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Browse Talent</h1>
-            <p className="text-gray-600 mt-1 text-sm sm:text-base">
+          <div>
+            <h1 className="text-heading-sm sm:text-heading font-semibold text-gray-900 tracking-tight">Browse Talent</h1>
+            <p className="text-body-sm text-gray-500 mt-0.5">
               Swipe through verified talent across all professions
             </p>
           </div>
@@ -423,7 +423,7 @@ export default function BrowseTalent() {
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button
                   onClick={() => navigate(ROUTES.SAVED_DEVELOPERS)}
-                  className="bg-green-400 hover:bg-green-500 text-black font-bold shadow-sm active:scale-[0.97] transition-all"
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-sm active:scale-[0.97] transition-all"
                 >
                   <Bookmark className="w-4 h-4 mr-2" />
                   View Saved
@@ -447,7 +447,7 @@ export default function BrowseTalent() {
                 </p>
                 <div className="w-full bg-gray-200 rounded-full h-1.5">
                   <div
-                    className="bg-green-400 h-1.5 rounded-full transition-all duration-300"
+                    className="bg-blue-500 h-1.5 rounded-full transition-all duration-300"
                     style={{
                       width: `${((currentIndex + 1) / candidates.length) * 100}%`,
                     }}
@@ -486,7 +486,7 @@ export default function BrowseTalent() {
                 <div className="flex justify-center mt-2">
                   <span
                     className={`text-xs font-bold uppercase tracking-wider ${
-                      dragOffset > 0 ? 'text-green-500' : 'text-red-400'
+                      dragOffset > 0 ? 'text-blue-500' : 'text-red-400'
                     }`}
                   >
                     {dragOffset > 0 ? '→ Save' : '← Skip'}

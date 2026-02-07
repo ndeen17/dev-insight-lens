@@ -67,6 +67,7 @@ const Withdrawals = React.lazy(() => import("./pages/Withdrawals"));
 
 // Admin pages
 const AdminWithdrawals = React.lazy(() => import("./pages/AdminWithdrawals"));
+const AdminBroadcast = React.lazy(() => import("./pages/AdminBroadcast"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -303,6 +304,14 @@ const App = () => (
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.ADMIN}>
                     <AdminWithdrawals />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path={ROUTES.ADMIN_BROADCAST}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.ADMIN}>
+                    <AdminBroadcast />
                   </ProtectedRoute>
                 } 
               />

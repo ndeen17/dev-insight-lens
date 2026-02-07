@@ -78,7 +78,7 @@ export default function SessionResults() {
   return (
     <DashboardLayout userRole="BusinessOwner">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-8 py-6">
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-8 py-6">
         <div className="flex items-start gap-4">
           <Button
             variant="ghost"
@@ -91,7 +91,7 @@ export default function SessionResults() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Assessment Results</h1>
+            <h1 className="text-heading-sm sm:text-heading font-semibold text-gray-900 tracking-tight">Assessment Results</h1>
             <div className="flex items-center gap-3 mt-1">
               {assessment && (
                 <span className="text-sm text-gray-500">{assessment.title}</span>
@@ -109,11 +109,11 @@ export default function SessionResults() {
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto p-8 space-y-8">
+      <div className="max-w-3xl mx-auto p-4 sm:p-8 space-y-8">
         {/* Score hero */}
         <div className="bg-white rounded-xl border border-gray-200 p-6 text-center">
           <p className="text-sm text-gray-400 uppercase tracking-wider mb-2">Overall Score</p>
-          <p className={`text-5xl font-bold ${scoreColor(session.score ?? 0)}`}>
+          <p className={`text-3xl sm:text-5xl font-bold ${scoreColor(session.score ?? 0)}`}>
             {session.score ?? '—'}%
           </p>
           <div className="flex items-center justify-center gap-4 mt-4 text-sm text-gray-500">

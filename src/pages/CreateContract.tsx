@@ -87,8 +87,53 @@ export default function CreateContract() {
 
   const [showDraftToast, setShowDraftToast] = useState(false);
 
-  // Load draft from localStorage
+  // Load draft — skip if navigated with fresh:true, load from backend if resumeDraftId, else localStorage
   useEffect(() => {
+    // "New Contract" button passes fresh:true — start with clean slate
+    if (location.state?.fresh) {
+      localStorage.removeItem('contractDraft');
+      return;
+    }
+
+    // Resume a specific draft from the dashboard
+    if (location.state?.resumeDraftId) {
+      const loadDraftFromBackend = async () => {
+        try {
+          const response = await apiClient.get(`/api/contracts/${location.state.resumeDraftId}`);
+          const c = response.data.contract;
+          setContractName(c.contractName || '');
+          setContributorEmail(c.contributorEmail || '');
+          setCategory(c.category || '');
+          setSubcategory(c.subcategory || '');
+          setDescription(c.description || '');
+          setContractType(c.contractType || 'fixed');
+          setBudget(c.budget ? String(c.budget) : '');
+          setCurrency(c.currency || 'USD');
+          setSplitMilestones(c.splitMilestones || false);
+          setMilestones(
+            c.milestones?.length
+              ? c.milestones.map((m: { name?: string; budget?: number; dueDate?: string }) => ({
+                  name: m.name || '',
+                  budget: m.budget ? String(m.budget) : '',
+                  dueDate: m.dueDate ? new Date(m.dueDate).toISOString().split('T')[0] : ''
+                }))
+              : [{ name: '', budget: '', dueDate: '' }]
+          );
+          setHourlyRate(c.hourlyRate ? String(c.hourlyRate) : '');
+          setWeeklyLimit(c.weeklyLimit ? String(c.weeklyLimit) : '');
+          setNoLimit(c.weeklyLimit === null);
+          setDraftContractId(c._id);
+          setShowDraftToast(true);
+          setTimeout(() => setShowDraftToast(false), 5000);
+        } catch (error) {
+          console.error('Failed to load draft from backend:', error);
+        }
+      };
+      loadDraftFromBackend();
+      return;
+    }
+
+    // Default — restore from localStorage
     const savedDraft = localStorage.getItem('contractDraft');
     if (savedDraft) {
       try {
@@ -392,7 +437,7 @@ export default function CreateContract() {
 
   const handleSaveDraft = async () => {
     await saveDraft();
-    alert('Draft saved successfully!');
+    navigate('/employer/dashboard?filter=pending', { replace: true });
   };
 
   const handleSubmit = async () => {
@@ -481,8 +526,8 @@ export default function CreateContract() {
           <div className="mb-4">
             <BackToDashboard />
           </div>
-          <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Create New Contract</h1>
-          <p className="mt-2 text-gray-600 text-sm sm:text-base">Set up a contract with your freelancer</p>
+          <h1 className="text-heading-sm sm:text-heading font-semibold text-gray-900 tracking-tight">Create New Contract</h1>
+          <p className="mt-1 text-body-sm text-gray-500">Set up a contract with your freelancer</p>
         </div>
 
         {/* Progress Steps */}
@@ -509,7 +554,7 @@ export default function CreateContract() {
               </div>
             ))}
           </div>
-          <div className="flex justify-between mt-2 max-w-2xl mx-auto">
+          <div className="hidden sm:flex justify-between mt-2 max-w-2xl mx-auto">
             <span className={`text-sm font-medium ${currentStep >= 1 ? 'text-[#84cc16]' : 'text-gray-400'}`}>
               Set Up
             </span>
@@ -877,7 +922,7 @@ export default function CreateContract() {
                               </button>
                             )}
 
-                            {/* "You'll receive" summary box */}
+                            {/* Payment summary box */}
                             <div className="mt-2 rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-2">
                               <div className="flex justify-between text-sm text-gray-600">
                                 <span>Total Budget</span>
@@ -986,7 +1031,7 @@ export default function CreateContract() {
                           <Edit2 className="w-4 h-4" />
                         </Button>
                       </div>
-                      <h2 className="text-2xl font-bold text-gray-900">{contractName}</h2>
+                      <h2 className="text-heading font-semibold text-gray-900">{contractName}</h2>
                     </div>
 
                     {/* Project Description Card */}
@@ -1128,8 +1173,8 @@ export default function CreateContract() {
                         </div>
                         <div className="border-t-2 border-[#84cc16]/20 pt-3">
                           <div className="flex justify-between">
-                            <span className="font-bold text-gray-900">Total</span>
-                            <span className="font-bold text-xl text-[#84cc16]">
+                            <span className="font-semibold text-gray-900">Total</span>
+                            <span className="font-bold text-heading-sm text-[#84cc16]">
                               {currency} {payment.totalForClient.toFixed(2)}
                             </span>
                           </div>
@@ -1164,7 +1209,7 @@ export default function CreateContract() {
                       </Button>
                       <Button 
                         onClick={handleNext}
-                        className="bg-green-400 hover:bg-green-500 text-black font-bold active:scale-[0.97] transition-all flex items-center gap-2"
+                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold active:scale-[0.97] transition-all flex items-center gap-2"
                       >
                         {currentStep === 3 ? 'Review Contract' : 'Next'}
                         <ChevronRight className="w-4 h-4" />
@@ -1183,9 +1228,9 @@ export default function CreateContract() {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <DollarSign className="w-5 h-5 text-[#84cc16]" />
-                  You'll receive
+                  Payment Summary
                 </CardTitle>
-                <CardDescription>Payment breakdown after platform fees</CardDescription>
+                <CardDescription>What you'll pay including platform fees</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -1338,7 +1383,7 @@ export default function CreateContract() {
                   <Button
                     onClick={handleSubmit}
                     disabled={!agreedToTerms || isSending}
-                    className="w-full bg-green-400 hover:bg-green-500 text-black font-bold active:scale-[0.97] transition-all h-12 text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold active:scale-[0.97] transition-all h-12 text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSending ? (
                       <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Sending...</>

@@ -131,7 +131,7 @@ export default function CreateAssessment() {
     <DashboardLayout userRole="BusinessOwner">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 sm:px-8 py-4 sm:py-6">
-        <div className="flex items-center gap-4 pl-10 md:pl-0">
+        <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate(ROUTES.EMPLOYER_ASSESSMENTS)}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
@@ -213,7 +213,7 @@ export default function CreateAssessment() {
                     <Badge
                       key={r}
                       variant={role === r ? 'default' : 'outline'}
-                      className={`cursor-pointer ${role === r ? 'bg-green-400 text-black font-semibold' : 'hover:bg-gray-100'}`}
+                      className={`cursor-pointer ${role === r ? 'bg-blue-600 text-white font-semibold' : 'hover:bg-gray-100'}`}
                       onClick={() => { setRole(role === r ? '' : r); setCustomRole(''); }}
                     >
                       {r}
@@ -278,47 +278,61 @@ export default function CreateAssessment() {
 
         {/* Difficulty */}
         <section className="space-y-3">
-          <Label className="text-sm font-medium">Difficulty</Label>
-          <div className="flex gap-3">
-            {(['beginner', 'intermediate', 'advanced'] as const).map((d) => (
-              <Button
-                key={d}
-                variant={difficulty === d ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setDifficulty(d)}
-                className={difficulty === d ? 'bg-green-400 text-black font-semibold' : ''}
+          <Label className="text-sm font-medium text-gray-700">Difficulty</Label>
+          <div className="grid grid-cols-3 gap-2 p-1 bg-gray-100 rounded-xl">
+            {([
+              { value: 'beginner' as const, label: 'Beginner', color: 'text-emerald-600' },
+              { value: 'intermediate' as const, label: 'Intermediate', color: 'text-amber-600' },
+              { value: 'advanced' as const, label: 'Advanced', color: 'text-red-600' },
+            ]).map(({ value, label, color }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setDifficulty(value)}
+                className={`relative px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  difficulty === value
+                    ? 'bg-white text-gray-900 shadow-sm ring-1 ring-gray-200'
+                    : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+                }`}
               >
-                {d.charAt(0).toUpperCase() + d.slice(1)}
-              </Button>
+                <span className="flex items-center justify-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${difficulty === value ? color.replace('text-', 'bg-') : 'bg-gray-300'} transition-colors`} />
+                  {label}
+                </span>
+              </button>
             ))}
           </div>
         </section>
 
         {/* Question count + time limit */}
         <section className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div className="space-y-3">
-            <Label className="text-sm font-medium">
-              Questions: <span className="font-bold">{questionCount}</span>
-            </Label>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-medium text-gray-700">Questions</Label>
+              <span className="text-sm font-semibold text-gray-900 bg-gray-100 px-2.5 py-0.5 rounded-md">{questionCount}</span>
+            </div>
             <Slider
               value={[questionCount]}
               onValueChange={([v]) => setQuestionCount(v)}
               min={3}
               max={20}
               step={1}
+              className="[&_[role=slider]]:bg-blue-600 [&_[role=slider]]:border-blue-600 [&_[role=slider]]:shadow-md [&_[role=slider]]:w-5 [&_[role=slider]]:h-5 [&_[data-orientation=horizontal]>.bg-primary]:bg-blue-600"
             />
             <p className="text-xs text-gray-400">3 – 20 questions</p>
           </div>
-          <div className="space-y-3">
-            <Label className="text-sm font-medium">
-              Time Limit: <span className="font-bold">{timeLimitMinutes} min</span>
-            </Label>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm font-medium text-gray-700">Time Limit</Label>
+              <span className="text-sm font-semibold text-gray-900 bg-gray-100 px-2.5 py-0.5 rounded-md">{timeLimitMinutes} min</span>
+            </div>
             <Slider
               value={[timeLimitMinutes]}
               onValueChange={([v]) => setTimeLimitMinutes(v)}
               min={5}
               max={120}
               step={5}
+              className="[&_[role=slider]]:bg-blue-600 [&_[role=slider]]:border-blue-600 [&_[role=slider]]:shadow-md [&_[role=slider]]:w-5 [&_[role=slider]]:h-5 [&_[data-orientation=horizontal]>.bg-primary]:bg-blue-600"
             />
             <p className="text-xs text-gray-400">5 – 120 minutes</p>
           </div>
@@ -332,7 +346,7 @@ export default function CreateAssessment() {
           <Button
             onClick={handleSubmit}
             disabled={!canSubmit || saving}
-            className="flex-1 bg-green-400 hover:bg-green-500 text-black font-bold active:scale-[0.97] transition-all"
+            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold active:scale-[0.97] transition-all"
           >
             {saving ? (
               <>

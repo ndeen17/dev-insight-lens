@@ -16,6 +16,8 @@ export default function ContractCard({ contract, userRole }: ContractCardProps) 
       case 'active':
       case 'ongoing':
         return 'bg-green-100 text-green-800 border-green-200';
+      case 'draft':
+        return 'bg-indigo-100 text-indigo-800 border-indigo-200';
       case 'pending':
         return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       case 'completed':
@@ -74,6 +76,14 @@ export default function ContractCard({ contract, userRole }: ContractCardProps) 
     : null;
 
   const handleClick = () => {
+    // Draft contracts → resume editing
+    if (contract.status === 'draft') {
+      const createRoute = userRole === 'Freelancer'
+        ? '/freelancer/contracts/create'
+        : '/employer/contracts/create';
+      navigate(createRoute, { state: { resumeDraftId: contract._id } });
+      return;
+    }
     // Pending offers for freelancers → respond page
     if (contract.status === 'pending' && userRole === 'Freelancer') {
       navigate(`/contracts/${contract._id}/respond`);
@@ -91,7 +101,7 @@ export default function ContractCard({ contract, userRole }: ContractCardProps) 
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1 min-w-0">
-          <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-1">
+          <h3 className="text-subheading text-gray-900 mb-2 line-clamp-1">
             {contract.contractName}
           </h3>
           <div className="flex items-center gap-2 flex-wrap">

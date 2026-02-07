@@ -27,6 +27,11 @@ import {
   Wallet,
   ArrowDownToLine,
   XCircle,
+  GraduationCap,
+  UserX,
+  PlayCircle,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import type { Notification, NotificationType } from '@/types/notification';
 
@@ -49,6 +54,10 @@ const typeConfig: Record<NotificationType, { icon: typeof Bell; color: string; b
   withdrawal_processing: { icon: ArrowDownToLine, color: 'text-blue-600', bg: 'bg-blue-100' },
   withdrawal_completed: { icon: CircleCheck, color: 'text-emerald-600', bg: 'bg-emerald-100' },
   withdrawal_rejected: { icon: XCircle, color: 'text-red-600', bg: 'bg-red-100' },
+  assessment_invitation: { icon: GraduationCap, color: 'text-blue-600', bg: 'bg-blue-100' },
+  assessment_declined: { icon: UserX, color: 'text-orange-500', bg: 'bg-orange-100' },
+  assessment_started: { icon: PlayCircle, color: 'text-blue-600', bg: 'bg-blue-100' },
+  assessment_completed: { icon: GraduationCap, color: 'text-green-600', bg: 'bg-green-100' },
   system_announcement: { icon: Megaphone, color: 'text-gray-700', bg: 'bg-gray-100' },
 };
 
@@ -87,7 +96,7 @@ function NotificationItem({
     <button
       onClick={handleClick}
       className={`w-full flex items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-gray-50 ${
-        !notification.read ? 'bg-lime-50/60' : ''
+        !notification.read ? 'bg-blue-50/60' : ''
       }`}
     >
       {/* Icon */}
@@ -106,7 +115,7 @@ function NotificationItem({
 
       {/* Unread dot */}
       {!notification.read && (
-        <span className="mt-2 flex-shrink-0 w-2 h-2 rounded-full bg-lime-500" />
+        <span className="mt-2 flex-shrink-0 w-2 h-2 rounded-full bg-blue-500" />
       )}
     </button>
   );
@@ -123,6 +132,8 @@ export default function NotificationBell() {
     markAllAsRead,
     loadMore,
     hasMore,
+    soundEnabled,
+    toggleSound,
   } = useNotifications();
 
   const navigate = useNavigate();
@@ -163,15 +174,32 @@ export default function NotificationBell() {
 
       {/* Dropdown panel */}
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-[380px] max-h-[480px] bg-white border border-gray-200 rounded-xl shadow-xl z-50 flex flex-col overflow-hidden">
+        <>
+          {/* Backdrop overlay */}
+          <div className="fixed inset-0 bg-black/20 z-[60]" onClick={() => setOpen(false)} />
+          
+          {/* Panel - always fixed, centered on mobile, top-right on desktop */}
+          <div className="fixed z-[61] inset-x-3 top-4 sm:inset-auto sm:top-4 sm:right-4 sm:w-[400px] max-h-[calc(100vh-2rem)] bg-white border border-gray-200 rounded-xl shadow-2xl flex flex-col overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
             <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
             <div className="flex items-center gap-2">
+              <button
+                onClick={toggleSound}
+                className="p-1 rounded hover:bg-gray-100 transition-colors"
+                aria-label={soundEnabled ? 'Mute notifications' : 'Unmute notifications'}
+                title={soundEnabled ? 'Sound on' : 'Sound off'}
+              >
+                {soundEnabled ? (
+                  <Volume2 className="w-4 h-4 text-blue-600" />
+                ) : (
+                  <VolumeX className="w-4 h-4 text-gray-400" />
+                )}
+              </button>
               {unreadCount > 0 && (
                 <button
                   onClick={markAllAsRead}
-                  className="text-xs text-lime-600 hover:text-lime-700 font-medium flex items-center gap-1"
+                  className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
                 >
                   <CheckCheck className="w-3.5 h-3.5" />
                   Mark all read
@@ -221,6 +249,7 @@ export default function NotificationBell() {
             )}
           </div>
         </div>
+        </>
       )}
     </div>
   );

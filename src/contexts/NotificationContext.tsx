@@ -12,6 +12,7 @@ import { apiClient } from '@/lib/apiClient';
 import { API_CONFIG } from '@/config/constants';
 import { logger } from '@/utils/logger';
 import type { Notification, NotificationPage } from '@/types/notification';
+import { playNotificationSound, getSoundEnabled, setSoundEnabled } from '@/utils/notificationSound';
 
 interface NotificationContextType {
   /** Live array of loaded notifications (newest first) */
@@ -32,6 +33,10 @@ interface NotificationContextType {
   hasMore: boolean;
   /** Delete a notification */
   deleteNotification: (notificationId: string) => Promise<void>;
+  /** Whether notification sounds are enabled */
+  soundEnabled: boolean;
+  /** Toggle notification sound on/off */
+  toggleSound: () => void;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
@@ -49,6 +54,21 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
 
   const socketRef = useRef<Socket | null>(null);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [soundEnabled, setSoundEnabledState] = useState(getSoundEnabled);
+  const soundEnabledRef = useRef(soundEnabled);
+
+  // Keep ref in sync so socket handler always has latest value
+  useEffect(() => {
+    soundEnabledRef.current = soundEnabled;
+  }, [soundEnabled]);
+
+  const toggleSound = useCallback(() => {
+    setSoundEnabledState((prev) => {
+      const next = !prev;
+      setSoundEnabled(next);
+      return next;
+    });
+  }, []);
 
   // ── Socket.io connection management ────────────────────
 
@@ -116,6 +136,10 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
         socket.on('notification:new', (notification: Notification) => {
           setNotifications((prev) => [notification, ...prev]);
           setUnreadCount((prev) => prev + 1);
+          // Play chime if sound is enabled
+          if (soundEnabledRef.current) {
+            playNotificationSound();
+          }
         });
 
         socket.on('notification:unreadCount', ({ count }: { count: number }) => {
@@ -271,6 +295,8 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
     loadMore,
     hasMore,
     deleteNotification,
+    soundEnabled,
+    toggleSound,
   };
 
   return (

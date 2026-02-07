@@ -116,10 +116,10 @@ const AdminWithdrawals = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-8 py-6">
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-8 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Withdrawal Management</h1>
+            <h1 className="text-heading-sm sm:text-heading font-semibold text-gray-900 tracking-tight">Withdrawal Management</h1>
             <p className="text-sm text-gray-500 mt-1">Review and process freelancer withdrawal requests</p>
           </div>
           <button
@@ -132,9 +132,9 @@ const AdminWithdrawals = () => {
         </div>
       </div>
 
-      <div className="px-8 py-6 space-y-6">
+      <div className="px-4 sm:px-8 py-6 space-y-6">
         {/* Filters */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Filter className="w-4 h-4 text-gray-400" />
           {filters.map((f) => (
             <button
@@ -171,7 +171,7 @@ const AdminWithdrawals = () => {
                 <div key={w._id} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
                   {/* Summary Row */}
                   <div
-                    className="flex items-center justify-between p-5 cursor-pointer hover:bg-gray-50 transition-colors"
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 sm:p-5 cursor-pointer hover:bg-gray-50 transition-colors gap-3"
                     onClick={() => setExpandedId(isExpanded ? null : w._id)}
                   >
                     <div className="flex items-center gap-4">
@@ -187,7 +187,7 @@ const AdminWithdrawals = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-gray-900">
+                      <p className="text-subheading text-gray-900">
                         {w.currency} {w.amount.toFixed(2)}
                       </p>
                       <p className="text-xs text-gray-400">
@@ -281,7 +281,7 @@ const AdminWithdrawals = () => {
                             <button
                               onClick={() => handleProcess(w._id, 'completed')}
                               disabled={processingId === w._id}
-                              className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+                              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 transition-colors"
                             >
                               {processingId === w._id ? 'Processing...' : 'Mark Completed'}
                             </button>

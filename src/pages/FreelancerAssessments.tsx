@@ -87,10 +87,10 @@ const FreelancerAssessments = () => {
   return (
     <DashboardLayout userRole="Freelancer">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-4 sm:px-8 py-4 sm:py-6">
-        <div className="pl-10 md:pl-0">
-          <h1 className="text-xl sm:text-3xl font-bold text-gray-900">My Assessments</h1>
-          <p className="text-gray-600 mt-1 text-sm sm:text-base">View invitations and track your assessment results</p>
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-8 py-5 sm:py-6">
+        <div>
+          <h1 className="text-heading-sm sm:text-heading font-semibold text-gray-900 tracking-tight">My Assessments</h1>
+          <p className="text-body-sm text-gray-500 mt-0.5">View invitations and track your assessment results</p>
         </div>
       </div>
 

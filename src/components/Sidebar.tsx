@@ -269,7 +269,7 @@ export default function Sidebar({ userRole }: SidebarProps) {
       <div className="px-4 pb-4">
         <button
           onClick={handleCreateContract}
-          className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-black font-bold bg-green-400 hover:bg-green-500 active:scale-[0.97] rounded-lg transition-all shadow-sm"
+          className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-white font-bold bg-blue-600 hover:bg-blue-700 active:scale-[0.97] rounded-lg transition-all shadow-sm"
         >
           <Plus className="w-5 h-5" />
           <span>New Contract</span>
@@ -319,7 +319,8 @@ export default function Sidebar({ userRole }: SidebarProps) {
       {/* Mobile Menu Button */}
       <button
         onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        className="md:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-lg border border-gray-200"
+        className="md:hidden fixed top-4 left-3 z-50 p-2.5 bg-white rounded-xl shadow-md border border-gray-200 hover:shadow-lg active:scale-95 transition-all"
+        aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
       >
         {mobileMenuOpen ? (
           <X className="w-6 h-6 text-gray-900" />
@@ -338,7 +339,7 @@ export default function Sidebar({ userRole }: SidebarProps) {
           />
           
           {/* Slide-in menu */}
-          <aside className="md:hidden fixed inset-y-0 left-0 w-64 bg-white z-50 flex flex-col shadow-2xl animate-slide-in-left">
+          <aside className="md:hidden fixed inset-y-0 left-0 w-[280px] max-w-[85vw] bg-white z-50 flex flex-col shadow-2xl animate-slide-in-left">
             <SidebarContent />
           </aside>
         </>

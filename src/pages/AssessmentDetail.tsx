@@ -151,7 +151,7 @@ export default function AssessmentDetail() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-4 sm:px-8 py-4 sm:py-6">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <div className="flex items-start gap-4 pl-10 md:pl-0">
+          <div className="flex items-start gap-4">
             <Button variant="ghost" size="icon" onClick={() => navigate(ROUTES.EMPLOYER_ASSESSMENTS)}>
               <ArrowLeft className="w-5 h-5" />
             </Button>
@@ -183,7 +183,7 @@ export default function AssessmentDetail() {
           </div>
           <Button
             onClick={() => setInviteOpen(true)}
-            className="bg-green-400 hover:bg-green-500 text-black font-bold shadow-sm active:scale-[0.97] transition-all w-full sm:w-auto"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-sm active:scale-[0.97] transition-all w-full sm:w-auto"
           >
             <Send className="w-4 h-4 mr-2" />
             Send Invitation

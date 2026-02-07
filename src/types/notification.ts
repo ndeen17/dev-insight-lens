@@ -20,6 +20,10 @@ export type NotificationType =
   | 'withdrawal_processing'
   | 'withdrawal_completed'
   | 'withdrawal_rejected'
+  | 'assessment_invitation'
+  | 'assessment_declined'
+  | 'assessment_started'
+  | 'assessment_completed'
   | 'system_announcement';
 
 export interface Notification {
@@ -29,6 +33,7 @@ export interface Notification {
   title: string;
   message: string;
   contract?: string;
+  assessment?: string;
   actor?: {
     _id: string;
     firstName: string;
