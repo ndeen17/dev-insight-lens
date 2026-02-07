@@ -26,6 +26,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import type { Contract } from '@/types/contract';
 import type { FreelancerDashboardStats } from '@/types/dashboard';
+import { SkeletonDashboard } from '@/components/Skeletons';
 import { ROUTES } from '@/config/constants';
 
 const FreelancerDashboard = () => {
@@ -137,60 +138,9 @@ const FreelancerDashboard = () => {
         </p>
       </div>
 
-      {/* Stats Cards */}
-      <div className="px-4 sm:px-8 pt-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            label="Active Contracts"
-            value={stats?.contracts.active ?? 0}
-            icon={<TrendingUp className="w-5 h-5 text-blue-600" />}
-            bg="bg-blue-50"
-            loading={loadingStats}
-          />
-          <StatCard
-            label="Pending Offers"
-            value={stats?.contracts.pending ?? 0}
-            icon={<Inbox className="w-5 h-5 text-blue-600" />}
-            bg="bg-blue-50"
-            loading={loadingStats}
-          />
-          <StatCard
-            label="Available Balance"
-            value={fmtCurrency(balance)}
-            sub={`Total earned: ${fmtCurrency(totalEarnings)}`}
-            icon={<Wallet className="w-5 h-5 text-amber-600" />}
-            bg="bg-amber-50"
-            loading={loadingStats}
-          />
-          <StatCard
-            label="Best Score"
-            value={stats?.assessments.bestScore ?? '—'}
-            sub={stats?.assessments.avgScore ? `Avg: ${stats.assessments.avgScore} · ${stats.assessments.completed} tests` : undefined}
-            icon={<Award className="w-5 h-5 text-purple-600" />}
-            bg="bg-purple-50"
-            loading={loadingStats}
-          />
-        </div>
-      </div>
-
       {/* Quick Actions */}
       <div className="px-4 sm:px-8 pt-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {/* Balance / Withdrawals */}
-          <button
-            onClick={() => navigate(ROUTES.WITHDRAWALS)}
-            className="flex items-center gap-4 bg-gradient-to-r from-blue-50 to-sky-50 border border-blue-200 rounded-xl p-5 text-left hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
-          >
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <DollarSign className="w-5 h-5 text-blue-600" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-blue-900">Withdrawals</p>
-              <p className="text-xs text-blue-600">Manage your earnings &amp; payouts</p>
-            </div>
-            <ArrowUpRight className="w-4 h-4 text-blue-300 group-hover:text-blue-500 transition-colors" />
-          </button>
-
           {/* Skills / GitHub or Assessments */}
           {authUser?.profession === 'Software Engineering' ? (
             <button

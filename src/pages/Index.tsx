@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { analyzeGitHubProfile } from '../services/api';
 import GitHubInput from '../components/GitHubInput';
@@ -27,6 +27,7 @@ import {
   BarChart3,
   CheckCircle,
   Star,
+  Target,
   BadgeCheck,
   Lock,
   Clock,
@@ -56,6 +57,37 @@ const Index = () => {
   const [error, setError] = useState(null);
   const [viewMode, setViewMode] = useState<ViewMode>('recruiter');
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [heroIndex, setHeroIndex] = useState(0);
+
+  const heroSlides = [
+    {
+      highlight: 'hire top talent.',
+      subtitle: 'AI-ranked developers with verified GitHub profiles and live assessment scores.',
+    },
+    {
+      highlight: 'verify real skills.',
+      subtitle: 'GitHub analysis reveals true coding ability, languages, and contribution quality.',
+    },
+    {
+      highlight: 'protect every payment.',
+      subtitle: 'Funds held safely in escrow until milestones are delivered and approved.',
+    },
+    {
+      highlight: 'test any developer.',
+      subtitle: 'AI-powered coding assessments with real-time scoring across any tech stack.',
+    },
+    {
+      highlight: 'ship with confidence.',
+      subtitle: 'Smart contracts, milestone tracking, and the lowest fees in the industry.',
+    },
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHeroIndex((prev) => (prev + 1) % heroSlides.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleAnalyze = async (url) => {
     setAppState('loading');
@@ -108,8 +140,8 @@ const Index = () => {
       <nav className="border-b border-gray-100 bg-white/95 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Link to="/" className="text-heading-sm font-semibold text-gray-900 tracking-tight">
-              Artemis
+            <Link to="/" className="flex items-center gap-2 text-heading-sm font-semibold text-gray-900 tracking-tight">
+              <Target className="w-5 h-5 text-blue-600" />Artemis
             </Link>
 
             {/* Desktop nav */}
@@ -181,24 +213,36 @@ const Index = () => {
       <section className="relative overflow-hidden">
         {/* Subtle grid background */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-40" />
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-50/30 via-blue-50/30 to-white" />
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-50/40 via-blue-50/20 to-white" />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-24 pb-16 sm:pb-20">
           <div className="max-w-3xl mx-auto text-center">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-caption text-emerald-700 font-medium mb-6">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              Secure Contracts &middot; Low Fees &middot; AI-Powered
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-caption text-blue-700 font-medium mb-6">
+              <Target className="w-3.5 h-3.5" />
+              Hire Smarter &middot; Work Safer &middot; Pay Less
             </div>
 
             <h1 className="text-display sm:text-[2.75rem] lg:text-[3.25rem] font-bold text-gray-900 tracking-tight leading-[1.15]">
-              Stop overpaying.<br className="hidden sm:block" />
-              <span className="text-emerald-600">Keep more</span> of what you earn.
+              The smarter way to<br className="hidden sm:block" />
+              <span className="inline-block overflow-hidden h-[1.2em] align-bottom">
+                <span
+                  key={heroIndex}
+                  className="inline-block text-emerald-600 hero-text-reveal"
+                >
+                  {heroSlides[heroIndex].highlight}
+                </span>
+              </span>
             </h1>
 
-            <p className="mt-5 text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
-              The only platform where Freelancers keep up to <span className="text-emerald-600 font-semibold">96.4%</span> of their earnings and Employers pay just <span className="text-emerald-600 font-semibold">1.9%</span> in fees. Protected by escrow. Powered by AI.
-            </p>
+            <div className="overflow-hidden">
+              <p
+                key={`sub-${heroIndex}`}
+                className="mt-5 text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed hero-subtitle-reveal"
+              >
+                {heroSlides[heroIndex].subtitle}
+              </p>
+            </div>
 
             {/* CTA buttons */}
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -217,7 +261,7 @@ const Index = () => {
                   </Button>
                 </>
               ) : (
-                <Button asChild size="lg" className="bg-emerald-600 hover:bg-emerald-700 !text-white font-semibold h-12 px-8 text-body shadow-lg shadow-emerald-200/50">
+                <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 !text-white font-semibold h-12 px-8 text-body shadow-lg shadow-blue-200/50">
                   <Link to={getDashboardLink()}>
                     Go to Dashboard <ArrowRight className="w-4 h-4 ml-2" />
                   </Link>
@@ -227,10 +271,10 @@ const Index = () => {
 
             {/* Trust signals */}
             <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-caption text-gray-400">
+              <span className="flex items-center gap-1.5"><ClipboardCheck className="w-3.5 h-3.5 text-blue-500" /> AI Assessments</span>
+              <span className="flex items-center gap-1.5"><GitBranch className="w-3.5 h-3.5 text-blue-500" /> GitHub Analysis</span>
               <span className="flex items-center gap-1.5"><Shield className="w-3.5 h-3.5 text-emerald-500" /> Escrow Protected</span>
-              <span className="flex items-center gap-1.5"><Percent className="w-3.5 h-3.5 text-emerald-500" /> 3.6% Freelancer Fee</span>
-              <span className="flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-emerald-500" /> AI Assessments</span>
-              <span className="flex items-center gap-1.5"><Globe className="w-3.5 h-3.5 text-emerald-500" /> Global Payments</span>
+              <span className="flex items-center gap-1.5"><Percent className="w-3.5 h-3.5 text-blue-500" /> Lowest Fees</span>
             </div>
           </div>
 
@@ -309,7 +353,7 @@ const Index = () => {
               },
               {
                 icon: Shield,
-                color: 'bg-emerald-50 text-emerald-600',
+                color: 'bg-blue-50 text-blue-600',
                 title: 'Escrow Payment Protection',
                 description: 'Every payment is held safely in escrow until work is approved. Both parties are protected from day one, automatically.',
               },
@@ -321,7 +365,7 @@ const Index = () => {
               },
               {
                 icon: Receipt,
-                color: 'bg-emerald-50 text-emerald-600',
+                color: 'bg-blue-50 text-blue-600',
                 title: 'Lowest Fees in the Industry',
                 description: 'Just 3.6% for freelancers and 1.9% for clients. No hidden charges, no tiered pricing, no surprises. Keep more of what you earn.',
               },
@@ -333,7 +377,7 @@ const Index = () => {
                 <h3 className="text-heading-sm text-gray-900 mb-2">{title}</h3>
                 <p className="text-body-sm text-gray-500 leading-relaxed mb-4">{description}</p>
                 {link && (
-                  <Link to={link} className="inline-flex items-center text-body-sm text-emerald-600 hover:text-emerald-700 font-medium transition-colors group/link">
+                  <Link to={link} className="inline-flex items-center text-body-sm text-blue-600 hover:text-blue-700 font-medium transition-colors group/link">
                     {linkText} <ChevronRight className="w-4 h-4 ml-0.5 group-hover/link:translate-x-0.5 transition-transform" />
                   </Link>
                 )}
@@ -348,7 +392,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-caption text-emerald-700 font-medium mb-5">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-caption text-blue-700 font-medium mb-5">
                 <Lock className="w-3.5 h-3.5" />
                 Payment Protection
               </div>
@@ -360,13 +404,13 @@ const Index = () => {
               </p>
               <div className="mt-8 space-y-4">
                 {[
-                  { icon: ShieldCheck, text: 'Funds locked in escrow before work begins', color: 'text-emerald-600' },
-                  { icon: Clock, text: 'Automatic payment release on milestone approval', color: 'text-emerald-600' },
-                  { icon: HandCoins, text: 'Instant withdrawals to your bank account', color: 'text-emerald-600' },
-                  { icon: FileCheck2, text: 'Dispute resolution built into every contract', color: 'text-emerald-600' },
+                  { icon: ShieldCheck, text: 'Funds locked in escrow before work begins', color: 'text-blue-600' },
+                  { icon: Clock, text: 'Automatic payment release on milestone approval', color: 'text-blue-600' },
+                  { icon: HandCoins, text: 'Instant withdrawals to your bank account', color: 'text-blue-600' },
+                  { icon: FileCheck2, text: 'Dispute resolution built into every contract', color: 'text-blue-600' },
                 ].map(({ icon: Icon, text, color }) => (
                   <div key={text} className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <Icon className={`w-4 h-4 ${color}`} />
                     </div>
                     <span className="text-body text-gray-700">{text}</span>
@@ -376,14 +420,14 @@ const Index = () => {
             </div>
 
             {/* Visual escrow flow */}
-            <div className="bg-gradient-to-br from-emerald-50 via-white to-blue-50 rounded-3xl border border-gray-200 p-6 sm:p-8">
+            <div className="bg-gradient-to-br from-blue-50 via-white to-gray-50 rounded-3xl border border-gray-200 p-6 sm:p-8">
               <div className="space-y-4">
                 {[
                   { step: 1, icon: FileText, label: 'Contract Created', desc: 'Terms agreed by both parties', color: 'bg-blue-600' },
                   { step: 2, icon: Lock, label: 'Funds Locked in Escrow', desc: 'Client deposits payment securely', color: 'bg-emerald-600' },
                   { step: 3, icon: Send, label: 'Work Delivered', desc: 'Freelancer submits milestone', color: 'bg-blue-600' },
-                  { step: 4, icon: BadgeCheck, label: 'Client Approves', desc: 'Work reviewed and accepted', color: 'bg-emerald-600' },
-                  { step: 5, icon: Wallet, label: 'Payment Released', desc: 'Instant payout to freelancer', color: 'bg-emerald-600' },
+                  { step: 4, icon: BadgeCheck, label: 'Client Approves', desc: 'Work reviewed and accepted', color: 'bg-blue-600' },
+                  { step: 5, icon: Wallet, label: 'Payment Released', desc: 'Instant payout to freelancer', color: 'bg-blue-600' },
                 ].map(({ step, icon: Icon, label, desc, color }, idx) => (
                   <div key={step} className="flex items-start gap-4">
                     <div className="flex flex-col items-center">
@@ -408,12 +452,12 @@ const Index = () => {
       <section className="py-16 sm:py-24 bg-gray-50 border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-caption text-emerald-700 font-medium mb-5">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-caption text-blue-700 font-medium mb-5">
               <Wallet className="w-3.5 h-3.5" />
               Keep More Money
             </div>
             <h2 className="text-display-sm sm:text-display text-gray-900 tracking-tight">
-              Tired of platforms<br /><span className="text-emerald-600">eating your earnings?</span>
+              Tired of platforms<br /><span className="text-blue-600">eating your earnings?</span>
             </h2>
             <p className="mt-4 text-body sm:text-lg text-gray-500 leading-relaxed">
               See how much more you keep with Artemis vs other platforms on a $1,000 contract.
@@ -453,7 +497,7 @@ const Index = () => {
                 Best Value
               </div>
               <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-6 h-6 text-emerald-600" />
+                <Target className="w-6 h-6 text-emerald-600" />
               </div>
               <p className="text-caption text-emerald-700 font-medium uppercase tracking-wider mb-1">On Artemis</p>
               <p className="text-display-sm font-bold text-gray-900">$964</p>
@@ -519,91 +563,16 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ─── Features Section ─── */}
-      <section id="features" className="py-16 sm:py-24 bg-gray-50 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="text-caption text-blue-600 font-semibold uppercase tracking-wider">Platform Features</span>
-            <h2 className="mt-3 text-display-sm sm:text-display text-gray-900 tracking-tight">
-              Everything you need to manage remote work
-            </h2>
-            <p className="mt-4 text-body sm:text-lg text-gray-500 leading-relaxed">
-              From finding top talent to processing payments, streamlined for modern teams
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {[
-              {
-                icon: TrendingUp,
-                color: 'bg-blue-50 text-blue-600',
-                title: 'AI-Ranked Talent Discovery',
-                description: 'Browse professionals ranked by verified GitHub skills, assessment scores, and contribution history. No guesswork.',
-                link: isAuthenticated ? undefined : '/leaderboard',
-                linkText: 'Browse Developers',
-              },
-              {
-                icon: FileText,
-                color: 'bg-indigo-50 text-indigo-600',
-                title: 'Smart Contracts',
-                description: 'Create fixed-price or hourly contracts with milestone tracking, automated approval workflows, and built-in escrow protection.',
-                link: isAuthenticated && user?.role === 'BusinessOwner' ? '/employer/contracts/new' : (!isAuthenticated ? '/auth/signup' : undefined),
-                linkText: isAuthenticated ? 'Create Contract' : 'Get Started',
-              },
-              {
-                icon: ClipboardCheck,
-                color: 'bg-purple-50 text-purple-600',
-                title: 'AI Technical Assessments',
-                description: 'Create and send coding assessments powered by AI. Evaluate candidates across languages and frameworks in real-time with live scoring.',
-                link: isAuthenticated && user?.role === 'BusinessOwner' ? '/test-candidate' : (!isAuthenticated ? '/auth/signup' : undefined),
-                linkText: isAuthenticated ? 'Create Assessment' : 'Get Started',
-              },
-              {
-                icon: Shield,
-                color: 'bg-emerald-50 text-emerald-600',
-                title: 'Escrow Payment Protection',
-                description: 'Every payment is held safely in escrow until work is approved. Both parties are protected from day one, automatically.',
-              },
-              {
-                icon: GitBranch,
-                color: 'bg-orange-50 text-orange-600',
-                title: 'GitHub Profile Analysis',
-                description: 'Deep-dive into any developer\'s GitHub with AI. See real skills, contribution patterns, language proficiency, and coding quality.',
-              },
-              {
-                icon: Receipt,
-                color: 'bg-emerald-50 text-emerald-600',
-                title: 'Lowest Fees in the Industry',
-                description: 'Just 3.6% for freelancers and 1.9% for clients. No hidden charges, no tiered pricing, no surprises. Keep more of what you earn.',
-              },
-            ].map(({ icon: Icon, color, title, description, link, linkText }) => (
-              <div key={title} className="group bg-white border border-gray-200 rounded-2xl p-6 lg:p-8 hover:shadow-lg hover:border-gray-300 hover:-translate-y-1 transition-all duration-300">
-                <div className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center mb-5`}>
-                  <Icon className="w-6 h-6" />
-                </div>
-                <h3 className="text-heading-sm text-gray-900 mb-2">{title}</h3>
-                <p className="text-body-sm text-gray-500 leading-relaxed mb-4">{description}</p>
-                {link && (
-                  <Link to={link} className="inline-flex items-center text-body-sm text-emerald-600 hover:text-emerald-700 font-medium transition-colors group/link">
-                    {linkText} <ChevronRight className="w-4 h-4 ml-0.5 group-hover/link:translate-x-0.5 transition-transform" />
-                  </Link>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ─── How It Works ─── */}
       <section id="how-it-works" className="py-16 sm:py-24 bg-white border-t border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
-            <span className="text-caption text-emerald-600 font-semibold uppercase tracking-wider">Simple Workflow</span>
+            <span className="text-caption text-blue-600 font-semibold uppercase tracking-wider">How It Works</span>
             <h2 className="mt-3 text-display-sm sm:text-display text-gray-900 tracking-tight">
-              Getting paid is as easy as <span className="text-emerald-600">1-2-3</span>
+              From discovery to payment in <span className="text-blue-600">3 steps</span>
             </h2>
             <p className="mt-4 text-body sm:text-lg text-gray-500 leading-relaxed">
-              No complicated setup. No long onboarding. Just create, work, and get paid.
+              Find verified talent, agree on terms, and let the platform handle the rest.
             </p>
           </div>
 
@@ -611,24 +580,24 @@ const Index = () => {
             {[
               {
                 step: '01',
-                title: 'Create a Contract',
-                description: 'Set your terms, scope, budget, and milestones. Both employers and freelancers can create contracts. Funds are locked in escrow immediately.',
-                icon: FileText,
-                color: 'bg-emerald-600',
+                title: 'Discover & Verify Talent',
+                description: 'Browse AI-ranked developers on the leaderboard. Review GitHub analysis, skill scores, and coding assessments before you hire.',
+                icon: TrendingUp,
+                color: 'bg-blue-600',
               },
               {
                 step: '02',
-                title: 'Client Secures Payment',
-                description: 'Funds are deposited and locked safely in escrow. The freelancer can work with confidence knowing the money is already there.',
-                icon: Lock,
+                title: 'Create a Smart Contract',
+                description: 'Set milestones, budget, and terms. Funds are secured in escrow automatically. Both parties are protected from the start.',
+                icon: FileText,
                 color: 'bg-blue-600',
               },
               {
                 step: '03',
-                title: 'Deliver & Get Paid',
-                description: 'Submit your work, client reviews and approves. Payment is released instantly to your account. No waiting days for withdrawals.',
+                title: 'Deliver, Approve & Pay',
+                description: 'Work gets submitted, reviewed, and approved. Payment releases instantly with the lowest fees in the industry.',
                 icon: BadgeCheck,
-                color: 'bg-emerald-600',
+                color: 'bg-blue-600',
               },
             ].map(({ step, title, description, icon: Icon, color }, idx) => (
               <div key={step} className="relative">
@@ -637,10 +606,10 @@ const Index = () => {
                   <div className="hidden md:block absolute top-8 left-[calc(50%+2rem)] w-[calc(100%-4rem)] h-px bg-gray-200" />
                 )}
                 <div className="bg-white rounded-2xl border border-gray-200 p-6 lg:p-8 text-center relative hover:shadow-md hover:border-gray-300 transition-all duration-200">
-                  <div className={`w-14 h-14 ${color} text-white rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-md ${color === 'bg-emerald-600' ? 'shadow-emerald-200/40' : 'shadow-blue-200/40'}`}>
+                  <div className={`w-14 h-14 ${color} text-white rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-md shadow-blue-200/40`}>
                     <Icon className="w-6 h-6" />
                   </div>
-                  <span className="text-overline text-emerald-600 mb-2 block">STEP {step}</span>
+                  <span className="text-overline text-blue-600 mb-2 block">STEP {step}</span>
                   <h3 className="text-heading-sm text-gray-900 mb-2">{title}</h3>
                   <p className="text-body-sm text-gray-500 leading-relaxed">{description}</p>
                 </div>
@@ -656,26 +625,26 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-caption text-blue-700 font-medium mb-5">
-                <Zap className="w-3.5 h-3.5" />
-                Switch Easily
+                <Target className="w-3.5 h-3.5" />
+                Why Artemis
               </div>
               <h2 className="text-display-sm sm:text-display text-gray-900 tracking-tight leading-tight">
-                You don't need permission<br />to <span className="text-emerald-600">stop overpaying.</span>
+                One platform for<br /><span className="text-emerald-600">the entire workflow.</span>
               </h2>
               <p className="mt-4 text-body sm:text-lg text-gray-500 leading-relaxed">
-                Move your active contracts to Artemis in minutes. No setup fees, no commitments, no hoops to jump through.
+                Other platforms do one thing. Artemis does everything: find talent, verify skills, manage contracts, and process payments.
               </p>
 
               <div className="mt-8 space-y-5">
                 {[
-                  { icon: HandCoins, text: 'Get paid instantly to your bank', color: 'text-emerald-600' },
-                  { icon: Clock, text: 'No more waiting days to withdraw', color: 'text-emerald-600' },
-                  { icon: CircleDollarSign, text: 'Your client saves too with just 1.9% fee', color: 'text-emerald-600' },
-                  { icon: EyeOff, text: 'Total privacy. No public profile required', color: 'text-emerald-600' },
-                  { icon: UserCheck, text: 'AI-powered skill verification for credibility', color: 'text-emerald-600' },
+                  { icon: ClipboardCheck, text: 'AI-generated coding assessments with live scoring', color: 'text-blue-600' },
+                  { icon: GitBranch, text: 'GitHub profile analysis powered by AI', color: 'text-blue-600' },
+                  { icon: Shield, text: 'Escrow-protected contracts with milestone tracking', color: 'text-blue-600' },
+                  { icon: HandCoins, text: 'Industry-lowest fees: 3.6% freelancer, 1.9% client', color: 'text-blue-600' },
+                  { icon: EyeOff, text: 'Total privacy. No public profile required', color: 'text-blue-600' },
                 ].map(({ icon: Icon, text, color }) => (
                   <div key={text} className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
                       <Icon className={`w-4 h-4 ${color}`} />
                     </div>
                     <span className="text-body text-gray-700">{text}</span>
@@ -685,7 +654,7 @@ const Index = () => {
 
               {!isAuthenticated && (
                 <div className="mt-8">
-                  <Button asChild size="lg" className="bg-emerald-600 hover:bg-emerald-700 !text-white font-semibold h-12 px-8 shadow-lg shadow-emerald-200/40">
+                  <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700 !text-white font-semibold h-12 px-8 shadow-lg shadow-blue-200/40">
                     <Link to="/auth/signup">
                       Start Your First Contract <ArrowRight className="w-4 h-4 ml-2" />
                     </Link>
@@ -697,7 +666,7 @@ const Index = () => {
             {/* Feature cards grid */}
             <div className="grid grid-cols-2 gap-4">
               {[
-                { icon: Shield, title: 'Secure Escrow', desc: 'Funds protected until work is approved', color: 'bg-emerald-50', iconColor: 'text-emerald-600' },
+                { icon: Shield, title: 'Secure Escrow', desc: 'Funds protected until work is approved', color: 'bg-blue-50', iconColor: 'text-blue-600' },
                 { icon: Zap, title: 'AI Assessments', desc: 'Test skills in real-time with AI scoring', color: 'bg-purple-50', iconColor: 'text-purple-600' },
                 { icon: BarChart3, title: 'Skill Analytics', desc: 'GitHub analysis and assessment scorecards', color: 'bg-indigo-50', iconColor: 'text-indigo-600' },
                 { icon: Globe, title: 'Global Payments', desc: 'EUR, USD, and local currencies supported', color: 'bg-sky-50', iconColor: 'text-sky-600' },
@@ -724,8 +693,8 @@ const Index = () => {
               { value: '30+', label: 'Countries Served', icon: Globe },
             ].map(({ value, label, icon: Icon }) => (
               <div key={label} className="text-center">
-                <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center mx-auto mb-3">
-                  <Icon className="w-5 h-5 text-emerald-600" />
+                <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center mx-auto mb-3">
+                  <Icon className="w-5 h-5 text-blue-600" />
                 </div>
                 <p className="text-display-sm sm:text-display font-bold text-gray-900">{value}</p>
                 <p className="text-caption text-gray-500 mt-1">{label}</p>
@@ -737,21 +706,21 @@ const Index = () => {
 
       {/* ─── Final CTA ─── */}
       {!isAuthenticated && (
-        <section className="bg-gradient-to-r from-emerald-600 to-emerald-700 py-16 sm:py-20">
+        <section className="bg-gradient-to-r from-blue-600 to-blue-700 py-16 sm:py-20">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-display-sm sm:text-display text-white tracking-tight">
-              You just need a <span className="underline decoration-emerald-300 underline-offset-4">better contract.</span>
+              You just need a <span className="underline decoration-blue-300 underline-offset-4">smarter platform.</span>
             </h2>
-            <p className="mt-4 text-lg text-emerald-100 max-w-xl mx-auto">
-              Join thousands of freelancers and employers who are already keeping more of what they earn. Start your first contract in minutes.
+            <p className="mt-4 text-lg text-blue-100 max-w-xl mx-auto">
+              AI assessments, GitHub analysis, smart contracts, escrow payments, and the lowest fees, all in one place. Start building your team today.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Button asChild size="lg" className="w-full sm:w-auto bg-white text-emerald-700 hover:bg-emerald-50 font-semibold h-12 px-8 shadow-lg">
+              <Button asChild size="lg" className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-400 !text-white font-semibold h-12 px-8 shadow-lg">
                 <Link to="/auth/signup">
                   Start Free Today <ArrowRight className="w-4 h-4 ml-2" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="w-full sm:w-auto border-white/30 !text-white hover:bg-white/10 h-12 px-8 font-medium">
+              <Button asChild variant="outline" size="lg" className="w-full sm:w-auto bg-white text-gray-900 border-white hover:bg-blue-50 h-12 px-8 font-medium">
                 <Link to="/leaderboard">
                   Explore Leaderboard
                 </Link>
@@ -766,7 +735,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
             <div className="col-span-2 md:col-span-1">
-              <span className="text-heading-sm font-semibold text-white">Artemis</span>
+              <span className="flex items-center gap-2 text-heading-sm font-semibold text-white"><Target className="w-5 h-5 text-blue-400" />Artemis</span>
               <p className="mt-3 text-body-sm text-gray-400 leading-relaxed">
                 The complete remote work platform for Employers and Freelancers. Find talent, manage contracts, and handle payments, all in one place.
               </p>
