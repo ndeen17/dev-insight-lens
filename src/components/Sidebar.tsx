@@ -21,7 +21,8 @@ import {
   ChevronRight,
   Wallet,
   ClipboardList,
-  Settings
+  Settings,
+  CreditCard
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -62,6 +63,11 @@ export default function Sidebar({ userRole }: SidebarProps) {
             name: 'Payments', 
             path: '/employer/dashboard?filter=payments', 
             icon: ShieldCheck 
+          },
+          {
+            name: 'Payment Methods',
+            path: ROUTES.PAYMENT_METHODS,
+            icon: CreditCard
           },
         ],
         talent: [

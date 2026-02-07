@@ -1,10 +1,16 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotifications } from '@/contexts/NotificationContext';
 import { apiClient } from '@/lib/apiClient';
 import { ROUTES } from '@/config/constants';
 import type { Contract, ActivityLogEntry } from '@/types/contract';
+import { loadStripe } from '@stripe/stripe-js';
+import { getMilestonePaymentStatus, payMilestone as payMilestoneApi, retryMilestonePayment } from '@/services/paymentService';
+
+const stripePromise = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY
+  ? loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY)
+  : null;
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -97,6 +103,8 @@ export default function ContractDetails() {
   const [payingMilestone, setPayingMilestone] = useState<number | null>(null);
   const [retryingPayment, setRetryingPayment] = useState<number | null>(null);
   const [expandedActivityLog, setExpandedActivityLog] = useState<number | null>(null);
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [pollingIndex, setPollingIndex] = useState<number | null>(null);
 
   const isCreator = useMemo(
     () => user && contract?.creator?._id === user._id,
@@ -236,14 +244,63 @@ export default function ContractDetails() {
     }
   };
 
+  /* ── Payment status polling ────────────── */
+  const startPolling = useCallback((milestoneIndex: number) => {
+    if (pollingRef.current) clearInterval(pollingRef.current);
+    setPollingIndex(milestoneIndex);
+    pollingRef.current = setInterval(async () => {
+      try {
+        const status = await getMilestonePaymentStatus(id!, milestoneIndex);
+        if (status.paymentStatus === 'succeeded' || status.paymentStatus === 'failed') {
+          if (pollingRef.current) clearInterval(pollingRef.current);
+          pollingRef.current = null;
+          setPollingIndex(null);
+          await fetchContract();
+        }
+      } catch {
+        // Ignore polling errors — will retry next tick
+      }
+    }, 3000);
+  }, [id, fetchContract]);
+
+  // Cleanup polling on unmount
+  useEffect(() => {
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, []);
+
+  /* ── 3DS-aware payment handler ─────────── */
+  const confirmPaymentIfNeeded = useCallback(async (clientSecret: string, milestoneIndex: number) => {
+    const stripe = stripePromise ? await stripePromise : null;
+    if (!stripe) {
+      // No Stripe.js — assume server-side confirmation worked
+      startPolling(milestoneIndex);
+      await fetchContract();
+      return;
+    }
+
+    const { error: confirmError, paymentIntent } = await stripe.confirmCardPayment(clientSecret);
+    if (confirmError) {
+      setError(confirmError.message || 'Card authentication failed. Please try again.');
+      await fetchContract();
+    } else if (paymentIntent?.status === 'succeeded') {
+      await fetchContract();
+    } else {
+      // Still processing — poll for webhook confirmation
+      startPolling(milestoneIndex);
+    }
+  }, [fetchContract, startPolling]);
+
   const handleRetryPayment = async (milestoneIndex: number) => {
     try {
       setRetryingPayment(milestoneIndex);
-      await apiClient.post(
-        `/api/payments/milestones/${id}/${milestoneIndex}/retry`,
-        {}
-      );
-      await fetchContract();
+      const res = await retryMilestonePayment(id!, milestoneIndex);
+      if (res.clientSecret) {
+        await confirmPaymentIfNeeded(res.clientSecret, milestoneIndex);
+      } else {
+        await fetchContract();
+      }
     } catch (err: any) {
       const msg = err.response?.data?.message || 'Retry failed. Please try again.';
       setError(msg);
@@ -255,13 +312,12 @@ export default function ContractDetails() {
   const handlePayMilestone = async (milestoneIndex: number) => {
     try {
       setPayingMilestone(milestoneIndex);
-      const res = await apiClient.post(
-        `/api/payments/milestones/${id}/${milestoneIndex}/pay`,
-        {}
-      );
-      // Payment intent created — for now we auto-confirm server-side
-      // In future, use Stripe Elements with res.data.clientSecret
-      await fetchContract();
+      const res = await payMilestoneApi(id!, milestoneIndex);
+      if (res.clientSecret) {
+        await confirmPaymentIfNeeded(res.clientSecret, milestoneIndex);
+      } else {
+        await fetchContract();
+      }
     } catch (err: any) {
       const msg =
         err.response?.data?.message || 'Payment failed. Please try again.';

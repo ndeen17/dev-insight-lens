@@ -38,6 +38,7 @@ export const ROUTES = {
   SAVED_DEVELOPERS: '/employer/saved',
   CREATE_CONTRACT: '/employer/contracts/create',
   CONTRACT_DETAILS: '/employer/contracts/:id',
+  PAYMENT_METHODS: '/employer/payment-methods',
   
   // Freelancer routes
   FREELANCER_ONBOARDING: '/freelancer/onboarding',

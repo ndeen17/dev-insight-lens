@@ -62,6 +62,9 @@ const ContractSent = React.lazy(() => import("./pages/ContractSent"));
 const ContractRespond = React.lazy(() => import("./pages/ContractRespond"));
 const ProfileSettings = React.lazy(() => import("./pages/ProfileSettings"));
 
+// Payment methods (employer)
+const PaymentMethods = React.lazy(() => import("./pages/PaymentMethods"));
+
 // Freelancer balance & withdrawals
 const Withdrawals = React.lazy(() => import("./pages/Withdrawals"));
 
@@ -176,6 +179,14 @@ const App = () => (
                 element={
                   <ProtectedRoute>
                     <ContractDetails />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path={ROUTES.PAYMENT_METHODS}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.BUSINESS_OWNER}>
+                    <PaymentMethods />
                   </ProtectedRoute>
                 } 
               />
