@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
+import { apiClient } from '@/lib/apiClient';
+import { useNotifications } from '@/contexts/NotificationContext';
 import DashboardLayout from '../components/DashboardLayout';
 import FilterTabs from '../components/FilterTabs';
 import ContractCard from '../components/ContractCard';
@@ -8,12 +10,13 @@ import EmptyState from '../components/EmptyState';
 import { FileText, Plus } from 'lucide-react';
 import { useToast } from '../hooks/use-toast';
 import { ROUTES } from '@/config/constants';
+import type { Contract } from '@/types/contract';
 
 const EmployerDashboard = () => {
   const navigate = useNavigate();
   const { user } = useUser();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [contracts, setContracts] = useState<any[]>([]);
+  const [contracts, setContracts] = useState<Contract[]>([]);
   const [loadingContracts, setLoadingContracts] = useState(false);
   const { toast } = useToast();
 
@@ -34,6 +37,11 @@ const EmployerDashboard = () => {
       count: contracts.filter(c => c.status?.toLowerCase() === 'active').length 
     },
     { 
+      id: 'rejected', 
+      label: 'Rejected', 
+      count: contracts.filter(c => c.status?.toLowerCase() === 'rejected').length 
+    },
+    { 
       id: 'completed', 
       label: 'Completed', 
       count: contracts.filter(c => c.status?.toLowerCase() === 'completed').length 
@@ -50,19 +58,11 @@ const EmployerDashboard = () => {
     fetchContracts();
   }, []);
 
-  const fetchContracts = async () => {
+  const fetchContracts = useCallback(async () => {
     try {
       setLoadingContracts(true);
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/contracts`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setContracts(data);
-      }
+      const response = await apiClient.get('/api/contracts?role=creator');
+      setContracts(response.data.contracts || []);
     } catch (error) {
       console.error('Failed to fetch contracts:', error);
       toast({
@@ -73,7 +73,20 @@ const EmployerDashboard = () => {
     } finally {
       setLoadingContracts(false);
     }
-  };
+  }, [toast]);
+
+  // Real-time refresh: refetch when we receive a contract-related notification
+  const { notifications } = useNotifications();
+  useEffect(() => {
+    // If newest notification is contract-related, refetch
+    const latest = notifications[0];
+    if (
+      latest &&
+      ['contract_accepted', 'contract_rejected', 'contract_completed', 'milestone_submitted', 'milestone_approved', 'milestone_rejected'].includes(latest.type)
+    ) {
+      fetchContracts();
+    }
+  }, [notifications, fetchContracts]);
 
   // Filter contracts based on active filter
   const getFilteredContracts = () => {

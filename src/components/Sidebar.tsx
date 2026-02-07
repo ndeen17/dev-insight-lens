@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ROUTES } from '@/config/constants';
 import { useUser, UserButton } from '@clerk/clerk-react';
+import NotificationBell from '@/components/NotificationBell';
 import { 
   Clock, 
   CheckCircle2, 
   Archive, 
   DollarSign, 
+  ShieldCheck,
   Plus,
   Menu,
   X,
@@ -19,7 +21,8 @@ import {
   BarChart3,
   Trophy,
   ChevronDown,
-  ChevronRight
+  ChevronRight,
+  Wallet
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -60,7 +63,7 @@ export default function Sidebar({ userRole }: SidebarProps) {
           { 
             name: 'Payments', 
             path: '/employer/dashboard?filter=payments', 
-            icon: DollarSign 
+            icon: ShieldCheck 
           },
         ],
         talent: [
@@ -99,7 +102,12 @@ export default function Sidebar({ userRole }: SidebarProps) {
         { 
           name: 'Payments', 
           path: '/freelancer/dashboard?filter=payments', 
-          icon: DollarSign 
+          icon: ShieldCheck 
+        },
+        {
+          name: 'Withdrawals',
+          path: ROUTES.WITHDRAWALS,
+          icon: Wallet
         },
       ]
       };
@@ -124,11 +132,12 @@ export default function Sidebar({ userRole }: SidebarProps) {
 
   const SidebarContent = () => (
     <>
-      {/* Logo */}
-      <div className="px-6 py-6">
+      {/* Logo + Notifications */}
+      <div className="px-6 py-6 flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2">
           <span className="text-2xl font-bold text-gray-900">Artemis</span>
         </Link>
+        <NotificationBell />
       </div>
 
       {/* Navigation Items */}

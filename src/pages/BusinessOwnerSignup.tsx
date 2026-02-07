@@ -54,8 +54,14 @@ const BusinessOwnerSignup = () => {
           }
         }
         
-        // Navigate to onboarding
-        navigate(ROUTES.EMPLOYER_ONBOARDING, { replace: true });
+        // Navigate to stored return URL or onboarding
+        const returnUrl = sessionStorage.getItem('artemis_return_url');
+        if (returnUrl) {
+          sessionStorage.removeItem('artemis_return_url');
+          navigate(returnUrl, { replace: true });
+        } else {
+          navigate(ROUTES.EMPLOYER_ONBOARDING, { replace: true });
+        }
       }
     };
     handlePostSignup();

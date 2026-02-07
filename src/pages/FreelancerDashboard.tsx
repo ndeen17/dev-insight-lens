@@ -1,36 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
 import { apiClient } from '@/lib/apiClient';
+import { useNotifications } from '@/contexts/NotificationContext';
 import DashboardLayout from '../components/DashboardLayout';
 import FilterTabs from '../components/FilterTabs';
 import ContractCard from '../components/ContractCard';
 import EmptyState from '../components/EmptyState';
-import { FileText, Inbox } from 'lucide-react';
+import { FileText, Inbox, Wallet, ArrowUpRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
-interface Contract {
-  _id: string;
-  contractName: string;
-  creator: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    companyName?: string;
-  };
-  category: string;
-  contractType: 'fixed' | 'hourly';
-  budget?: number;
-  hourlyRate?: number;
-  currency: string;
-  status: string;
-  createdAt: string;
-  milestones?: Array<{
-    name: string;
-    budget: number;
-    status: string;
-  }>;
-}
+import type { Contract } from '@/types/contract';
+import { ROUTES } from '@/config/constants';
 
 const FreelancerDashboard = () => {
   const navigate = useNavigate();
@@ -38,6 +18,8 @@ const FreelancerDashboard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [loading, setLoading] = useState(true);
+  const [balance, setBalance] = useState<number>(0);
+  const [totalEarnings, setTotalEarnings] = useState<number>(0);
   const { toast } = useToast();
 
   // Get filter from URL params (default: 'pending')
@@ -57,6 +39,11 @@ const FreelancerDashboard = () => {
       count: contracts.filter(c => c.status?.toLowerCase() === 'active').length 
     },
     { 
+      id: 'rejected', 
+      label: 'Declined', 
+      count: contracts.filter(c => c.status?.toLowerCase() === 'rejected').length 
+    },
+    { 
       id: 'completed', 
       label: 'Completed', 
       count: contracts.filter(c => c.status?.toLowerCase() === 'completed').length 
@@ -70,12 +57,23 @@ const FreelancerDashboard = () => {
 
   useEffect(() => {
     fetchContracts();
+    fetchBalance();
   }, []);
 
-  const fetchContracts = async () => {
+  const fetchBalance = useCallback(async () => {
+    try {
+      const response = await apiClient.get('/api/payments/balance');
+      setBalance(response.data.balance || 0);
+      setTotalEarnings(response.data.totalEarnings || 0);
+    } catch (error) {
+      console.error('Error fetching balance:', error);
+    }
+  }, []);
+
+  const fetchContracts = useCallback(async () => {
     try {
       const response = await apiClient.get('/api/contracts?role=contributor');
-      setContracts(response.data.contracts);
+      setContracts(response.data.contracts || []);
     } catch (error) {
       console.error('Error fetching contracts:', error);
       toast({
@@ -86,7 +84,19 @@ const FreelancerDashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
+
+  // Real-time refresh: refetch when we receive a contract-related notification
+  const { notifications } = useNotifications();
+  useEffect(() => {
+    const latest = notifications[0];
+    if (
+      latest &&
+      ['contract_invitation', 'contract_accepted', 'contract_rejected', 'contract_completed', 'milestone_submitted', 'milestone_approved', 'milestone_rejected', 'milestone_paid', 'payment_failed'].includes(latest.type)
+    ) {
+      fetchContracts();
+    }
+  }, [notifications, fetchContracts]);
 
   // Filter contracts based on active filter
   const getFilteredContracts = () => {
@@ -124,6 +134,31 @@ const FreelancerDashboard = () => {
         </div>
       </div>
 
+      {/* Balance Card */}
+      <div className="px-8 pt-6">
+        <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                <Wallet className="w-6 h-6 text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-sm text-emerald-600 font-medium">Available Balance</p>
+                <p className="text-2xl font-bold text-emerald-900">${balance.toFixed(2)}</p>
+                <p className="text-xs text-emerald-500 mt-0.5">Total earned: ${totalEarnings.toFixed(2)}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigate(ROUTES.WITHDRAWALS)}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors"
+            >
+              Withdrawals
+              <ArrowUpRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Filter Tabs */}
       <div className="px-8 py-6">
         <FilterTabs 
@@ -158,20 +193,7 @@ const FreelancerDashboard = () => {
             {filteredContracts.map((contract) => (
               <ContractCard 
                 key={contract._id} 
-                contract={{
-                  _id: contract._id,
-                  contractName: contract.contractName,
-                  description: undefined,
-                  budget: contract.budget,
-                  status: contract.status,
-                  businessOwnerEmail: contract.creator.email,
-                  createdAt: contract.createdAt,
-                  milestones: contract.milestones?.map(m => ({
-                    title: m.name,
-                    amount: m.budget,
-                    status: m.status
-                  }))
-                }}
+                contract={contract}
                 userRole="Freelancer"
               />
             ))}

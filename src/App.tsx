@@ -4,42 +4,71 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { ROUTES, USER_ROLES } from "@/config/constants";
+import React, { Suspense } from "react";
 
+// Loading fallback
+const PageLoading = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+  </div>
+);
+
+// ─── Lazy-loaded pages (code-split) ────────────────────────────
 // Public pages
-import Index from "./pages/Index";
-import Leaderboard from "./pages/Leaderboard";
-import NotFound from "./pages/NotFound";
+const Index = React.lazy(() => import("./pages/Index"));
+const Leaderboard = React.lazy(() => import("./pages/Leaderboard"));
+const NotFound = React.lazy(() => import("./pages/NotFound"));
 
 // Auth pages
-import SignIn from "./pages/SignIn";
-import RoleSelection from "./pages/RoleSelection";
-import FreelancerSignup from "./pages/FreelancerSignup";
-import BusinessOwnerSignup from "./pages/BusinessOwnerSignup";
-import VerifyEmail from "./pages/VerifyEmail";
+const SignIn = React.lazy(() => import("./pages/SignIn"));
+const RoleSelection = React.lazy(() => import("./pages/RoleSelection"));
+const FreelancerSignup = React.lazy(() => import("./pages/FreelancerSignup"));
+const BusinessOwnerSignup = React.lazy(() => import("./pages/BusinessOwnerSignup"));
+const VerifyEmail = React.lazy(() => import("./pages/VerifyEmail"));
 
 // Employer pages
-import EmployerDashboard from "./pages/EmployerDashboard";
-import BrowseDevelopers from "./pages/BrowseDevelopers";
-import SavedDevelopers from "./pages/SavedDevelopers";
-import TestSelection from "./pages/TestSelection";
-import TakeTest from "./pages/TakeTest";
-import TestResults from "./pages/TestResults";
-import TestResultsList from "./pages/TestResultsList";
-import TestingHub from "./pages/TestingHub";
-import EmployerOnboarding from "./pages/EmployerOnboarding";
-import EmployerGettingStarted from "./pages/EmployerGettingStarted";
-import TestInvitations from "./pages/TestInvitations";
-import CreateContract from "./pages/CreateContract";
-import ContractDetails from "./pages/ContractDetails";
+const EmployerDashboard = React.lazy(() => import("./pages/EmployerDashboard"));
+const BrowseDevelopers = React.lazy(() => import("./pages/BrowseDevelopers"));
+const SavedDevelopers = React.lazy(() => import("./pages/SavedDevelopers"));
+const TestSelection = React.lazy(() => import("./pages/TestSelection"));
+const TakeTest = React.lazy(() => import("./pages/TakeTest"));
+const TestResults = React.lazy(() => import("./pages/TestResults"));
+const TestResultsList = React.lazy(() => import("./pages/TestResultsList"));
+const TestingHub = React.lazy(() => import("./pages/TestingHub"));
+const EmployerOnboarding = React.lazy(() => import("./pages/EmployerOnboarding"));
+const EmployerGettingStarted = React.lazy(() => import("./pages/EmployerGettingStarted"));
+const TestInvitations = React.lazy(() => import("./pages/TestInvitations"));
+const CreateContract = React.lazy(() => import("./pages/CreateContract"));
+const ContractDetails = React.lazy(() => import("./pages/ContractDetails"));
 
 // Freelancer pages
-import FreelancerDashboard from "./pages/FreelancerDashboard";
-import CreateContractFreelancer from "./pages/CreateContractFreelancer";
+const FreelancerDashboard = React.lazy(() => import("./pages/FreelancerDashboard"));
+const CreateContractFreelancer = React.lazy(() => import("./pages/CreateContractFreelancer"));
 
-const queryClient = new QueryClient();
+// Shared pages (both roles)
+const ContractSent = React.lazy(() => import("./pages/ContractSent"));
+const ContractRespond = React.lazy(() => import("./pages/ContractRespond"));
+
+// Freelancer balance & withdrawals
+const Withdrawals = React.lazy(() => import("./pages/Withdrawals"));
+
+// Admin pages
+const AdminWithdrawals = React.lazy(() => import("./pages/AdminWithdrawals"));
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,   // 5 minutes
+      gcTime: 10 * 60 * 1000,     // 10 minutes
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <ErrorBoundary>
@@ -48,7 +77,9 @@ const App = () => (
         <Toaster />
         <Sonner />
         <AuthProvider>
+          <NotificationProvider>
           <BrowserRouter>
+            <Suspense fallback={<PageLoading />}>
             <Routes>
               {/* Public routes */}
               <Route path={ROUTES.HOME} element={<Index />} />
@@ -141,7 +172,7 @@ const App = () => (
               <Route 
                 path={ROUTES.CONTRACT_DETAILS}
                 element={
-                  <ProtectedRoute requiredRole={USER_ROLES.BUSINESS_OWNER}>
+                  <ProtectedRoute>
                     <ContractDetails />
                   </ProtectedRoute>
                 } 
@@ -189,10 +220,46 @@ const App = () => (
                 } 
               />
               
+              {/* Shared routes (both roles) */}
+              <Route 
+                path={ROUTES.CONTRACT_SENT}
+                element={
+                  <ProtectedRoute>
+                    <ContractSent />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path={ROUTES.CONTRACT_RESPOND}
+                element={
+                  <ProtectedRoute>
+                    <ContractRespond />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path={ROUTES.WITHDRAWALS}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.FREELANCER}>
+                    <Withdrawals />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path={ROUTES.ADMIN_WITHDRAWALS}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.ADMIN}>
+                    <AdminWithdrawals />
+                  </ProtectedRoute>
+                } 
+              />
+              
               {/* Catch-all 404 route - MUST BE LAST */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </Suspense>
           </BrowserRouter>
+          </NotificationProvider>
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>

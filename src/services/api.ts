@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { appConfig } from '../config/index.js';
+import axios, { AxiosError } from 'axios';
+import { appConfig } from '../config/index';
 
 // API configuration for backend integration
 const API_BASE_URL = appConfig.apiUrl;

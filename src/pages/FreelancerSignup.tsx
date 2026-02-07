@@ -54,8 +54,14 @@ const FreelancerSignup = () => {
           }
         }
         
-        // Navigate to dashboard
-        navigate(ROUTES.FREELANCER_DASHBOARD, { replace: true });
+        // Navigate to stored return URL or dashboard
+        const returnUrl = sessionStorage.getItem('artemis_return_url');
+        if (returnUrl) {
+          sessionStorage.removeItem('artemis_return_url');
+          navigate(returnUrl, { replace: true });
+        } else {
+          navigate(ROUTES.FREELANCER_DASHBOARD, { replace: true });
+        }
       }
     };
     handlePostSignup();

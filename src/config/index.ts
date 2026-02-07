@@ -2,7 +2,16 @@
  * Application configuration based on environment
  */
 
-const config = {
+interface EnvConfig {
+  apiUrl: string;
+  enableDebugLogs: boolean;
+  enableHealthCheck: boolean;
+  healthCheckInterval: number;
+  requestTimeout: number;
+  retryAttempts: number;
+}
+
+const config: Record<string, EnvConfig> = {
   development: {
     apiUrl: 'http://localhost:5000',
     enableDebugLogs: true,

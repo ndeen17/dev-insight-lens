@@ -4,7 +4,7 @@
  */
 
 // User Types
-export type UserRole = 'Freelancer' | 'BusinessOwner';
+export type UserRole = 'Freelancer' | 'BusinessOwner' | 'Admin';
 
 export interface User {
   _id: string;
@@ -21,45 +21,24 @@ export interface User {
   isActive: boolean;
   isEmailVerified: boolean;
   savedDevelopers?: string[];
+  balance?: number;
+  totalEarnings?: number;
+  stripeCustomerId?: string;
   lastLoginAt?: string;
   createdAt: string;
   updatedAt: string;
 }
 
-// Contract Types
-export interface Contract {
-  _id: string;
-  title: string;
-  description: string;
-  employerId: string;
-  freelancerId?: string;
-  status: 'draft' | 'pending' | 'active' | 'completed' | 'cancelled';
-  budget: number;
-  currency: string;
-  deadline?: string;
-  requirements: Requirement[];
-  milestones?: Milestone[];
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface Requirement {
-  id: string;
-  title: string;
-  description: string;
-  priority: 'high' | 'medium' | 'low';
-  completed: boolean;
-}
-
-export interface Milestone {
-  id: string;
-  title: string;
-  description: string;
-  amount: number;
-  dueDate?: string;
-  status: 'pending' | 'in-progress' | 'completed' | 'approved';
-  completedAt?: string;
-}
+// Contract Types — re-exported from dedicated file
+import type { ContractStatus as _ContractStatus } from './contract';
+export type {
+  ContractStatus,
+  MilestoneStatus,
+  ContractType,
+  PopulatedUser,
+  ContractMilestone,
+  Contract,
+} from './contract';
 
 // Test Types
 export interface Test {
@@ -204,12 +183,16 @@ export interface SignUpFormData {
 }
 
 export interface ContractFormData {
-  title: string;
+  contractName: string;
   description: string;
-  budget: number;
+  contractType: 'fixed' | 'hourly';
+  budget?: number;
+  hourlyRate?: number;
   currency: string;
-  deadline?: string;
-  requirements: Omit<Requirement, 'id'>[];
+  dueDate?: string;
+  contributorEmail: string;
+  category: string;
+  subcategory?: string;
 }
 
 // Pagination Types
@@ -238,7 +221,7 @@ export interface DeveloperFilters {
 }
 
 export interface ContractFilters {
-  status?: Contract['status'][];
+  status?: _ContractStatus[];
   minBudget?: number;
   maxBudget?: number;
   dateRange?: {

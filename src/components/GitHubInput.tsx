@@ -1,6 +1,13 @@
 import { useState } from 'react';
 
-const GitHubInput = ({ value, onChange, onAnalyze, disabled }) => {
+interface Props {
+  value: string;
+  onChange: (value: string) => void;
+  onAnalyze: (value: string) => void;
+  disabled: boolean;
+}
+
+const GitHubInput = ({ value, onChange, onAnalyze, disabled }: Props) => {
   const [isValid, setIsValid] = useState(true);
 
   const handleSubmit = (e) => {

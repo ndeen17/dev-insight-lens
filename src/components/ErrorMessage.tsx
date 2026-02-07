@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 import { isRateLimitError, isNetworkError } from '../utils/errorHandler';
 
-const ErrorMessage = ({ error, onRetry }) => {
+interface ErrorMessageProps {
+  error: Error | string | null;
+  onRetry?: () => void;
+}
+
+const ErrorMessage = ({ error, onRetry }: ErrorMessageProps) => {
   const [countdown, setCountdown] = useState(0);
   const isRateLimit = isRateLimitError({ message: error });
   const isNetwork = isNetworkError({ message: error });

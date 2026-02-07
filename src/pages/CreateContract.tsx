@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { apiClient } from '@/lib/apiClient';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,7 +16,7 @@ import CategoryDropdown from '@/components/CategoryDropdown';
 import BackToDashboard from '@/components/BackToDashboard';
 import { 
   Calendar, DollarSign, Clock, Plus, X, AlertCircle, ArrowLeft, Check, 
-  FileText, Info, Briefcase, Target, ChevronRight, Edit2, Send, CreditCard, Building2
+  FileText, Info, Briefcase, Target, ChevronRight, Edit2, Send, CreditCard, ShieldCheck, Loader2
 } from 'lucide-react';
 
 interface Milestone {
@@ -74,6 +75,8 @@ export default function CreateContract() {
   // Review step state
   const [recipientMessage, setRecipientMessage] = useState('');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   // Pre-fill email from location state (e.g., from Leaderboard hire button)
   useEffect(() => {
@@ -139,22 +142,13 @@ export default function CreateContract() {
         hourlyRate,
         weeklyLimit,
         noLimit,
+        recipientMessage,
+        agreedToTerms,
         savedAt: new Date().toISOString()
       };
       localStorage.setItem('contractDraft', JSON.stringify(draft));
     }
-  }, [contractName, contributorEmail, category, subcategory, description, contractType, budget, currency, milestones, splitMilestones, hourlyRate, weeklyLimit, noLimit]);
-
-  // Auto-save to backend (debounced) - saves as draft in pending contracts
-  useEffect(() => {
-    if (contractName && contributorEmail) {
-      const timer = setTimeout(() => {
-        saveDraft();
-      }, 5000); // Save 5 seconds after user stops typing
-
-      return () => clearTimeout(timer);
-    }
-  }, [contractName, contributorEmail, category, subcategory, description, contractType, budget, currency, milestones, splitMilestones, hourlyRate, weeklyLimit, noLimit, recipientMessage, agreedToTerms, saveDraft]);
+  }, [contractName, contributorEmail, category, subcategory, description, contractType, budget, currency, milestones, splitMilestones, hourlyRate, weeklyLimit, noLimit, recipientMessage, agreedToTerms]);
 
   // Save draft to localStorage and backend
   const saveDraft = useCallback(async () => {
@@ -182,15 +176,16 @@ export default function CreateContract() {
     if (contractName && contributorEmail) {
       try {
         const contractData = {
-          name: contractName,
-          freelancerEmail: contributorEmail,
+          contractName,
+          contributorEmail,
           category: category || undefined,
           subcategory: subcategory || undefined,
           description: description || undefined,
-          type: contractType,
+          contractType,
           ...(contractType === 'fixed' ? {
             budget: budget ? parseFloat(budget) : undefined,
             currency,
+            splitMilestones,
             milestones: splitMilestones ? milestones
               .filter(m => m.name || m.budget)
               .map(m => ({
@@ -206,23 +201,13 @@ export default function CreateContract() {
           status: 'draft'
         };
 
-        const url = draftContractId
-          ? `${import.meta.env.VITE_API_URL}/api/contracts/${draftContractId}`
-          : `${import.meta.env.VITE_API_URL}/api/contracts`;
-
-        const response = await fetch(url, {
-          method: draftContractId ? 'PUT' : 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          },
-          body: JSON.stringify(contractData)
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          if (!draftContractId && result.contract?._id) {
-            setDraftContractId(result.contract._id);
+        if (draftContractId) {
+          const response = await apiClient.put(`/api/contracts/${draftContractId}`, contractData);
+          // Draft already tracked
+        } else {
+          const response = await apiClient.post('/api/contracts', contractData);
+          if (response.data.contract?._id) {
+            setDraftContractId(response.data.contract._id);
           }
         }
       } catch (error) {
@@ -231,6 +216,17 @@ export default function CreateContract() {
       }
     }
   }, [contractName, contributorEmail, category, subcategory, description, contractType, budget, currency, milestones, splitMilestones, hourlyRate, weeklyLimit, noLimit, recipientMessage, agreedToTerms, draftContractId]);
+
+  // Auto-save to backend (debounced) - saves as draft in pending contracts
+  useEffect(() => {
+    if (contractName && contributorEmail) {
+      const timer = setTimeout(() => {
+        saveDraft();
+      }, 5000); // Save 5 seconds after user stops typing
+
+      return () => clearTimeout(timer);
+    }
+  }, [contractName, contributorEmail, category, subcategory, description, contractType, budget, currency, milestones, splitMilestones, hourlyRate, weeklyLimit, noLimit, recipientMessage, agreedToTerms, saveDraft]);
 
   // Calculate payment summary — uses milestone total when milestones active
   const milestoneTotalBudget = useMemo(
@@ -400,24 +396,27 @@ export default function CreateContract() {
   };
 
   const handleSubmit = async () => {
-    // Validation already done before reaching step 4
     if (!agreedToTerms) {
-      alert('Please agree to the terms and conditions to proceed');
+      setSendError('Please agree to the terms and conditions to proceed');
       return;
     }
 
+    setIsSending(true);
+    setSendError(null);
+
     try {
       const contractData = {
-        name: contractName,
-        freelancerEmail: contributorEmail,
+        contractName,
+        contributorEmail,
         category,
         subcategory,
         description,
         recipientMessage: recipientMessage || undefined,
-        type: contractType,
+        contractType,
         ...(contractType === 'fixed' ? {
           budget: parseFloat(budget),
           currency,
+          splitMilestones,
           milestones: splitMilestones ? milestones.map(m => ({
             name: m.name,
             budget: parseFloat(m.budget),
@@ -431,30 +430,44 @@ export default function CreateContract() {
         status: 'pending'
       };
 
-      // If we have a draft ID, update it to pending status
-      const url = draftContractId
-        ? `${import.meta.env.VITE_API_URL}/api/contracts/${draftContractId}`
-        : `${import.meta.env.VITE_API_URL}/api/contracts`;
+      let contractId: string;
 
-      const response = await fetch(url, {
-        method: draftContractId ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(contractData)
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create contract');
+      if (draftContractId) {
+        // Update existing draft to pending
+        await apiClient.put(`/api/contracts/${draftContractId}`, contractData);
+        await apiClient.patch(`/api/contracts/${draftContractId}/status`, { status: 'pending' });
+        contractId = draftContractId;
+      } else {
+        const response = await apiClient.post('/api/contracts', contractData);
+        contractId = response.data.contract._id;
       }
 
       localStorage.removeItem('contractDraft');
       setDraftContractId(null);
-      navigate('/employer/dashboard', { state: { message: 'Contract created successfully!' } });
-    } catch (error) {
+
+      // Navigate to success page with contract summary
+      const amount = contractType === 'fixed'
+        ? parseFloat(budget).toFixed(2)
+        : `${parseFloat(hourlyRate).toFixed(2)}/hr`;
+
+      navigate('/contract-sent', {
+        replace: true,
+        state: {
+          contractId,
+          contractName,
+          recipientEmail: contributorEmail,
+          contractType,
+          amount,
+          currency,
+          milestoneCount: splitMilestones ? milestones.length : 0,
+        },
+      });
+    } catch (error: any) {
       console.error('Error creating contract:', error);
-      alert('Failed to create contract. Please try again.');
+      const msg = error.response?.data?.message || error.response?.data?.error || 'Failed to send contract. Please try again.';
+      setSendError(msg);
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -1006,7 +1019,7 @@ export default function CreateContract() {
                       </div>
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-lg bg-[#84cc16]/10 flex items-center justify-center">
-                          <Building2 className="w-6 h-6 text-[#84cc16]" />
+                          <ShieldCheck className="w-6 h-6 text-[#84cc16]" />
                         </div>
                         <div>
                           <p className="font-semibold text-gray-900">Escrow Payment</p>
@@ -1108,7 +1121,7 @@ export default function CreateContract() {
                           <div className="flex justify-between">
                             <span className="font-bold text-gray-900">Total</span>
                             <span className="font-bold text-xl text-[#84cc16]">
-                              {currency} {payment.total.toFixed(2)}
+                              {currency} {payment.totalForClient.toFixed(2)}
                             </span>
                           </div>
                         </div>
@@ -1304,14 +1317,25 @@ export default function CreateContract() {
                     </div>
                   </div>
 
+                  {/* Error Message */}
+                  {sendError && (
+                    <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <AlertCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                      <p className="text-sm text-red-700">{sendError}</p>
+                    </div>
+                  )}
+
                   {/* Send Button */}
                   <Button
                     onClick={handleSubmit}
-                    disabled={!agreedToTerms}
+                    disabled={!agreedToTerms || isSending}
                     className="w-full bg-[#84cc16] hover:bg-[#65a30d] text-white h-12 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <Send className="w-5 h-5 mr-2" />
-                    Send Contract
+                    {isSending ? (
+                      <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Sending...</>
+                    ) : (
+                      <><Send className="w-5 h-5 mr-2" /> Send Contract</>
+                    )}
                   </Button>
 
                   {/* Save as Draft */}

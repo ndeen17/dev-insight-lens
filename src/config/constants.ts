@@ -46,12 +46,21 @@ export const ROUTES = {
   TAKE_TEST: '/freelancer/tests/:id',
   TEST_RESULTS_VIEW: '/freelancer/tests/:id/results',
   CREATE_CONTRACT_FREELANCER: '/freelancer/contracts/create',
+  
+  // Shared routes (both roles)
+  CONTRACT_SENT: '/contract-sent',
+  CONTRACT_RESPOND: '/contracts/:id/respond',
+  WITHDRAWALS: '/freelancer/withdrawals',
+
+  // Admin routes
+  ADMIN_WITHDRAWALS: '/admin/withdrawals',
 } as const;
 
 // User Roles
 export const USER_ROLES = {
   FREELANCER: 'Freelancer',
   BUSINESS_OWNER: 'BusinessOwner',
+  ADMIN: 'Admin',
 } as const;
 
 // Local Storage Keys

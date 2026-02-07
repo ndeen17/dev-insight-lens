@@ -3,7 +3,13 @@ import { ROUTES } from '@/config/constants';
 import { Link } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
 
+const RETURN_URL_KEY = 'artemis_return_url';
+
 const SignIn = () => {
+  // If the user was redirected here from a protected route (e.g. contract invitation),
+  // send them back there after signing in instead of the generic home page.
+  const storedReturnUrl = sessionStorage.getItem(RETURN_URL_KEY);
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-4">
       <div className="w-full max-w-md space-y-6">
@@ -17,7 +23,7 @@ const SignIn = () => {
           routing="path"
           path={ROUTES.SIGN_IN}
           signUpUrl={ROUTES.SIGN_UP}
-          fallbackRedirectUrl={ROUTES.HOME}
+          fallbackRedirectUrl={storedReturnUrl || ROUTES.HOME}
         />
         
         <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 text-center">
