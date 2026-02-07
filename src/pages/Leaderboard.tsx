@@ -3,7 +3,8 @@ import { getLeaderboard, getLeaderboardStats } from '../services/api';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from '../components/ui/button';
-import { Briefcase } from 'lucide-react';
+import { Briefcase, Trophy, ArrowLeft } from 'lucide-react';
+import { SkeletonLeaderboardRow } from '../components/Skeletons';
 
 const Leaderboard = () => {
   const navigate = useNavigate();
@@ -82,18 +83,16 @@ const Leaderboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white py-8 sm:py-12">
+      <div className="bg-gradient-to-r from-green-500 via-green-400 to-emerald-500 text-white py-8 sm:py-12">
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-start">
             <Link to="/" className="inline-flex items-center space-x-2 text-white/90 hover:text-white mb-6 transition-colors">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-              </svg>
+              <ArrowLeft className="w-5 h-5" />
               <span>Back to Analysis</span>
             </Link>
             
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4">
-              🏆 Developer Leaderboard
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 flex items-center gap-3">
+              <Trophy className="w-8 h-8 sm:w-10 sm:h-10" /> Developer Leaderboard
             </h1>
             <p className="text-base sm:text-lg text-white/90 max-w-full md:max-w-2xl">
               Top GitHub developers ranked by comprehensive skill assessment
@@ -135,7 +134,7 @@ const Leaderboard = () => {
               <select 
                 value={filters.country} 
                 onChange={(e) => setFilters({...filters, country: e.target.value})}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:border-green-400"
               >
                 <option value="">All Countries</option>
                 <option value="US">🇺🇸 United States</option>
@@ -156,7 +155,7 @@ const Leaderboard = () => {
               <select 
                 value={filters.level} 
                 onChange={(e) => setFilters({...filters, level: e.target.value})}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:border-green-400"
               >
                 <option value="">All Levels</option>
                 <option value="Expert">Expert</option>
@@ -171,7 +170,7 @@ const Leaderboard = () => {
               <select 
                 value={filters.limit} 
                 onChange={(e) => setFilters({...filters, limit: parseInt(e.target.value)})}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 focus:border-green-400"
               >
                 <option value="10">Top 10</option>
                 <option value="25">Top 25</option>
@@ -184,9 +183,10 @@ const Leaderboard = () => {
 
         {/* Leaderboard */}
         {loading ? (
-          <div className="text-center py-12">
-            <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-gray-300 border-t-indigo-600"></div>
-            <p className="mt-4 text-gray-600">Loading leaderboard...</p>
+          <div className="grid gap-4 animate-fade-in-up">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <SkeletonLeaderboardRow key={i} />
+            ))}
           </div>
         ) : error ? (
           <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
@@ -203,7 +203,7 @@ const Leaderboard = () => {
             <p className="text-gray-600 text-lg">No developers found with the selected filters</p>
             <button 
               onClick={() => setFilters({ country: '', level: '', limit: 100 })}
-              className="mt-4 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+              className="mt-4 px-6 py-2 bg-green-400 text-black font-bold rounded-lg hover:bg-green-500 active:scale-[0.97] transition-all"
             >
               Reset Filters
             </button>
@@ -213,12 +213,12 @@ const Leaderboard = () => {
             {leaderboard.map((dev) => (
               <div 
                 key={dev.username} 
-                className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-200 p-6"
+                className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-6"
               >
-                <div className="flex items-center gap-6">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
                   {/* Rank */}
-                  <div className="flex-shrink-0 w-16 text-center">
-                    <div className="text-3xl font-bold text-gray-400">
+                  <div className="flex-shrink-0 w-10 sm:w-16 text-center">
+                    <div className="text-xl sm:text-3xl font-bold text-gray-400">
                       {getRankMedal(dev.rank) || `#${dev.rank}`}
                     </div>
                   </div>
@@ -227,17 +227,17 @@ const Leaderboard = () => {
                   <img 
                     src={dev.avatar} 
                     alt={dev.name} 
-                    className="w-16 h-16 rounded-full border-2 border-gray-200"
+                    className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 border-gray-200"
                   />
 
                   {/* Info */}
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-xl font-bold text-gray-900 truncate">{dev.name}</h3>
+                    <h3 className="text-base sm:text-xl font-bold text-gray-900 truncate">{dev.name}</h3>
                     <a 
                       href={`https://github.com/${dev.username}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-indigo-600 hover:text-indigo-800 font-medium text-sm"
+                      className="text-green-600 hover:text-green-700 font-medium text-sm"
                     >
                       @{dev.username} ↗
                     </a>
@@ -251,9 +251,9 @@ const Leaderboard = () => {
                   </div>
 
                   {/* Score & Actions */}
-                  <div className="flex-shrink-0 text-right space-y-3">
+                  <div className="flex-shrink-0 text-left sm:text-right space-y-2 sm:space-y-3">
                     <div>
-                      <div className="text-4xl font-bold text-indigo-600">
+                      <div className="text-2xl sm:text-4xl font-bold text-green-500">
                         {dev.overall_score}
                       </div>
                       <div className="text-sm text-gray-500">/ 110</div>

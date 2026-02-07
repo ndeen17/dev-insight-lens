@@ -14,8 +14,8 @@ export default function DashboardLayout({ children, userRole }: DashboardLayoutP
       <Sidebar userRole={userRole} />
       
       {/* Main content area */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="min-h-screen">
+      <div className="flex-1 overflow-y-auto scroll-smooth">
+        <div className="min-h-screen animate-page-enter">
           {/* Email verification banner - shows on all dashboard pages */}
           <EmailVerificationBanner />
           {children}

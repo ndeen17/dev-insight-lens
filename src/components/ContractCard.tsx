@@ -86,7 +86,7 @@ export default function ContractCard({ contract, userRole }: ContractCardProps) 
   return (
     <div 
       onClick={handleClick}
-      className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg hover:border-gray-300 transition-all cursor-pointer"
+      className="bg-white border border-gray-200 rounded-xl p-6 hover:shadow-md hover:border-gray-300 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">

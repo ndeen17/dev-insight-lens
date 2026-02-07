@@ -65,6 +65,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
             to={user.role === 'Freelancer' ? '/freelancer/dashboard' : '/employer/dashboard'} 
             replace 
           />
+        ) : /* Redirect freelancers who haven't completed profession onboarding */
+          user?.role === 'Freelancer' &&
+          !user.profession &&
+          location.pathname !== ROUTES.FREELANCER_ONBOARDING ? (
+          <Navigate to={ROUTES.FREELANCER_ONBOARDING} replace />
         ) : (
           children
         )}

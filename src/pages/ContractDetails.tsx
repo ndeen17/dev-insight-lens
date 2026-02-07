@@ -22,6 +22,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { SkeletonProfile } from '@/components/Skeletons';
 import {
   CheckCircle2,
   Clock,
@@ -366,10 +367,9 @@ export default function ContractDetails() {
   /* ── Loading / Error states ──────────────── */
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <Loader2 className="w-10 h-10 animate-spin text-lime-500 mx-auto" />
-          <p className="mt-3 text-gray-500">Loading contract…</p>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-8">
+        <div className="max-w-3xl w-full">
+          <SkeletonProfile />
         </div>
       </div>
     );
@@ -378,11 +378,13 @@ export default function ContractDetails() {
   if (error && !contract) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="max-w-md w-full text-center bg-white rounded-xl shadow-sm p-8">
-          <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Unable to Load</h2>
-          <p className="text-gray-500 mb-6">{error}</p>
-          <Button variant="outline" onClick={() => navigate(dashboardRoute)}>
+        <div className="max-w-md w-full text-center bg-white rounded-xl shadow-sm p-8 animate-fade-in-up">
+          <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-8 h-8 text-red-400" />
+          </div>
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Unable to Load</h2>
+          <p className="text-sm text-gray-500 mb-6">{error}</p>
+          <Button variant="outline" onClick={() => navigate(dashboardRoute)} className="active:scale-[0.97] transition-all">
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Dashboard
           </Button>
         </div>
@@ -469,7 +471,7 @@ export default function ContractDetails() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t">
                   <div>
                     <h3 className="text-sm font-semibold text-gray-600 mb-1">
                       Type
@@ -542,7 +544,7 @@ export default function ContractDetails() {
                           className="border"
                         >
                           <CardHeader className="pb-3">
-                            <div className="flex items-start justify-between">
+                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2">
                               <div className="flex items-center gap-3">
                                 <span className="w-7 h-7 rounded-full bg-lime-100 text-lime-700 text-xs font-bold flex items-center justify-center flex-shrink-0">
                                   {idx + 1}
@@ -624,7 +626,7 @@ export default function ContractDetails() {
                                 rows={2}
                                 className="text-sm"
                               />
-                              <div className="flex gap-2">
+                              <div className="flex flex-col sm:flex-row gap-2">
                                 <Button
                                   onClick={() =>
                                     handleApproveMilestone(milestoneIndex)
@@ -671,7 +673,7 @@ export default function ContractDetails() {
                                 rows={2}
                                 className="text-sm"
                               />
-                              <div className="flex gap-2">
+                              <div className="flex flex-col sm:flex-row gap-2">
                                 <Button
                                   onClick={() =>
                                     handleSubmitMilestone(milestoneIndex)
@@ -757,7 +759,7 @@ export default function ContractDetails() {
                           {/* Payment processing indicator */}
                           {milestone.paymentStatus === 'processing' && milestone.status !== 'paid' && (
                             <CardContent className="pt-0 border-t">
-                              <div className="flex items-center justify-between bg-blue-50 rounded-lg p-3">
+                              <div className="flex flex-wrap items-center justify-between gap-2 bg-blue-50 rounded-lg p-3">
                                 <div className="flex items-center gap-2 text-blue-700">
                                   <Loader2 className="w-4 h-4 animate-spin" />
                                   <span className="text-sm font-semibold">Payment Processing</span>
@@ -772,7 +774,7 @@ export default function ContractDetails() {
                           {/* Paid confirmation */}
                           {milestone.status === 'paid' && (
                             <CardContent className="pt-0 border-t">
-                              <div className="flex items-center justify-between bg-lime-50 rounded-lg p-3">
+                              <div className="flex flex-wrap items-center justify-between gap-2 bg-lime-50 rounded-lg p-3">
                                 <div className="flex items-center gap-2 text-lime-700">
                                   <CheckCircle2 className="w-4 h-4" />
                                   <span className="text-sm font-semibold">Payment Complete</span>

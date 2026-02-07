@@ -477,8 +477,8 @@ export default function CreateContractFreelancer() {
           <div className="mb-4">
             <BackToDashboard />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Create New Contract</h1>
-          <p className="mt-2 text-gray-600">Set up a contract with your employer</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Create New Contract</h1>
+          <p className="mt-2 text-gray-600 text-sm sm:text-base">Set up a contract with your employer</p>
         </div>
 
         {/* Progress Steps */}
@@ -498,7 +498,7 @@ export default function CreateContractFreelancer() {
                   )}
                 </div>
                 {step < 4 && (
-                  <div className={`w-24 h-1 mx-2 transition-all ${
+                  <div className={`w-12 sm:w-24 h-1 mx-1 sm:mx-2 transition-all ${
                     currentStep > step ? 'bg-[#84cc16]' : 'bg-gray-300'
                   }`} />
                 )}
@@ -703,7 +703,7 @@ export default function CreateContractFreelancer() {
                     {contractType === 'fixed' ? (
                       <>
                         {/* Budget & Currency row */}
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <Label htmlFor="budget">
                               {splitMilestones ? 'Total Budget' : 'Budget'} *
@@ -773,8 +773,7 @@ export default function CreateContractFreelancer() {
 
                         {/* Milestone List — shown when milestones are ON */}
                         {splitMilestones && (
-                          <div className="space-y-3">
-                            {/* Budget mismatch warning */}
+                          <div className="space-y-3 overflow-x-auto">
                             {budgetMismatch && (
                               <Alert variant="destructive" className="border-red-300 bg-red-50">
                                 <AlertCircle className="h-4 w-4" />
@@ -890,7 +889,7 @@ export default function CreateContractFreelancer() {
                       </>
                     ) : (
                       <>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <Label htmlFor="hourlyRate">Hourly Rate *</Label>
                             <Input
@@ -1037,7 +1036,7 @@ export default function CreateContractFreelancer() {
                           <Edit2 className="w-4 h-4" />
                         </Button>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="border rounded-lg p-4">
                           <p className="text-xs text-gray-500 mb-1">Type</p>
                           <p className="font-semibold text-gray-900 flex items-center gap-2">
@@ -1151,7 +1150,7 @@ export default function CreateContractFreelancer() {
                       </Button>
                       <Button 
                         onClick={handleNext}
-                        className="bg-[#84cc16] hover:bg-[#65a30d] text-white flex items-center gap-2"
+                        className="bg-green-400 hover:bg-green-500 text-black font-bold active:scale-[0.97] transition-all flex items-center gap-2"
                       >
                         {currentStep === 3 ? 'Review Contract' : 'Next'}
                         <ChevronRight className="w-4 h-4" />
@@ -1325,7 +1324,7 @@ export default function CreateContractFreelancer() {
                   <Button
                     onClick={handleSubmit}
                     disabled={!agreedToTerms || isSending}
-                    className="w-full bg-[#84cc16] hover:bg-[#65a30d] text-white h-12 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-green-400 hover:bg-green-500 text-black font-bold active:scale-[0.97] transition-all h-12 text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSending ? (
                       <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Sending...</>

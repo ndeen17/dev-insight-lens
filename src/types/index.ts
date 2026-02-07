@@ -18,6 +18,9 @@ export interface User {
   githubUsername?: string;
   profilePicture?: string;
   bio?: string;
+  profession?: string;
+  professionalRole?: string;
+  skills?: string[];
   isActive: boolean;
   isEmailVerified: boolean;
   savedDevelopers?: string[];
@@ -39,58 +42,6 @@ export type {
   ContractMilestone,
   Contract,
 } from './contract';
-
-// Test Types
-export interface Test {
-  id: string;
-  title: string;
-  description: string;
-  category: string;
-  difficulty: 'easy' | 'medium' | 'hard';
-  duration: number; // in minutes
-  questions: Question[];
-}
-
-export interface Question {
-  id: string;
-  text: string;
-  type: 'multiple-choice' | 'code' | 'essay';
-  options?: string[];
-  correctAnswer?: string | number;
-  points: number;
-}
-
-export interface TestInvitation {
-  id: string;
-  testId: string;
-  candidateEmail: string;
-  emailVerified: boolean;
-  status: 'pending' | 'completed' | 'expired';
-  invitedBy: string;
-  invitedAt: string;
-  expiresAt: string;
-  completedAt?: string;
-}
-
-export interface TestResult {
-  id: string;
-  testId: string;
-  userId: string;
-  score: number;
-  totalPoints: number;
-  percentage: number;
-  passed: boolean;
-  answers: TestAnswer[];
-  completedAt: string;
-  duration: number; // actual time taken in minutes
-}
-
-export interface TestAnswer {
-  questionId: string;
-  answer: string | number | string[];
-  isCorrect: boolean;
-  points: number;
-}
 
 // GitHub Analysis Types
 export interface GitHubProfile {

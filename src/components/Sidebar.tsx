@@ -15,14 +15,13 @@ import {
   FileText,
   Inbox,
   Users,
-  ClipboardCheck,
   Bookmark,
-  Send,
-  BarChart3,
   Trophy,
   ChevronDown,
   ChevronRight,
-  Wallet
+  Wallet,
+  ClipboardList,
+  Settings
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -35,7 +34,6 @@ export default function Sidebar({ userRole }: SidebarProps) {
   const { user } = useUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [talentSectionOpen, setTalentSectionOpen] = useState(true);
-  const [testsSectionOpen, setTestsSectionOpen] = useState(true);
 
   // Define navigation items based on user role
   const getNavigationItems = () => {
@@ -67,15 +65,13 @@ export default function Sidebar({ userRole }: SidebarProps) {
           },
         ],
         talent: [
-          { name: 'Browse Developers', icon: Users, path: ROUTES.BROWSE_DEVELOPERS },
-          { name: 'Leaderboard', icon: Trophy, path: ROUTES.LEADERBOARD },
+          { name: 'Browse Talent', icon: Users, path: ROUTES.BROWSE_TALENT },
+          { name: 'GitHub Leaderboard', icon: Trophy, path: ROUTES.LEADERBOARD },
           { name: 'Saved Developers', icon: Bookmark, path: ROUTES.SAVED_DEVELOPERS },
         ],
-        tests: [
-          { name: 'Create Test', icon: ClipboardCheck, path: ROUTES.TESTING_HUB },
-          { name: 'Test Invitations', icon: Send, path: ROUTES.TEST_INVITATIONS },
-          { name: 'Test Results', icon: BarChart3, path: ROUTES.TEST_RESULTS },
-        ]
+        assessments: [
+          { name: 'All Assessments', icon: ClipboardList, path: ROUTES.EMPLOYER_ASSESSMENTS },
+        ],
       };
     } else {
       // Freelancer navigation
@@ -217,57 +213,83 @@ export default function Sidebar({ userRole }: SidebarProps) {
           </div>
         )}
 
-        {/* Tests Section (only for Business Owners) */}
-        {userRole === 'BusinessOwner' && navItems.tests && (
+        {/* Assessments Section (Employer) */}
+        {userRole === 'BusinessOwner' && navItems.assessments && (
           <div className="mb-6">
-            <button
-              onClick={() => setTestsSectionOpen(!testsSectionOpen)}
-              className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider hover:text-gray-700"
+            <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Assessments
+            </h3>
+            <div className="space-y-1">
+              {navItems.assessments.map((item) => {
+                const Icon = item.icon;
+                const active = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center space-x-3 px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                      active
+                        ? 'bg-gray-200 text-gray-900'
+                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    }`}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Assessments Section (Freelancer) */}
+        {userRole === 'Freelancer' && (
+          <div className="mb-6">
+            <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              Assessments
+            </h3>
+            <Link
+              to={ROUTES.ASSESSMENT_INVITATIONS}
+              onClick={() => setMobileMenuOpen(false)}
+              className={`flex items-center space-x-3 px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                location.pathname === ROUTES.ASSESSMENT_INVITATIONS
+                  ? 'bg-gray-200 text-gray-900'
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+              }`}
             >
-              <span>Tests</span>
-              {testsSectionOpen ? (
-                <ChevronDown className="w-4 h-4" />
-              ) : (
-                <ChevronRight className="w-4 h-4" />
-              )}
-            </button>
-            {testsSectionOpen && (
-              <div className="mt-1 space-y-1">
-                {navItems.tests.map((item) => {
-                  const Icon = item.icon;
-                  const active = location.pathname === item.path;
-                  
-                  return (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center space-x-3 px-4 py-3 text-base font-medium rounded-lg transition-colors ${
-                        active
-                          ? 'bg-gray-200 text-gray-900'
-                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                      }`}
-                    >
-                      <Icon className="w-5 h-5" />
-                      <span>{item.name}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
+              <ClipboardList className="w-5 h-5" />
+              <span>My Assessments</span>
+            </Link>
           </div>
         )}
       </nav>
 
       {/* Create Contract Button */}
-      <div className="px-4 pb-6">
+      <div className="px-4 pb-4">
         <button
           onClick={handleCreateContract}
-          className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-black font-bold bg-green-400 hover:bg-green-500 rounded-lg transition-colors shadow-md"
+          className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-black font-bold bg-green-400 hover:bg-green-500 active:scale-[0.97] rounded-lg transition-all shadow-sm"
         >
           <Plus className="w-5 h-5" />
           <span>New Contract</span>
         </button>
+      </div>
+
+      {/* Settings Link */}
+      <div className="px-4 pb-4">
+        <Link
+          to={ROUTES.SETTINGS}
+          onClick={() => setMobileMenuOpen(false)}
+          className={`flex items-center space-x-3 px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+            location.pathname === ROUTES.SETTINGS
+              ? 'bg-gray-200 text-gray-900'
+              : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+          }`}
+        >
+          <Settings className="w-5 h-5" />
+          <span>Settings</span>
+        </Link>
       </div>
 
       {/* User Profile */}
@@ -311,12 +333,12 @@ export default function Sidebar({ userRole }: SidebarProps) {
         <>
           {/* Backdrop */}
           <div
-            className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-40"
+            className="md:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity"
             onClick={() => setMobileMenuOpen(false)}
           />
           
           {/* Slide-in menu */}
-          <aside className="md:hidden fixed inset-y-0 left-0 w-64 bg-white z-50 flex flex-col shadow-xl animate-slide-in">
+          <aside className="md:hidden fixed inset-y-0 left-0 w-64 bg-white z-50 flex flex-col shadow-2xl animate-slide-in-left">
             <SidebarContent />
           </aside>
         </>

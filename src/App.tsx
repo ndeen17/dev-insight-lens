@@ -33,25 +33,34 @@ const VerifyEmail = React.lazy(() => import("./pages/VerifyEmail"));
 // Employer pages
 const EmployerDashboard = React.lazy(() => import("./pages/EmployerDashboard"));
 const BrowseDevelopers = React.lazy(() => import("./pages/BrowseDevelopers"));
+const BrowseTalent = React.lazy(() => import("./pages/BrowseTalent"));
+const TalentProfilePage = React.lazy(() => import("./pages/TalentProfile"));
 const SavedDevelopers = React.lazy(() => import("./pages/SavedDevelopers"));
-const TestSelection = React.lazy(() => import("./pages/TestSelection"));
-const TakeTest = React.lazy(() => import("./pages/TakeTest"));
-const TestResults = React.lazy(() => import("./pages/TestResults"));
-const TestResultsList = React.lazy(() => import("./pages/TestResultsList"));
-const TestingHub = React.lazy(() => import("./pages/TestingHub"));
 const EmployerOnboarding = React.lazy(() => import("./pages/EmployerOnboarding"));
 const EmployerGettingStarted = React.lazy(() => import("./pages/EmployerGettingStarted"));
-const TestInvitations = React.lazy(() => import("./pages/TestInvitations"));
 const CreateContract = React.lazy(() => import("./pages/CreateContract"));
 const ContractDetails = React.lazy(() => import("./pages/ContractDetails"));
 
 // Freelancer pages
+const FreelancerOnboarding = React.lazy(() => import("./pages/FreelancerOnboarding"));
 const FreelancerDashboard = React.lazy(() => import("./pages/FreelancerDashboard"));
 const CreateContractFreelancer = React.lazy(() => import("./pages/CreateContractFreelancer"));
+
+// Assessment pages (employer)
+const EmployerAssessments = React.lazy(() => import("./pages/EmployerAssessments"));
+const CreateAssessment = React.lazy(() => import("./pages/CreateAssessment"));
+const AssessmentDetail = React.lazy(() => import("./pages/AssessmentDetail"));
+const SessionResults = React.lazy(() => import("./pages/SessionResults"));
+
+// Assessment pages (freelancer + shared)
+const AssessmentInvite = React.lazy(() => import("./pages/AssessmentInvite"));
+const AssessmentShell = React.lazy(() => import("./pages/AssessmentShell"));
+const FreelancerAssessments = React.lazy(() => import("./pages/FreelancerAssessments"));
 
 // Shared pages (both roles)
 const ContractSent = React.lazy(() => import("./pages/ContractSent"));
 const ContractRespond = React.lazy(() => import("./pages/ContractRespond"));
+const ProfileSettings = React.lazy(() => import("./pages/ProfileSettings"));
 
 // Freelancer balance & withdrawals
 const Withdrawals = React.lazy(() => import("./pages/Withdrawals"));
@@ -130,34 +139,26 @@ const App = () => (
                 } 
               />
               <Route 
+                path={ROUTES.BROWSE_TALENT}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.BUSINESS_OWNER}>
+                    <BrowseTalent />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path={ROUTES.TALENT_PROFILE}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.BUSINESS_OWNER}>
+                    <TalentProfilePage />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
                 path={ROUTES.SAVED_DEVELOPERS}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.BUSINESS_OWNER}>
                     <SavedDevelopers />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path={ROUTES.TESTING_HUB}
-                element={
-                  <ProtectedRoute requiredRole={USER_ROLES.BUSINESS_OWNER}>
-                    <TestingHub />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path={ROUTES.TEST_INVITATIONS}
-                element={
-                  <ProtectedRoute requiredRole={USER_ROLES.BUSINESS_OWNER}>
-                    <TestInvitations />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path={ROUTES.TEST_RESULTS}
-                element={
-                  <ProtectedRoute requiredRole={USER_ROLES.BUSINESS_OWNER}>
-                    <TestResultsList />
                   </ProtectedRoute>
                 } 
               />
@@ -180,34 +181,18 @@ const App = () => (
               
               {/* Freelancer routes (protected) */}
               <Route 
+                path={ROUTES.FREELANCER_ONBOARDING}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.FREELANCER}>
+                    <FreelancerOnboarding />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
                 path={ROUTES.FREELANCER_DASHBOARD}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.FREELANCER}>
                     <FreelancerDashboard />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path={ROUTES.TEST_SELECTION}
-                element={
-                  <ProtectedRoute requiredRole={USER_ROLES.FREELANCER}>
-                    <TestSelection />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path={ROUTES.TAKE_TEST}
-                element={
-                  <ProtectedRoute requiredRole={USER_ROLES.FREELANCER}>
-                    <TakeTest />
-                  </ProtectedRoute>
-                } 
-              />
-              <Route 
-                path={ROUTES.TEST_RESULTS_VIEW}
-                element={
-                  <ProtectedRoute requiredRole={USER_ROLES.FREELANCER}>
-                    <TestResults />
                   </ProtectedRoute>
                 } 
               />
@@ -220,6 +205,66 @@ const App = () => (
                 } 
               />
               
+              {/* Employer assessment routes */}
+              <Route 
+                path={ROUTES.EMPLOYER_ASSESSMENTS}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.BUSINESS_OWNER}>
+                    <EmployerAssessments />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path={ROUTES.CREATE_ASSESSMENT}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.BUSINESS_OWNER}>
+                    <CreateAssessment />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path={ROUTES.ASSESSMENT_RESULTS}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.BUSINESS_OWNER}>
+                    <SessionResults />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path={ROUTES.ASSESSMENT_DETAIL}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.BUSINESS_OWNER}>
+                    <AssessmentDetail />
+                  </ProtectedRoute>
+                } 
+              />
+
+              {/* Assessment routes (freelancer + shared) */}
+              <Route 
+                path={ROUTES.ASSESSMENT_INVITE}
+                element={
+                  <ProtectedRoute>
+                    <AssessmentInvite />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path={ROUTES.ASSESSMENT_SESSION}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.FREELANCER}>
+                    <AssessmentShell />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path={ROUTES.ASSESSMENT_INVITATIONS}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.FREELANCER}>
+                    <FreelancerAssessments />
+                  </ProtectedRoute>
+                } 
+              />
+
               {/* Shared routes (both roles) */}
               <Route 
                 path={ROUTES.CONTRACT_SENT}
@@ -242,6 +287,14 @@ const App = () => (
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.FREELANCER}>
                     <Withdrawals />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path={ROUTES.SETTINGS}
+                element={
+                  <ProtectedRoute>
+                    <ProfileSettings />
                   </ProtectedRoute>
                 } 
               />

@@ -1,12 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  * {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  }
-  
   :root {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
@@ -28,6 +26,11 @@
     --input: 240 5.9% 90%;
     --ring: 240 10% 3.9%;
     --radius: 0.5rem;
+
+    /* Artemis brand tokens */
+    --artemis-brand: 84 81% 44%;           /* green-500  #65a30d */
+    --artemis-brand-light: 82 85% 67%;     /* green-400  #84cc16 */
+    --artemis-brand-surface: 80 80% 95%;   /* green-50   */
   }
 
   .dark {
@@ -60,9 +63,80 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ── Skeleton shimmer ─────────────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+/* ── Page entrance ────────────────────────────────────────── */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Fade in up (staggerable) ─────────────────────────────── */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Slide in from left (mobile sidebar) ──────────────────── */
+@keyframes slide-in-left {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+/* ── Float / breathe (empty states) ───────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* ── Count up pulse ───────────────────────────────────────── */
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@layer utilities {
+  /* Skeleton block */
+  .skeleton {
+    @apply rounded-md bg-gray-200;
+    background-image: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    background-size: 400px 100%;
+    animation: shimmer 1.5s infinite linear;
+  }
+
+  /* Page wrapper — every page wraps content in this */
+  .animate-page-enter {
+    animation: page-enter 0.35s ease-out both;
+  }
+
+  /* Staggered children */
+  .animate-fade-in-up {
+    animation: fade-in-up 0.4s ease-out both;
+  }
+
+  /* Mobile sidebar */
+  .animate-slide-in {
+    animation: slide-in-left 0.25s ease-out both;
+  }
+
+  /* Empty state icon float */
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Stat card pop-in */
+  .animate-scale-in {
+    animation: scale-in 0.3s ease-out both;
   }
 }

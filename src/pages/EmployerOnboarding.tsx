@@ -117,38 +117,13 @@ const EmployerOnboarding = () => {
 
     setIsAnalyzing(true);
     
-    // Simulate AI analysis (in production, this would call OpenAI API)
+    // TODO: Wire to real AI assessment generation endpoint (Milestone 2)
+    // For now, redirect to manual flow with a note
     setTimeout(() => {
-      const mockRecommendations = {
-        suggestedRole: 'fullstack',
-        suggestedLevel: 'mid',
-        suggestedTechStack: ['React', 'Node.js', 'PostgreSQL', 'TypeScript', 'AWS'],
-        suggestedProjectTypes: ['Web Application', 'API Development', 'SaaS Product'],
-        suggestedAssessments: ['coding', 'system-design', 'debugging'],
-        reasoning: `Based on your description, you're building a modern web application that requires both frontend and backend expertise. 
-        The product seems to focus on user interaction and data processing, suggesting a need for full-stack developers who can 
-        work across the entire application stack. TypeScript and React are recommended for the frontend, while Node.js would 
-        provide consistency across the stack. PostgreSQL is suitable for your data requirements, and AWS knowledge is valuable 
-        for deployment and scaling.`,
-        recommendedTests: [
-          { id: 'fullstack-developer', match: 95 },
-          { id: 'frontend-developer', match: 75 },
-        ]
-      };
-
-      setAiRecommendations(mockRecommendations);
-      
-      // Auto-populate fields based on recommendations
-      setRoleType(mockRecommendations.suggestedRole);
-      setExperienceLevel(mockRecommendations.suggestedLevel);
-      setTechStack(mockRecommendations.suggestedTechStack);
-      setProjectType(mockRecommendations.suggestedProjectTypes);
-      setAssessmentAreas(mockRecommendations.suggestedAssessments);
-      
       setIsAnalyzing(false);
-      setOnboardingMode('ai');
-      setStep(2); // Move to review step
-    }, 3000);
+      setOnboardingMode('manual');
+      setStep(1);
+    }, 500);
   };
 
   return (
@@ -538,7 +513,7 @@ const EmployerOnboarding = () => {
 
             {/* Step 4: Project Type */}
             {step === 4 && (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {projectTypes.map((type) => (
                   <div
                     key={type}

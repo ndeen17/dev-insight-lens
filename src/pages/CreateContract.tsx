@@ -481,8 +481,8 @@ export default function CreateContract() {
           <div className="mb-4">
             <BackToDashboard />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Create New Contract</h1>
-          <p className="mt-2 text-gray-600">Set up a contract with your freelancer</p>
+          <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Create New Contract</h1>
+          <p className="mt-2 text-gray-600 text-sm sm:text-base">Set up a contract with your freelancer</p>
         </div>
 
         {/* Progress Steps */}
@@ -502,7 +502,7 @@ export default function CreateContract() {
                   )}
                 </div>
                 {step < 4 && (
-                  <div className={`w-24 h-1 mx-2 transition-all ${
+                  <div className={`w-10 sm:w-24 h-1 mx-1 sm:mx-2 transition-all ${
                     currentStep > step ? 'bg-[#84cc16]' : 'bg-gray-300'
                   }`} />
                 )}
@@ -707,7 +707,7 @@ export default function CreateContract() {
                     {contractType === 'fixed' ? (
                       <>
                         {/* Budget & Currency row */}
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <Label htmlFor="budget">
                               {splitMilestones ? 'Total Budget' : 'Budget'} *
@@ -796,7 +796,7 @@ export default function CreateContract() {
                             )}
 
                             {/* Column headers */}
-                            <div className="grid grid-cols-[32px_1fr_120px_130px_32px] gap-2 px-1 text-xs font-medium text-gray-400 uppercase tracking-wide">
+                            <div className="hidden sm:grid grid-cols-[32px_1fr_120px_130px_32px] gap-2 px-1 text-xs font-medium text-gray-400 uppercase tracking-wide">
                               <span></span>
                               <span>Milestone</span>
                               <span>Budget ({currency})</span>
@@ -808,23 +808,28 @@ export default function CreateContract() {
                             {milestones.map((milestone, index) => (
                               <div
                                 key={index}
-                                className="grid grid-cols-[32px_1fr_120px_130px_32px] gap-2 items-center"
+                                className="grid grid-cols-1 sm:grid-cols-[32px_1fr_120px_130px_32px] gap-2 items-center bg-gray-50 sm:bg-transparent rounded-lg sm:rounded-none p-3 sm:p-0"
                               >
                                 {/* Index circle */}
-                                <div className="flex items-center justify-center w-7 h-7 rounded-full bg-gray-100 text-xs font-semibold text-gray-500 shrink-0">
+                                <div className="flex items-center justify-center w-7 h-7 rounded-full bg-gray-100 sm:bg-gray-100 text-xs font-semibold text-gray-500 shrink-0">
                                   {index + 1}
                                 </div>
 
                                 {/* Name */}
-                                <Input
+                                <div className="w-full">
+                                  <label className="text-xs text-gray-500 sm:hidden mb-1 block">Milestone Name</label>
+                                  <Input
                                   placeholder={`e.g. Phase ${index + 1}`}
                                   value={milestone.name}
                                   onChange={(e) => updateMilestone(index, 'name', e.target.value)}
                                   className={`h-9 text-sm ${errors[`milestone_${index}_name`] ? 'border-red-400 focus-visible:ring-red-400' : ''}`}
                                 />
+                                </div>
 
                                 {/* Budget */}
-                                <Input
+                                <div className="w-full">
+                                  <label className="text-xs text-gray-500 sm:hidden mb-1 block">Budget ({currency})</label>
+                                  <Input
                                   type="number"
                                   placeholder="0.00"
                                   value={milestone.budget}
@@ -833,15 +838,19 @@ export default function CreateContract() {
                                   step="0.01"
                                   className={`h-9 text-sm ${errors[`milestone_${index}_budget`] ? 'border-red-400 focus-visible:ring-red-400' : ''}`}
                                 />
+                                </div>
 
                                 {/* Due Date */}
-                                <Input
+                                <div className="w-full">
+                                  <label className="text-xs text-gray-500 sm:hidden mb-1 block">Due Date</label>
+                                  <Input
                                   type="date"
                                   value={milestone.dueDate}
                                   onChange={(e) => updateMilestone(index, 'dueDate', e.target.value)}
                                   min={new Date().toISOString().split('T')[0]}
                                   className={`h-9 text-sm ${errors[`milestone_${index}_dueDate`] ? 'border-red-400 focus-visible:ring-red-400' : ''}`}
                                 />
+                                </div>
 
                                 {/* Remove */}
                                 <button
@@ -894,7 +903,7 @@ export default function CreateContract() {
                       </>
                     ) : (
                       <>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <Label htmlFor="hourlyRate">Hourly Rate *</Label>
                             <Input
@@ -1041,7 +1050,7 @@ export default function CreateContract() {
                           <Edit2 className="w-4 h-4" />
                         </Button>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="border rounded-lg p-4">
                           <p className="text-xs text-gray-500 mb-1">Type</p>
                           <p className="font-semibold text-gray-900 flex items-center gap-2">
@@ -1155,7 +1164,7 @@ export default function CreateContract() {
                       </Button>
                       <Button 
                         onClick={handleNext}
-                        className="bg-[#84cc16] hover:bg-[#65a30d] text-white flex items-center gap-2"
+                        className="bg-green-400 hover:bg-green-500 text-black font-bold active:scale-[0.97] transition-all flex items-center gap-2"
                       >
                         {currentStep === 3 ? 'Review Contract' : 'Next'}
                         <ChevronRight className="w-4 h-4" />
@@ -1329,7 +1338,7 @@ export default function CreateContract() {
                   <Button
                     onClick={handleSubmit}
                     disabled={!agreedToTerms || isSending}
-                    className="w-full bg-[#84cc16] hover:bg-[#65a30d] text-white h-12 text-base font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-green-400 hover:bg-green-500 text-black font-bold active:scale-[0.97] transition-all h-12 text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSending ? (
                       <><Loader2 className="w-5 h-5 mr-2 animate-spin" /> Sending...</>

@@ -33,21 +33,30 @@ export const ROUTES = {
   EMPLOYER_GETTING_STARTED: '/employer/getting-started',
   EMPLOYER_ONBOARDING: '/employer/onboarding',
   BROWSE_DEVELOPERS: '/employer/browse',
+  BROWSE_TALENT: '/employer/talent',
+  TALENT_PROFILE: '/employer/talent/:id',
   SAVED_DEVELOPERS: '/employer/saved',
-  TESTING_HUB: '/employer/tests',
-  TEST_INVITATIONS: '/employer/tests/invitations',
-  TEST_RESULTS: '/employer/tests/results',
   CREATE_CONTRACT: '/employer/contracts/create',
   CONTRACT_DETAILS: '/employer/contracts/:id',
   
   // Freelancer routes
+  FREELANCER_ONBOARDING: '/freelancer/onboarding',
   FREELANCER_DASHBOARD: '/freelancer/dashboard',
-  TEST_SELECTION: '/freelancer/tests',
-  TAKE_TEST: '/freelancer/tests/:id',
-  TEST_RESULTS_VIEW: '/freelancer/tests/:id/results',
   CREATE_CONTRACT_FREELANCER: '/freelancer/contracts/create',
+
+  // Employer assessment routes
+  EMPLOYER_ASSESSMENTS: '/employer/assessments',
+  CREATE_ASSESSMENT: '/employer/assessments/create',
+  ASSESSMENT_DETAIL: '/employer/assessments/:id',
+  ASSESSMENT_RESULTS: '/employer/assessments/results/:id',
+
+  // Assessment routes (freelancer + shared)
+  ASSESSMENT_INVITE: '/assessment/invite/:token',
+  ASSESSMENT_SESSION: '/assessment/session/:id',
+  ASSESSMENT_INVITATIONS: '/freelancer/assessments',
   
   // Shared routes (both roles)
+  SETTINGS: '/settings',
   CONTRACT_SENT: '/contract-sent',
   CONTRACT_RESPOND: '/contracts/:id/respond',
   WITHDRAWALS: '/freelancer/withdrawals',
