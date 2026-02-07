@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole?: 'Freelancer' | 'BusinessOwner';
+  requiredRole?: 'Freelancer' | 'BusinessOwner' | 'Admin';
   redirectTo?: string;
 }
 

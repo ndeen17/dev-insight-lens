@@ -17,7 +17,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import * as talentService from '@/services/talentService';
 import { getLeaderboard } from '@/services/api';
-import { savedDevsService } from '@/utils/savedDevs';
+import { saveDeveloper, getSavedCount as fetchSavedCount } from '@/services/savedDevsApi';
 import type { TalentProfile, BrowseCandidate } from '@/types/talent';
 import { ROUTES } from '@/config/constants';
 
@@ -96,7 +96,14 @@ export default function BrowseTalent() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [swipeDirection, setSwipeDirection] = useState<'left' | 'right' | null>(null);
-  const [savedCount, setSavedCount] = useState(savedDevsService.getSavedCount());
+  const [savedCount, setSavedCount] = useState(0);
+
+  /* ── Fetch saved count from backend on mount ── */
+  useEffect(() => {
+    fetchSavedCount()
+      .then(setSavedCount)
+      .catch(() => { /* ignore — count stays 0 until next save */ });
+  }, []);
 
   /* ── Touch / drag state ── */
   const touchStartRef = useRef<number | null>(null);
@@ -219,28 +226,25 @@ export default function BrowseTalent() {
 
       if (direction === 'right') {
         const candidate = cands[idx];
-        const saved = savedDevsService.saveDev({
-          username: candidate.username || candidate.id,
-          name: candidate.name,
-          avatar: candidate.avatar,
-          level:
-            candidate.githubLevel ||
-            (candidate.bestScore != null ? `${candidate.bestScore}%` : '—'),
-          score: candidate.githubScore ?? candidate.bestScore ?? 0,
-          location: candidate.location,
-          github_url: candidate.githubUrl,
-          primary_languages:
-            candidate.primaryLanguages || candidate.skills.slice(0, 5),
-          type: candidate.type,
-          profileId: candidate.profileId,
-        });
+        const identifier = candidate.username || candidate.profileId || candidate.id;
 
-        if (saved) {
-          toast({ title: `${candidate.name} saved!`, description: 'Added to your saved list' });
-          setSavedCount(savedDevsService.getSavedCount());
-        } else {
-          toast({ title: 'Already saved', description: `${candidate.name} is already in your list` });
-        }
+        // Optimistic count bump
+        setSavedCount((prev) => prev + 1);
+
+        saveDeveloper(identifier)
+          .then(() => {
+            toast({ title: `${candidate.name} saved!`, description: 'Added to your saved list' });
+          })
+          .catch((err) => {
+            // Roll back on failure
+            setSavedCount((prev) => Math.max(0, prev - 1));
+            const msg = err?.response?.data?.error || err?.message || '';
+            if (msg === 'Already saved') {
+              toast({ title: 'Already saved', description: `${candidate.name} is already in your list` });
+            } else {
+              toast({ title: 'Save failed', description: msg || 'Could not save developer', variant: 'destructive' });
+            }
+          });
       }
 
       setTimeout(() => {

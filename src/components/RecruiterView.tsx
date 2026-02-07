@@ -21,7 +21,7 @@ const RecruiterView: React.FC<RecruiterViewProps> = ({ data }) => {
     return 'text-blue-600';
   };
 
-  const recommendationStyle = getRecommendationStyle(recruiter_summary.hiring_recommendation);
+  const recommendationStyle = getRecommendationStyle(recruiter_summary.hiring_readiness || recruiter_summary.hiring_recommendation || '');
 
   return (
     <div className="space-y-3 sm:space-y-4 md:space-y-6 w-full max-w-6xl mx-auto px-2 sm:px-3 md:px-4">
@@ -63,11 +63,11 @@ const RecruiterView: React.FC<RecruiterViewProps> = ({ data }) => {
           <svg className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
           </svg>
-          <span className="text-base sm:text-lg md:text-xl font-bold text-black">Hiring Recommendation</span>
+          <span className="text-base sm:text-lg md:text-xl font-bold text-black">Hiring Readiness</span>
         </div>
         
         <div className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-xl sm:text-2xl md:text-3xl font-bold text-blue-600 bg-blue-50 border-2 border-blue-200 mb-4">
-          {recruiter_summary.hiring_recommendation}
+          {recruiter_summary.hiring_readiness || recruiter_summary.hiring_recommendation}
         </div>
 
         <p className="text-sm sm:text-base md:text-lg font-medium text-gray-700 mb-3 sm:mb-4 px-2">
@@ -82,8 +82,8 @@ const RecruiterView: React.FC<RecruiterViewProps> = ({ data }) => {
             <div className="text-xs sm:text-xs text-gray-600">Skill Level</div>
           </div>
           <div className="bg-white rounded-lg p-3 sm:p-4 border-2 border-gray-200">
-            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600 mb-1">{scores.job_readiness_score}%</div>
-            <div className="text-xs sm:text-xs text-gray-600">Job Ready</div>
+            <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600 mb-1">{scores.overall_score}/100</div>
+            <div className="text-xs sm:text-xs text-gray-600">Overall Score</div>
           </div>
           <div className="bg-white rounded-lg p-3 sm:p-4 border-2 border-gray-200">
             <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600 mb-1">{scores.tech_depth_score}%</div>
@@ -144,6 +144,19 @@ const RecruiterView: React.FC<RecruiterViewProps> = ({ data }) => {
       </div>
 
       {/* Technical Competencies */}
+      {recruiter_summary.portfolio_readiness && (
+        <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
+          <div className="flex items-center space-x-2 mb-4">
+            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+            </svg>
+            <h3 className="text-lg font-semibold text-black">Portfolio Readiness</h3>
+          </div>
+          <p className="text-sm text-gray-700 leading-relaxed">{recruiter_summary.portfolio_readiness}</p>
+        </div>
+      )}
+
+      {/* Technical Competencies */}
       <div className="bg-white rounded-lg border-2 border-gray-200 p-6">
         <div className="flex items-center space-x-2 mb-4">
           <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,7 +174,7 @@ const RecruiterView: React.FC<RecruiterViewProps> = ({ data }) => {
       </div>
 
       {/* Repository Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         <div className="bg-white rounded-lg p-4 border-2 border-gray-200">
           <div className="text-2xl font-bold text-black mb-1">{profile.analyzed_repositories}</div>
           <div className="text-xs text-gray-600">Analyzed Repos</div>
@@ -171,12 +184,8 @@ const RecruiterView: React.FC<RecruiterViewProps> = ({ data }) => {
           <div className="text-xs text-gray-600">Total Repos</div>
         </div>
         <div className="bg-white rounded-lg p-4 border-2 border-gray-200">
-          <div className="text-2xl font-bold text-black mb-1">{scores.overall_score}</div>
-          <div className="text-xs text-gray-600">Overall Score</div>
-        </div>
-        <div className="bg-white rounded-lg p-4 border-2 border-gray-200">
-          <div className="text-2xl font-bold text-black mb-1">{scores.activity}/20</div>
-          <div className="text-xs text-gray-600">Activity Score</div>
+          <div className="text-2xl font-bold text-blue-600 mb-1 break-words">{profile.activity_status}</div>
+          <div className="text-xs text-gray-600">Activity Status</div>
         </div>
       </div>
     </div>

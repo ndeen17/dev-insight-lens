@@ -33,7 +33,7 @@ const EngineerView: React.FC<EngineerViewProps> = ({ data }) => {
                 {scores.overall_level} Developer
               </span>
               <span className="px-3 py-1 bg-white rounded-full text-sm font-semibold text-gray-700 border border-gray-200">
-                Score: {scores.overall_score}/110
+                Score: {scores.overall_score}/100
               </span>
             </div>
           </div>
@@ -50,12 +50,11 @@ const EngineerView: React.FC<EngineerViewProps> = ({ data }) => {
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
-            { label: 'Code Quality', score: scores.code_quality, max: 20 },
-            { label: 'Project Diversity', score: scores.project_diversity, max: 20 },
-            { label: 'Activity', score: scores.activity, max: 20 },
-            { label: 'Architecture', score: scores.architecture, max: 20 },
-            { label: 'Repository Quality', score: scores.repo_quality, max: 20 },
-            { label: 'Professionalism', score: scores.professionalism, max: 10 },
+            { label: 'Code Sophistication', score: scores.code_sophistication, max: 25 },
+            { label: 'Engineering Practices', score: scores.engineering_practices, max: 25 },
+            { label: 'Project Maturity', score: scores.project_maturity, max: 20 },
+            { label: 'Contribution Activity', score: scores.contribution_activity, max: 15 },
+            { label: 'Breadth & Depth', score: scores.breadth_and_depth, max: 15 },
           ].map((item, index) => (
             <div key={index} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
               <div className="flex items-center justify-between mb-2">
@@ -215,7 +214,67 @@ const EngineerView: React.FC<EngineerViewProps> = ({ data }) => {
                 </div>
               </div>
             </div>
+
+            {/* Testing Maturity & Details (new fields) */}
+            {(engineer_breakdown.testing_analysis.maturity || engineer_breakdown.testing_analysis.details) && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                {engineer_breakdown.testing_analysis.maturity && (
+                  <div className="p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                    <span className="font-semibold text-gray-900 block mb-1">Testing Maturity</span>
+                    <p className="text-sm text-gray-700">{engineer_breakdown.testing_analysis.maturity}</p>
+                  </div>
+                )}
+                {engineer_breakdown.testing_analysis.details && (
+                  <div className="p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                    <span className="font-semibold text-gray-900 block mb-1">Details</span>
+                    <p className="text-sm text-gray-700">{engineer_breakdown.testing_analysis.details}</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
+
+          {/* Interview Probes */}
+          {engineer_breakdown.interview_probes && engineer_breakdown.interview_probes.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 sm:p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>Interview Probes</span>
+              </h3>
+              <div className="space-y-3">
+                {engineer_breakdown.interview_probes.map((probe, index) => (
+                  <div key={index} className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg border-2 border-blue-100">
+                    <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">
+                      {index + 1}
+                    </div>
+                    <p className="text-sm text-gray-700 leading-relaxed">{probe}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Notable Implementations */}
+          {engineer_breakdown.notable_implementations && engineer_breakdown.notable_implementations.length > 0 && (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 sm:p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path>
+                </svg>
+                <span>Notable Implementations</span>
+              </h3>
+              <div className="space-y-3">
+                {engineer_breakdown.notable_implementations.map((impl, index) => (
+                  <div key={index} className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg border-2 border-blue-100">
+                    <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                    <p className="text-sm text-gray-700 leading-relaxed">{impl}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </TabsContent>
 
         {/* Languages Tab */}

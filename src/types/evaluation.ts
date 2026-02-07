@@ -3,8 +3,12 @@
  * Supports dual-mode analysis: Recruiter Mode & Engineer Mode
  */
 
-export type SkillLevel = 'Beginner' | 'Intermediate' | 'Senior' | 'Expert';
-export type HiringRecommendation = 'Strong Yes' | 'Yes' | 'Maybe' | 'No';
+export type SkillLevel = 'Entry' | 'Junior' | 'Mid-Level' | 'Senior' | 'Expert';
+export type HiringRecommendation = 'Strong Hire' | 'Hire' | 'Consider' | 'Develop';
+
+// Legacy compat aliases
+export type LegacySkillLevel = 'Beginner' | 'Intermediate';
+export type LegacyHiringRecommendation = 'Strong Yes' | 'Yes' | 'Maybe' | 'No';
 export type ActivityFlag = 'Active' | 'Semi-active' | 'Inactive';
 export type ProjectMaturityRating = 'Low' | 'Moderate' | 'Good' | 'Excellent';
 
@@ -26,21 +30,22 @@ export interface Profile {
 
 /**
  * Scoring model - base metrics for both modes
- * Total possible: 110 points
+ * Total possible: 100 points across 5 categories
  */
 export interface Scores {
-  overall_level: SkillLevel;
-  overall_score: number; // 0-110
+  overall_level: SkillLevel | string;
+  overall_score: number; // 0-100
+  max_score: number; // 100
+  hiring_readiness: string;
   job_readiness_score: number; // 0-100
   tech_depth_score: number; // 0-100
   
-  // Individual category scores
-  code_quality: number; // 0-20
-  project_diversity: number; // 0-20
-  activity: number; // 0-20
-  architecture: number; // 0-20
-  repo_quality: number; // 0-20
-  professionalism: number; // 0-10
+  // 5-category scores
+  code_sophistication: number; // 0-25
+  engineering_practices: number; // 0-25
+  project_maturity: number; // 0-20
+  contribution_activity: number; // 0-15
+  breadth_and_depth: number; // 0-15
 }
 
 /**
@@ -51,11 +56,10 @@ export interface RecruiterSummary {
   top_strengths: string[];
   risks_or_weaknesses: string[];
   recommended_role_level: string;
-  hiring_recommendation: HiringRecommendation;
-  activity_flag: ActivityFlag;
+  hiring_readiness: string;
+  hiring_recommendation?: string; // legacy alias
   project_maturity_rating: ProjectMaturityRating;
-  tech_stack_summary?: string[];
-  work_history_signals?: string[];
+  portfolio_readiness?: string;
 }
 
 /**
@@ -64,8 +68,9 @@ export interface RecruiterSummary {
 export interface TestingAnalysis {
   test_presence: boolean;
   test_libraries_seen: string[];
-  coverage_estimate?: string;
-  testing_patterns?: string[];
+  maturity?: string;
+  details?: string;
+  test_file_ratio?: number;
 }
 
 /**
@@ -104,10 +109,9 @@ export interface EngineerBreakdown {
   commit_message_quality: string;
   language_breakdown: LanguageBreakdown;
   repo_level_details: RepoDetail[];
-  design_patterns_used?: string[];
-  code_smells?: string[];
-  best_practices?: string[];
+  notable_implementations?: string[];
   improvement_areas?: string[];
+  interview_probes?: string[];
 }
 
 /**

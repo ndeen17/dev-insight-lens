@@ -116,7 +116,7 @@ const ResultsCard: React.FC<ResultsCardProps> = ({ results, mode, onModeChange }
           
           <button 
             onClick={() => {
-              const shareText = `Check out my GitHub profile analysis: ${results.scores.overall_level} Developer (${results.scores.overall_score}/110 score)`;
+              const shareText = `Check out my GitHub profile analysis: ${results.scores.overall_level} Developer (${results.scores.overall_score}/100 score)`;
               if (navigator.share) {
                 navigator.share({ 
                   title: 'Dev Insight Lens - GitHub Analysis',

@@ -1,35 +1,42 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { savedDevsService } from '../utils/savedDevs';
+import { getSavedDevelopers, removeDeveloper } from '@/services/savedDevsApi';
+import type { SavedDeveloper } from '@/services/savedDevsApi';
 import { toast } from 'sonner';
 import BackToDashboard from '../components/BackToDashboard';
-import { Search, Inbox, Trash2, Github, MapPin } from 'lucide-react';
+import { Search, Inbox, Trash2, Github, MapPin, Loader2 } from 'lucide-react';
 
 const SavedDevelopers = () => {
-  const [savedDevs, setSavedDevs] = useState([]);
+  const [savedDevs, setSavedDevs] = useState<SavedDeveloper[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [removingUsername, setRemovingUsername] = useState<string | null>(null);
 
   useEffect(() => {
     loadSavedDevs();
   }, []);
 
-  const loadSavedDevs = () => {
-    const devs = savedDevsService.getSavedDevs();
-    setSavedDevs(devs);
-  };
-
-  const handleRemove = (username) => {
-    const removed = savedDevsService.removeDev(username);
-    if (removed) {
-      toast.success('Developer removed from saved list');
-      loadSavedDevs();
+  const loadSavedDevs = async () => {
+    try {
+      setLoading(true);
+      const devs = await getSavedDevelopers();
+      setSavedDevs(devs);
+    } catch {
+      toast.error('Failed to load saved developers');
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleClearAll = () => {
-    if (window.confirm('Are you sure you want to clear all saved developers?')) {
-      savedDevsService.clearAll();
-      toast.success('All saved developers cleared');
-      loadSavedDevs();
+  const handleRemove = async (username: string) => {
+    try {
+      setRemovingUsername(username);
+      await removeDeveloper(username);
+      setSavedDevs((prev) => prev.filter((d) => d.username !== username));
+      toast.success('Developer removed from saved list');
+    } catch {
+      toast.error('Failed to remove developer');
+    } finally {
+      setRemovingUsername(null);
     }
   };
 
@@ -40,15 +47,6 @@ const SavedDevelopers = () => {
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between mb-4">
             <BackToDashboard />
-
-            {savedDevs.length > 0 && (
-              <button
-                onClick={handleClearAll}
-                className="text-sm text-red-600 hover:text-red-700 font-medium"
-              >
-                Clear All
-              </button>
-            )}
           </div>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -74,7 +72,12 @@ const SavedDevelopers = () => {
 
       {/* Content */}
       <div className="max-w-6xl mx-auto px-4 py-12">
-        {savedDevs.length === 0 ? (
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-500 mb-3" />
+            <p className="text-gray-500 text-sm">Loading saved developers…</p>
+          </div>
+        ) : savedDevs.length === 0 ? (
           <div className="text-center bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-16 animate-fade-in-up">
             <div className="w-20 h-20 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-6 animate-float">
               <Inbox className="w-10 h-10 text-gray-400" />
@@ -108,10 +111,15 @@ const SavedDevelopers = () => {
                     />
                     <button
                       onClick={() => handleRemove(dev.username)}
-                      className="text-white/80 hover:text-white transition-colors"
+                      disabled={removingUsername === dev.username}
+                      className="text-white/80 hover:text-white transition-colors disabled:opacity-50"
                       title="Remove from saved"
                     >
-                      <Trash2 className="w-5 h-5" />
+                      {removingUsername === dev.username ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      ) : (
+                        <Trash2 className="w-5 h-5" />
+                      )}
                     </button>
                   </div>
                   <h3 className="text-heading-sm font-semibold mb-1">{dev.name || dev.username}</h3>
@@ -135,28 +143,30 @@ const SavedDevelopers = () => {
                     </div>
                   </div>
 
-                  {/* Languages */}
-                  {dev.primary_languages && dev.primary_languages.length > 0 && (
+                  {/* Languages / Skills */}
+                  {((dev.primary_languages && dev.primary_languages.length > 0) || (dev.skills && dev.skills.length > 0)) && (
                     <div className="mb-4">
                       <div className="flex flex-wrap gap-1">
-                        {dev.primary_languages.slice(0, 3).map((lang, idx) => (
+                        {(dev.primary_languages?.length ? dev.primary_languages : dev.skills).slice(0, 3).map((item, idx) => (
                           <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
-                            {lang}
+                            {item}
                           </span>
                         ))}
-                        {dev.primary_languages.length > 3 && (
+                        {(dev.primary_languages?.length ? dev.primary_languages : dev.skills).length > 3 && (
                           <span className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
-                            +{dev.primary_languages.length - 3}
+                            +{(dev.primary_languages?.length ? dev.primary_languages : dev.skills).length - 3}
                           </span>
                         )}
                       </div>
                     </div>
                   )}
 
-                  {/* Saved Date */}
-                  <p className="text-xs text-gray-400 mb-4">
-                    Saved {new Date(dev.savedAt).toLocaleDateString()}
-                  </p>
+                  {/* Profession / Type */}
+                  {dev.profession && (
+                    <p className="text-xs text-gray-400 mb-4">
+                      {dev.profession}
+                    </p>
+                  )}
 
                   {/* Actions */}
                   <div className="flex gap-2">
@@ -171,7 +181,8 @@ const SavedDevelopers = () => {
                     </a>
                     <button
                       onClick={() => handleRemove(dev.username)}
-                      className="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium"
+                      disabled={removingUsername === dev.username}
+                      className="px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium disabled:opacity-50"
                     >
                       Remove
                     </button>
