@@ -13,6 +13,8 @@ import {
   AlertTriangle,
   ArrowRight,
   XCircle,
+  Code2,
+  Bot,
 } from 'lucide-react';
 import * as assessmentService from '@/services/assessmentService';
 import type { AssessmentInvitation, Assessment } from '@/types/assessment';
@@ -112,6 +114,7 @@ const AssessmentInvite = () => {
   const employer = typeof invitation.employer === 'object' ? invitation.employer : null;
   const alreadyCompleted = invitation.status === 'completed';
   const alreadyDeclined = invitation.status === 'declined';
+  const isCoding = assessment?.assessmentType === 'coding';
 
   // ── Render ──────────────────────────────────────────────────
   return (
@@ -119,6 +122,17 @@ const AssessmentInvite = () => {
       <div className="max-w-md w-full space-y-6">
         {/* Title */}
         <div className="text-center">
+          <div className="flex items-center justify-center gap-2 mb-2">
+            {isCoding ? (
+              <Badge className="bg-lime-500/20 text-lime-700 border-none text-xs">
+                <Code2 className="w-3 h-3 mr-1" /> Coding Challenge
+              </Badge>
+            ) : (
+              <Badge className="bg-blue-500/20 text-blue-700 border-none text-xs">
+                <Bot className="w-3 h-3 mr-1" /> AI Interview
+              </Badge>
+            )}
+          </div>
           <h1 className="text-2xl font-bold text-gray-900 mb-1">Skill Assessment</h1>
           <p className="text-gray-500 text-sm">
             {employer
@@ -164,6 +178,20 @@ const AssessmentInvite = () => {
                 ))}
               </div>
             )}
+
+            {/* Allowed languages (coding assessments) */}
+            {isCoding && assessment.allowedLanguages?.length > 0 && (
+              <div>
+                <p className="text-xs text-gray-500 mb-1.5">Allowed languages</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {assessment.allowedLanguages.map((lang) => (
+                    <Badge key={lang} className="bg-lime-50 text-lime-700 border-lime-200 text-xs py-0.5">
+                      {lang}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -181,8 +209,18 @@ const AssessmentInvite = () => {
             <p className="font-medium mb-1">Before you start</p>
             <ul className="list-disc list-inside space-y-1 text-amber-700">
               <li>The timer starts immediately when you begin</li>
-              <li>You cannot paste text — all answers must be typed</li>
-              <li>Answer each question thoughtfully, the AI adapts to your level</li>
+              {isCoding ? (
+                <>
+                  <li>Write and test your code in the built-in editor</li>
+                  <li>You can run against sample test cases before submitting</li>
+                  <li>Tab switches and copy/paste are monitored</li>
+                </>
+              ) : (
+                <>
+                  <li>You cannot paste text — all answers must be typed</li>
+                  <li>Answer each question thoughtfully, the AI adapts to your level</li>
+                </>
+              )}
             </ul>
           </div>
         </div>

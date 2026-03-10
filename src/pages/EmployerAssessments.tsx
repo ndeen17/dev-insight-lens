@@ -14,6 +14,10 @@ import {
   Trash2,
   Eye,
   Send,
+  Code2,
+  Bot,
+  Link2,
+  Copy,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -31,6 +35,11 @@ const difficultyColors: Record<string, string> = {
   beginner: 'bg-green-100 text-green-700',
   intermediate: 'bg-amber-100 text-amber-700',
   advanced: 'bg-red-100 text-red-700',
+};
+
+const typeConfig: Record<string, { label: string; icon: typeof Code2; cls: string; border: string }> = {
+  coding: { label: 'Coding', icon: Code2, cls: 'bg-lime-100 text-lime-700', border: 'border-l-lime-500' },
+  ai_chat: { label: 'AI Chat', icon: Bot, cls: 'bg-blue-100 text-blue-700', border: 'border-l-blue-500' },
 };
 
 const EmployerAssessments = () => {
@@ -109,16 +118,23 @@ const EmployerAssessments = () => {
           </div>
         ) : (
           <div className="grid gap-4">
-            {assessments.map((a) => (
+            {assessments.map((a) => {
+              const tc = typeConfig[a.assessmentType] || typeConfig.ai_chat;
+              const TypeIcon = tc.icon;
+              return (
               <div
                 key={a._id}
-                className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-md hover:border-gray-300 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer"
+                className={`bg-white rounded-xl border border-gray-200 border-l-4 ${tc.border} p-5 hover:shadow-md hover:border-gray-300 hover:-translate-y-0.5 transition-all duration-200 cursor-pointer`}
                 onClick={() => navigate(`/employer/assessments/${a._id}`)}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-2">
+                    <div className="flex items-center gap-2 mb-2">
                       <h3 className="font-semibold text-gray-900 truncate">{a.title}</h3>
+                      <Badge className={`text-[10px] gap-1 ${tc.cls}`}>
+                        <TypeIcon className="w-3 h-3" />
+                        {tc.label}
+                      </Badge>
                       <Badge className={`text-xs ${difficultyColors[a.difficulty] || ''}`}>
                         {a.difficulty}
                       </Badge>
@@ -134,12 +150,18 @@ const EmployerAssessments = () => {
                       </span>
                       <span className="flex items-center gap-1.5">
                         <HelpCircle className="w-3.5 h-3.5" />
-                        {a.questionCount} questions
+                        {a.assessmentType === 'coding' ? (a.questions?.length || 0) : a.questionCount} questions
                       </span>
                       <span className="flex items-center gap-1.5">
                         <Clock className="w-3.5 h-3.5" />
                         {a.timeLimitMinutes} min
                       </span>
+                      {a.inviteCode && (
+                        <span className="flex items-center gap-1.5 text-lime-700">
+                          <Link2 className="w-3.5 h-3.5" />
+                          {a.inviteCode}
+                        </span>
+                      )}
                     </div>
                     {a.skills.length > 0 && (
                       <div className="flex flex-wrap gap-1.5 mt-3">
@@ -182,7 +204,8 @@ const EmployerAssessments = () => {
                   </DropdownMenu>
                 </div>
               </div>
-            ))}
+            );
+            })}
           </div>
         )}
       </div>

@@ -138,6 +138,46 @@ const FreelancerDashboard = () => {
         </p>
       </div>
 
+      {/* Stat Cards */}
+      <div className="px-4 sm:px-8 pt-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <StatCard
+            label="Active Contracts"
+            value={stats?.contracts.active ?? 0}
+            icon={<Briefcase className="w-5 h-5 text-blue-600" />}
+            bg="bg-blue-50"
+            loading={loadingStats}
+            index={0}
+          />
+          <StatCard
+            label="Total Earnings"
+            value={fmtCurrency(stats?.contracts.totalEarnings ?? totalEarnings)}
+            icon={<DollarSign className="w-5 h-5 text-green-600" />}
+            bg="bg-green-50"
+            loading={loadingStats}
+            index={1}
+          />
+          <StatCard
+            label="Best Assessment"
+            value={stats?.assessments.bestScore != null ? `${stats.assessments.bestScore}%` : '—'}
+            sub={stats?.assessments.completed ? `${stats.assessments.completed} completed` : undefined}
+            icon={<Award className="w-5 h-5 text-amber-600" />}
+            bg="bg-amber-50"
+            loading={loadingStats}
+            index={2}
+          />
+          <StatCard
+            label="Balance"
+            value={fmtCurrency(balance)}
+            sub="Available to withdraw"
+            icon={<Wallet className="w-5 h-5 text-purple-600" />}
+            bg="bg-purple-50"
+            loading={loadingStats}
+            index={3}
+          />
+        </div>
+      </div>
+
       {/* Quick Actions */}
       <div className="px-4 sm:px-8 pt-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -189,6 +229,21 @@ const FreelancerDashboard = () => {
               <p className="text-xs text-gray-500">See top-rated professionals</p>
             </div>
             <ArrowUpRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors" />
+          </button>
+
+          {/* My Profile */}
+          <button
+            onClick={() => navigate(ROUTES.FREELANCER_PROFILE)}
+            className="flex items-center gap-4 bg-gradient-to-r from-purple-50 to-violet-50 border border-purple-200 rounded-xl p-5 text-left hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group"
+          >
+            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <Award className="w-5 h-5 text-purple-600" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-semibold text-purple-900">My Profile</p>
+              <p className="text-xs text-purple-600">View your public developer profile</p>
+            </div>
+            <ArrowUpRight className="w-4 h-4 text-purple-300 group-hover:text-purple-500 transition-colors" />
           </button>
         </div>
       </div>

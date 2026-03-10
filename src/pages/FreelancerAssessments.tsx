@@ -14,6 +14,8 @@ import {
   XCircle,
   AlertTriangle,
   Eye,
+  Code2,
+  Bot,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import * as assessmentService from '@/services/assessmentService';
@@ -146,10 +148,19 @@ const FreelancerAssessments = () => {
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3 mb-1">
+                      <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-semibold text-gray-900 truncate">
                           {assessment?.title || 'Assessment'}
                         </h3>
+                        {assessment?.assessmentType === 'coding' ? (
+                          <Badge className="bg-lime-100 text-lime-700 border-none text-[10px] py-0">
+                            <Code2 className="w-3 h-3 mr-0.5" /> Coding
+                          </Badge>
+                        ) : (
+                          <Badge className="bg-blue-100 text-blue-700 border-none text-[10px] py-0">
+                            <Bot className="w-3 h-3 mr-0.5" /> AI Chat
+                          </Badge>
+                        )}
                         <Badge className={st.cls}>{st.label}</Badge>
                       </div>
 
@@ -174,6 +185,27 @@ const FreelancerAssessments = () => {
                             <Clock className="w-3.5 h-3.5" />
                             {assessment.timeLimitMinutes} min
                           </span>
+                        </div>
+                      )}
+
+                      {/* Coding session details (completed) */}
+                      {inv.status === 'completed' && sess && assessment?.assessmentType === 'coding' && sess.submissions && sess.submissions.length > 0 && (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <span className="text-xs text-gray-500">
+                            {sess.submissions.length}/{assessment.questionCount} submitted
+                          </span>
+                          <span className="text-xs text-gray-400">·</span>
+                          <span className="text-xs text-green-600">
+                            {sess.submissions.filter((s) => s.score === 100).length} solved
+                          </span>
+                          {sess.selectedLanguage && (
+                            <>
+                              <span className="text-xs text-gray-400">·</span>
+                              <Badge className="text-[10px] py-0 bg-gray-100 text-gray-600 border-gray-200">
+                                {sess.selectedLanguage}
+                              </Badge>
+                            </>
+                          )}
                         </div>
                       )}
                     </div>

@@ -45,6 +45,88 @@ export interface TalentProfileFull {
   assessments: TalentAssessmentResult[];
 }
 
+// ─── Freelancer Self-Profile (GET /api/users/me/full-profile) ─
+
+export interface ProfileBadge {
+  key: string;
+  label: string;
+  icon: string;
+}
+
+export interface FreelancerProfile extends TalentProfile {
+  badges: ProfileBadge[];
+}
+
+export interface FreelancerSelfAssessment extends TalentAssessmentResult {
+  assessment: TalentAssessmentResult['assessment'] & {
+    assessmentType?: 'coding' | 'ai_chat';
+    allowedLanguages?: string[];
+    skills?: string[];
+    createdBy?: {
+      firstName: string;
+      lastName: string;
+      companyName?: string;
+    };
+  };
+  status?: string;
+}
+
+export interface ActiveSession {
+  _id: string;
+  assessment: {
+    _id: string;
+    title: string;
+    profession: string;
+    difficulty: string;
+    questionCount: number;
+    timeLimitMinutes: number;
+    assessmentType?: 'coding' | 'ai_chat';
+  };
+  startedAt: string;
+  status: string;
+}
+
+export interface FreelancerFullProfile {
+  profile: FreelancerProfile;
+  assessments: FreelancerSelfAssessment[];
+  activeSessions: ActiveSession[];
+}
+
+// ─── Public Assessment Catalog ────────────────────────────────
+
+export interface PublicAssessment {
+  _id: string;
+  title: string;
+  description: string;
+  profession: string;
+  skills: string[];
+  difficulty: 'beginner' | 'intermediate' | 'advanced';
+  questionCount: number;
+  timeLimitMinutes: number;
+  assessmentType: 'coding' | 'ai_chat';
+  allowedLanguages: string[];
+  createdBy: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+    companyName?: string;
+    profilePicture?: string;
+  };
+  createdAt: string;
+  completions: number;
+  avgScore: number | null;
+}
+
+export interface PublicAssessmentsResponse {
+  assessments: PublicAssessment[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    pages: number;
+  };
+}
+
 export interface BrowseTalentParams {
   profession?: string;
   skills?: string;

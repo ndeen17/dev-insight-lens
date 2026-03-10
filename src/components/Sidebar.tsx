@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { ROUTES } from '@/config/constants';
 import { useUser, UserButton } from '@clerk/clerk-react';
 import NotificationBell from '@/components/NotificationBell';
@@ -7,9 +7,7 @@ import {
   Clock, 
   CheckCircle2, 
   Archive, 
-  DollarSign, 
   ShieldCheck,
-  Plus,
   Menu,
   X,
   FileText,
@@ -22,7 +20,11 @@ import {
   Wallet,
   ClipboardList,
   Settings,
-  CreditCard
+  CreditCard,
+  Code2,
+  Library,
+  LayoutDashboard,
+  User,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -31,9 +33,9 @@ interface SidebarProps {
 
 export default function Sidebar({ userRole }: SidebarProps) {
   const location = useLocation();
-  const navigate = useNavigate();
   const { user } = useUser();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [contractSectionOpen, setContractSectionOpen] = useState(true);
   const [talentSectionOpen, setTalentSectionOpen] = useState(true);
 
   // Define navigation items based on user role
@@ -77,6 +79,8 @@ export default function Sidebar({ userRole }: SidebarProps) {
         ],
         assessments: [
           { name: 'All Assessments', icon: ClipboardList, path: ROUTES.EMPLOYER_ASSESSMENTS },
+          { name: 'Question Bank', icon: Library, path: ROUTES.QUESTION_BANK },
+          { name: 'Code Playground', icon: Code2, path: ROUTES.PLAYGROUND },
         ],
       };
     } else {
@@ -123,14 +127,7 @@ export default function Sidebar({ userRole }: SidebarProps) {
     return currentPath === path || location.search.includes(path.split('?')[1]);
   };
 
-  const handleCreateContract = () => {
-    if (userRole === 'BusinessOwner') {
-      navigate(ROUTES.CREATE_CONTRACT);
-    } else {
-      navigate(ROUTES.CREATE_CONTRACT_FREELANCER);
-    }
-    setMobileMenuOpen(false);
-  };
+
 
   const SidebarContent = () => (
     <>
@@ -146,10 +143,18 @@ export default function Sidebar({ userRole }: SidebarProps) {
       <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
         {/* Contracts Section */}
         <div className="mb-6">
-          <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-            Contracts
-          </h3>
-          {navItems.contracts?.map((item) => {
+          <button
+            onClick={() => setContractSectionOpen(!contractSectionOpen)}
+            className="w-full flex items-center justify-between px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider hover:text-gray-700"
+          >
+            <span>Contracts</span>
+            {contractSectionOpen ? (
+              <ChevronDown className="w-4 h-4" />
+            ) : (
+              <ChevronRight className="w-4 h-4" />
+            )}
+          </button>
+          {contractSectionOpen && navItems.contracts?.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
             
@@ -251,36 +256,95 @@ export default function Sidebar({ userRole }: SidebarProps) {
 
         {/* Assessments Section (Freelancer) */}
         {userRole === 'Freelancer' && (
-          <div className="mb-6">
-            <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-              Assessments
-            </h3>
-            <Link
-              to={ROUTES.ASSESSMENT_INVITATIONS}
-              onClick={() => setMobileMenuOpen(false)}
-              className={`flex items-center space-x-3 px-4 py-3 text-base font-medium rounded-lg transition-colors ${
-                location.pathname === ROUTES.ASSESSMENT_INVITATIONS
-                  ? 'bg-gray-200 text-gray-900'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-              }`}
-            >
-              <ClipboardList className="w-5 h-5" />
-              <span>My Assessments</span>
-            </Link>
-          </div>
+          <>
+            {/* Overview links */}
+            <div className="mb-6">
+              <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Overview
+              </h3>
+              <Link
+                to={ROUTES.FREELANCER_DASHBOARD}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center space-x-3 px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                  location.pathname === ROUTES.FREELANCER_DASHBOARD && !location.search
+                    ? 'bg-gray-200 text-gray-900'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                }`}
+              >
+                <LayoutDashboard className="w-5 h-5" />
+                <span>Dashboard</span>
+              </Link>
+              <Link
+                to={ROUTES.FREELANCER_PROFILE}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center space-x-3 px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                  location.pathname === ROUTES.FREELANCER_PROFILE
+                    ? 'bg-gray-200 text-gray-900'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                }`}
+              >
+                <User className="w-5 h-5" />
+                <span>My Profile</span>
+              </Link>
+            </div>
+
+            {/* Assessments */}
+            <div className="mb-6">
+              <h3 className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Assessments
+              </h3>
+              <Link
+                to={ROUTES.ASSESSMENT_INVITATIONS}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center space-x-3 px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                  location.pathname === ROUTES.ASSESSMENT_INVITATIONS
+                    ? 'bg-gray-200 text-gray-900'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                }`}
+              >
+                <ClipboardList className="w-5 h-5" />
+                <span>My Assessments</span>
+              </Link>
+              <Link
+                to={ROUTES.ASSESSMENT_CATALOG}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center space-x-3 px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                  location.pathname === ROUTES.ASSESSMENT_CATALOG
+                    ? 'bg-gray-200 text-gray-900'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                }`}
+              >
+                <Library className="w-5 h-5" />
+                <span>Browse Assessments</span>
+              </Link>
+              <Link
+                to={ROUTES.LEADERBOARD}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center space-x-3 px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                  location.pathname === ROUTES.LEADERBOARD
+                    ? 'bg-gray-200 text-gray-900'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                }`}
+              >
+                <Trophy className="w-5 h-5" />
+                <span>Leaderboard</span>
+              </Link>
+              <Link
+                to={ROUTES.PLAYGROUND}
+                onClick={() => setMobileMenuOpen(false)}
+                className={`flex items-center space-x-3 px-4 py-3 text-base font-medium rounded-lg transition-colors ${
+                  location.pathname === ROUTES.PLAYGROUND
+                    ? 'bg-gray-200 text-gray-900'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                }`}
+              >
+                <Code2 className="w-5 h-5" />
+                <span>Code Playground</span>
+              </Link>
+            </div>
+          </>
         )}
       </nav>
-
-      {/* Create Contract Button */}
-      <div className="px-4 pb-4">
-        <button
-          onClick={handleCreateContract}
-          className="w-full flex items-center justify-center space-x-2 px-4 py-3 text-white font-bold bg-blue-600 hover:bg-blue-700 active:scale-[0.97] rounded-lg transition-all shadow-sm"
-        >
-          <Plus className="w-5 h-5" />
-          <span>New Contract</span>
-        </button>
-      </div>
 
       {/* Settings Link */}
       <div className="px-4 pb-4">

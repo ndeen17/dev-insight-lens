@@ -34,6 +34,17 @@ export default {
 				'8xl': '88rem',    // 1408px — wider content for large monitors
 			},
 			colors: {
+				lime: {
+					DEFAULT: '#ADF033',
+					50: '#F4FDE0',
+					100: '#EAFBC2',
+					200: '#D6F78A',
+					300: '#C2F352',
+					400: '#ADF033',
+					500: '#8FCC1A',
+					600: '#6FA314',
+					700: '#507A0F',
+				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',

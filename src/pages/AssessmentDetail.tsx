@@ -1,3 +1,9 @@
+/**
+ * AssessmentDetail — Recruiter view of a single assessment.
+ * Enhanced with coding-assessment support: question list, shareable invite link,
+ * type badge, and coding-specific stats.
+ */
+
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -27,17 +33,30 @@ import {
   XCircle,
   AlertTriangle,
   User,
+  Code2,
+  Bot,
+  Link2,
+  Copy,
+  RefreshCw,
+  Target,
+  GripVertical,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import * as assessmentService from '@/services/assessmentService';
 import { SkeletonProfile } from '@/components/Skeletons';
-import type { Assessment, AssessmentInvitation, AssessmentSession } from '@/types/assessment';
+import type { Assessment, AssessmentInvitation, AssessmentSession, Question } from '@/types/assessment';
 import { ROUTES } from '@/config/constants';
 
 const diffBadge: Record<string, string> = {
   beginner: 'bg-green-100 text-green-700',
   intermediate: 'bg-amber-100 text-amber-700',
   advanced: 'bg-red-100 text-red-700',
+};
+
+const qDiffColor: Record<string, string> = {
+  easy: 'bg-green-100 text-green-700',
+  medium: 'bg-amber-100 text-amber-700',
+  hard: 'bg-red-100 text-red-700',
 };
 
 const statusBadge: Record<string, { cls: string; label: string }> = {
@@ -68,6 +87,9 @@ export default function AssessmentDetail() {
   const [inviteMessage, setInviteMessage] = useState('');
   const [inviteSending, setInviteSending] = useState(false);
 
+  // Regenerate code loading
+  const [regenerating, setRegenerating] = useState(false);
+
   const fetchAll = useCallback(async () => {
     if (!id) return;
     try {
@@ -78,7 +100,6 @@ export default function AssessmentDetail() {
         assessmentService.getSessions({ assessmentId: id }),
       ]);
       setAssessment(a);
-      // Filter invitations that belong to this assessment
       setInvitations(
         invs.filter((inv) => {
           const aId = typeof inv.assessment === 'object' ? inv.assessment._id : inv.assessment;
@@ -120,6 +141,27 @@ export default function AssessmentDetail() {
     }
   };
 
+  const handleCopyInviteLink = () => {
+    if (!assessment?.inviteCode) return;
+    const url = `${window.location.origin}/assessment/join/${assessment.inviteCode}`;
+    navigator.clipboard.writeText(url);
+    toast({ title: 'Invite link copied!' });
+  };
+
+  const handleRegenerateCode = async () => {
+    if (!id) return;
+    setRegenerating(true);
+    try {
+      const newCode = await assessmentService.regenerateInviteCode(id);
+      setAssessment((prev) => prev ? { ...prev, inviteCode: newCode } : prev);
+      toast({ title: 'Invite code regenerated' });
+    } catch {
+      toast({ title: 'Error', description: 'Failed to regenerate code', variant: 'destructive' });
+    } finally {
+      setRegenerating(false);
+    }
+  };
+
   // ── Loading / not-found ────────────────────────────────────
   if (loading) {
     return (
@@ -145,6 +187,14 @@ export default function AssessmentDetail() {
     );
   }
 
+  const isCoding = assessment.assessmentType === 'coding';
+  const TypeIcon = isCoding ? Code2 : Bot;
+  const themeAccent = isCoding ? 'lime' : 'blue';
+  const questions = (assessment.questions || []).filter(
+    (q): q is Question => typeof q === 'object' && q !== null
+  );
+  const totalPoints = questions.reduce((sum, q) => sum + (q.points || 0), 0);
+
   // ── Render ─────────────────────────────────────────────────
   return (
     <DashboardLayout userRole="BusinessOwner">
@@ -158,6 +208,10 @@ export default function AssessmentDetail() {
             <div>
               <div className="flex items-center gap-3 flex-wrap">
                 <h1 className="text-lg sm:text-2xl font-bold text-gray-900">{assessment.title}</h1>
+                <Badge className={`text-[10px] gap-1 ${isCoding ? 'bg-lime-100 text-lime-700' : 'bg-blue-100 text-blue-700'}`}>
+                  <TypeIcon className="w-3 h-3" />
+                  {isCoding ? 'Coding' : 'AI Chat'}
+                </Badge>
                 <Badge className={`${diffBadge[assessment.difficulty]}`}>
                   {assessment.difficulty}
                 </Badge>
@@ -172,18 +226,24 @@ export default function AssessmentDetail() {
                 </span>
                 <span className="flex items-center gap-1.5">
                   <HelpCircle className="w-3.5 h-3.5" />
-                  {assessment.questionCount} questions
+                  {isCoding ? questions.length : assessment.questionCount} questions
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5" />
                   {assessment.timeLimitMinutes} min
                 </span>
+                {isCoding && totalPoints > 0 && (
+                  <span className="flex items-center gap-1.5">
+                    <Target className="w-3.5 h-3.5" />
+                    {totalPoints} pts total
+                  </span>
+                )}
               </div>
             </div>
           </div>
           <Button
             onClick={() => setInviteOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-sm active:scale-[0.97] transition-all w-full sm:w-auto"
+            className={`${isCoding ? 'bg-lime-500 hover:bg-lime-600 text-black' : 'bg-blue-600 hover:bg-blue-700 text-white'} font-bold shadow-sm active:scale-[0.97] transition-all w-full sm:w-auto`}
           >
             <Send className="w-4 h-4 mr-2" />
             Send Invitation
@@ -216,7 +276,48 @@ export default function AssessmentDetail() {
       <div className="p-4 sm:p-8">
         {/* ── Details Tab ──────────────────────────────────────── */}
         {tab === 'details' && (
-          <div className="max-w-2xl space-y-6">
+          <div className="max-w-3xl space-y-6">
+
+            {/* Shareable invite link (coding assessments always get one, AI Chat can too) */}
+            {assessment.inviteCode && (
+              <div className={`rounded-xl border p-4 ${isCoding ? 'bg-lime-50 border-lime-200' : 'bg-blue-50 border-blue-200'}`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <Link2 className={`w-4 h-4 ${isCoding ? 'text-lime-600' : 'text-blue-600'}`} />
+                  <h3 className="text-sm font-semibold text-gray-900">Shareable Invite Link</h3>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={`${window.location.origin}/assessment/join/${assessment.inviteCode}`}
+                    readOnly
+                    className="bg-white text-sm font-mono"
+                  />
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCopyInviteLink}
+                    className="shrink-0"
+                  >
+                    <Copy className="w-3.5 h-3.5 mr-1" />
+                    Copy
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRegenerateCode}
+                    disabled={regenerating}
+                    className="shrink-0"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 mr-1 ${regenerating ? 'animate-spin' : ''}`} />
+                    Regenerate
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Share this link with candidates — anyone with the link can start the assessment.
+                </p>
+              </div>
+            )}
+
+            {/* Skills tested */}
             {assessment.skills.length > 0 && (
               <div>
                 <h3 className="text-sm font-medium text-gray-500 mb-2">Skills Tested</h3>
@@ -230,6 +331,55 @@ export default function AssessmentDetail() {
               </div>
             )}
 
+            {/* Allowed languages (coding) */}
+            {isCoding && assessment.allowedLanguages.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 mb-2">Allowed Languages</h3>
+                <div className="flex flex-wrap gap-2">
+                  {assessment.allowedLanguages.map((l) => (
+                    <Badge key={l} variant="outline" className="text-xs bg-gray-50">
+                      {l}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Questions list (coding) */}
+            {isCoding && questions.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium text-gray-500 mb-3">
+                  Questions ({questions.length})
+                  <span className="ml-2 text-gray-400 font-normal">· {totalPoints} pts total</span>
+                </h3>
+                <div className="space-y-2">
+                  {questions.map((q, idx) => (
+                    <div
+                      key={q._id}
+                      className="bg-white border border-gray-200 rounded-lg p-3 flex items-center gap-3 hover:border-gray-300 transition-colors"
+                    >
+                      <span className="text-xs text-gray-400 font-mono w-5 shrink-0">{idx + 1}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-gray-900 truncate text-sm">{q.title}</span>
+                          <Badge className={`text-[10px] ${qDiffColor[q.difficulty] || ''}`}>
+                            {q.difficulty}
+                          </Badge>
+                        </div>
+                        <div className="flex items-center gap-3 mt-0.5 text-xs text-gray-500">
+                          <span>{q.points} pts</span>
+                          <span>{Math.floor((q.timeLimitSeconds || 600) / 60)}m</span>
+                          {q.category && <span>{q.category}</span>}
+                          {q.testCases && <span>{q.testCases.length} test cases</span>}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Stats cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               <div className="bg-white rounded-lg border p-4">
                 <p className="text-xs text-gray-400 uppercase tracking-wider mb-1">Total Invitations</p>
@@ -342,6 +492,14 @@ export default function AssessmentDetail() {
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
+                        {/* Coding: show passed/total */}
+                        {isCoding && s.submissions && s.submissions.length > 0 && (
+                          <div className="text-right mr-2">
+                            <p className="text-xs text-gray-500">
+                              {s.submissions.filter((sub) => sub.score === 100).length}/{s.submissions.length} solved
+                            </p>
+                          </div>
+                        )}
                         <div className="text-right">
                           <p className="text-lg font-bold text-gray-900">{s.score ?? '—'}%</p>
                           <p className="text-xs text-gray-400">
@@ -394,6 +552,26 @@ export default function AssessmentDetail() {
                 className="mt-1"
               />
             </div>
+
+            {/* Shareable link hint */}
+            {assessment.inviteCode && (
+              <div className="bg-gray-50 rounded-lg p-3 text-xs text-gray-500">
+                <p className="font-medium text-gray-700 mb-1">Or share the invite link:</p>
+                <div className="flex items-center gap-2">
+                  <code className="flex-1 truncate text-[11px]">
+                    {window.location.origin}/assessment/join/{assessment.inviteCode}
+                  </code>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 px-2"
+                    onClick={handleCopyInviteLink}
+                  >
+                    <Copy className="w-3 h-3" />
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
 
           <DialogFooter>

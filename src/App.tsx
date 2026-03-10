@@ -44,18 +44,22 @@ const ContractDetails = React.lazy(() => import("./pages/ContractDetails"));
 // Freelancer pages
 const FreelancerOnboarding = React.lazy(() => import("./pages/FreelancerOnboarding"));
 const FreelancerDashboard = React.lazy(() => import("./pages/FreelancerDashboard"));
+const MyProfile = React.lazy(() => import("./pages/MyProfile"));
 const CreateContractFreelancer = React.lazy(() => import("./pages/CreateContractFreelancer"));
+const AssessmentCatalog = React.lazy(() => import("./pages/AssessmentCatalog"));
 
 // Assessment pages (employer)
 const EmployerAssessments = React.lazy(() => import("./pages/EmployerAssessments"));
 const CreateAssessment = React.lazy(() => import("./pages/CreateAssessment"));
 const AssessmentDetail = React.lazy(() => import("./pages/AssessmentDetail"));
 const SessionResults = React.lazy(() => import("./pages/SessionResults"));
+const QuestionBank = React.lazy(() => import("./pages/QuestionBank"));
 
 // Assessment pages (freelancer + shared)
 const AssessmentInvite = React.lazy(() => import("./pages/AssessmentInvite"));
 const AssessmentShell = React.lazy(() => import("./pages/AssessmentShell"));
 const FreelancerAssessments = React.lazy(() => import("./pages/FreelancerAssessments"));
+const JoinByCode = React.lazy(() => import("./pages/JoinByCode"));
 
 // Shared pages (both roles)
 const ContractSent = React.lazy(() => import("./pages/ContractSent"));
@@ -71,6 +75,17 @@ const Withdrawals = React.lazy(() => import("./pages/Withdrawals"));
 // Admin pages
 const AdminWithdrawals = React.lazy(() => import("./pages/AdminWithdrawals"));
 const AdminBroadcast = React.lazy(() => import("./pages/AdminBroadcast"));
+
+// Code Playground
+const Playground = React.lazy(() => import("./pages/Playground"));
+
+// Feature pages (public)
+const FeatureGitHubAnalysis = React.lazy(() => import("./pages/FeatureGitHubAnalysis"));
+const FeatureEscrowPayments = React.lazy(() => import("./pages/FeatureEscrowPayments"));
+const FeatureSmartContracts = React.lazy(() => import("./pages/FeatureSmartContracts"));
+const FeatureAIAssessments = React.lazy(() => import("./pages/FeatureAIAssessments"));
+const FeatureLowestFees = React.lazy(() => import("./pages/FeatureLowestFees"));
+const FeatureTalentDiscovery = React.lazy(() => import("./pages/FeatureTalentDiscovery"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -97,6 +112,14 @@ const App = () => (
               {/* Public routes */}
               <Route path={ROUTES.HOME} element={<Index />} />
               <Route path={ROUTES.LEADERBOARD} element={<Leaderboard />} />
+
+              {/* Feature pages (public) */}
+              <Route path={ROUTES.FEATURE_GITHUB_ANALYSIS} element={<FeatureGitHubAnalysis />} />
+              <Route path={ROUTES.FEATURE_ESCROW_PAYMENTS} element={<FeatureEscrowPayments />} />
+              <Route path={ROUTES.FEATURE_SMART_CONTRACTS} element={<FeatureSmartContracts />} />
+              <Route path={ROUTES.FEATURE_AI_ASSESSMENTS} element={<FeatureAIAssessments />} />
+              <Route path={ROUTES.FEATURE_LOWEST_FEES} element={<FeatureLowestFees />} />
+              <Route path={ROUTES.FEATURE_TALENT_DISCOVERY} element={<FeatureTalentDiscovery />} />
               
               {/* Auth routes */}
               <Route path={ROUTES.SIGN_IN} element={<SignIn />} />
@@ -209,10 +232,28 @@ const App = () => (
                 } 
               />
               <Route 
+                path={ROUTES.FREELANCER_PROFILE}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.FREELANCER}>
+                    <MyProfile />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
                 path={ROUTES.CREATE_CONTRACT_FREELANCER}
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.FREELANCER}>
                     <CreateContractFreelancer />
+                  </ProtectedRoute>
+                } 
+              />
+
+              {/* Public assessment catalog (auth required) */}
+              <Route 
+                path={ROUTES.ASSESSMENT_CATALOG}
+                element={
+                  <ProtectedRoute>
+                    <AssessmentCatalog />
                   </ProtectedRoute>
                 } 
               />
@@ -250,8 +291,20 @@ const App = () => (
                   </ProtectedRoute>
                 } 
               />
+              <Route 
+                path={ROUTES.QUESTION_BANK}
+                element={
+                  <ProtectedRoute requiredRole={USER_ROLES.BUSINESS_OWNER}>
+                    <QuestionBank />
+                  </ProtectedRoute>
+                } 
+              />
 
               {/* Assessment routes (freelancer + shared) */}
+              <Route 
+                path={ROUTES.ASSESSMENT_JOIN}
+                element={<JoinByCode />}
+              />
               <Route 
                 path={ROUTES.ASSESSMENT_INVITE}
                 element={
@@ -273,6 +326,16 @@ const App = () => (
                 element={
                   <ProtectedRoute requiredRole={USER_ROLES.FREELANCER}>
                     <FreelancerAssessments />
+                  </ProtectedRoute>
+                } 
+              />
+
+              {/* Code Playground (both roles) */}
+              <Route 
+                path={ROUTES.PLAYGROUND}
+                element={
+                  <ProtectedRoute>
+                    <Playground />
                   </ProtectedRoute>
                 } 
               />

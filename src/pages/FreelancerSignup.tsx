@@ -54,13 +54,14 @@ const FreelancerSignup = () => {
           }
         }
         
-        // Navigate to stored return URL or dashboard
+        // Navigate to stored return URL or onboarding (first-time signup)
         const returnUrl = sessionStorage.getItem('artemis_return_url');
         if (returnUrl) {
           sessionStorage.removeItem('artemis_return_url');
           navigate(returnUrl, { replace: true });
         } else {
-          navigate(ROUTES.FREELANCER_DASHBOARD, { replace: true });
+          // First signup → go through onboarding
+          navigate(ROUTES.FREELANCER_ONBOARDING, { replace: true });
         }
       }
     };
@@ -98,7 +99,7 @@ const FreelancerSignup = () => {
           routing="path"
           path={ROUTES.SIGN_UP_FREELANCER}
           signInUrl={ROUTES.SIGN_IN}
-          afterSignUpUrl={ROUTES.FREELANCER_DASHBOARD}
+          afterSignUpUrl={ROUTES.FREELANCER_ONBOARDING}
           fallbackRedirectUrl={ROUTES.SIGN_IN}
         />
         
