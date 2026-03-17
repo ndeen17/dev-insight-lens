@@ -13,6 +13,7 @@ import {
   RotateCcw,
   Eye,
   Bookmark,
+  Github,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import * as talentService from '@/services/talentService';
@@ -25,6 +26,7 @@ import { ROUTES } from '@/config/constants';
 
 const PROFESSIONS = [
   'All',
+  'GitHub Vetted',
   'Software Engineering',
   'Marketing',
   'Design',
@@ -131,38 +133,37 @@ export default function BrowseTalent() {
 
       const merged: BrowseCandidate[] = [];
 
-      // 1) Talent profiles (assessment-based)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const params: any = { limit: 100, sort: 'score' };
-      if (activeProfession !== 'All') params.profession = activeProfession;
-      if (activeSearch) params.search = activeSearch;
-
-      const talentData = await talentService.browseTalent(params);
-      merged.push(...talentData.talent.map(normalizeTalent));
-
-      // 2) Leaderboard developers (GitHub-based) for SE or All
-      if (
-        activeProfession === 'All' ||
-        activeProfession === 'Software Engineering'
-      ) {
+      if (activeProfession === 'GitHub Vetted') {
+        // ── GitHub Vetted tab: only leaderboard developers ──
         try {
           const lbData = await getLeaderboard({ limit: 100 });
           const devs = (lbData?.data || []).map(normalizeDeveloper);
-
-          // De-duplicate: skip leaderboard devs that already appear via talent
-          const existingUsernames = new Set(
-            merged
-              .filter((c) => c.username)
-              .map((c) => c.username!.toLowerCase()),
-          );
-          const uniqueDevs = devs.filter(
-            (d) =>
-              !d.username || !existingUsernames.has(d.username.toLowerCase()),
-          );
-          merged.push(...uniqueDevs);
+          // Filter by search if provided
+          if (activeSearch) {
+            const q = activeSearch.toLowerCase();
+            merged.push(
+              ...devs.filter(
+                (d) =>
+                  d.name.toLowerCase().includes(q) ||
+                  (d.username && d.username.toLowerCase().includes(q)) ||
+                  (d.primaryLanguages || []).some((l) => l.toLowerCase().includes(q)),
+              ),
+            );
+          } else {
+            merged.push(...devs);
+          }
         } catch {
-          // Leaderboard unavailable – still show talent
+          // Leaderboard unavailable
         }
+      } else {
+        // ── All other tabs: only registered talent (no GitHub-only devs) ──
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const params: any = { limit: 100, sort: 'score' };
+        if (activeProfession !== 'All') params.profession = activeProfession;
+        if (activeSearch) params.search = activeSearch;
+
+        const talentData = await talentService.browseTalent(params);
+        merged.push(...talentData.talent.map(normalizeTalent));
       }
 
       // Sort: highest score first (GitHub score or best assessment score)
@@ -352,12 +353,17 @@ export default function BrowseTalent() {
             <button
               key={prof}
               onClick={() => updateProfession(prof)}
-              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-                activeProfession === prof
-                  ? 'bg-black text-white shadow-md'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                prof === 'GitHub Vetted'
+                  ? activeProfession === prof
+                    ? 'bg-gray-900 text-white shadow-md'
+                    : 'bg-gray-800/10 text-gray-800 border border-gray-300 hover:bg-gray-800/20'
+                  : activeProfession === prof
+                    ? 'bg-black text-white shadow-md'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
+              {prof === 'GitHub Vetted' && <Github className="w-3.5 h-3.5" />}
               {prof}
             </button>
           ))}
@@ -407,9 +413,11 @@ export default function BrowseTalent() {
                 No talent found
               </h3>
               <p className="text-gray-500 max-w-sm">
-                {activeProfession !== 'All' || activeSearch
-                  ? 'Try a different profession or search query.'
-                  : 'Talent who complete onboarding or GitHub analysis will appear here.'}
+                {activeProfession === 'GitHub Vetted'
+                  ? 'No GitHub-vetted engineers found. Engineers analyzed via GitHub will appear here.'
+                  : activeProfession !== 'All' || activeSearch
+                    ? 'Try a different profession or search query.'
+                    : 'Registered talent will appear here once they create an account.'}
               </p>
             </div>
           ) : isFinished ? (
